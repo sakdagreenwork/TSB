@@ -1,6 +1,5 @@
 *** Settings ***
 Library    SeleniumLibrary    screenshot_root_directory=/Users/sakda.l/Desktop/TSB Automate/Login/Failed Screenshot 
-Library    XML
 Test Teardown    Close Browser   
 Resource    keyword.robot
 #robot --outputdir "\Users\sakda.l\Desktop\TSB Automate\Login\Report" Vehicle.robot
@@ -58,9 +57,15 @@ ${operation_save_button}    //div[@class="mb-3"][4]//div[@class="custom-tippy"][
 ${confirm_edit_button}    //header/div[2]/div/button
 ${delete_button}    //header/div[3]/div/button
 ${confirm_delete_button}    //div[3]/div/div[@class="flex justify-center w-full gap-2"]/div[1]
-${confirm_confirm_edit_button}    //div[@class="flex justify-center w-full gap-2"]/div[1]
+
 
 ${search_box}    //*[@id="root"]/main//main/div/div/div/input
+
+${confirm_edit_title}    //div[@role="dialog"]/div[2]/div/div/div/h2
+${confirm_edit_detail}    //div[@role="dialog"]/div[2]/div/div/div[2]/div
+${confirm_confirm_edit_button}    //div[@class="flex justify-center w-full gap-2"]/div[1]
+${confirm_edit_cancel_button}    //div[@role="dialog"]/div[2]/div/div/div[3]/div/div/div[2]
+
 *** Keywords ***
 
 Open Vehicle Menu
@@ -111,7 +116,7 @@ select_vehicle
     Open Vehicle Menu
     Wait Until Element Is Visible    ${search_box}    10
     Input Text    ${search_box}    ${correct_license}
-    Wait Until Element Is Visible    //span[text()[contains(.,"${correct_license}")]]    10
+    Wait Until Element Is Visible    //span[text()[contains(.,"${correct_license}")]]    13
     Sleep    2
     #คำสั่งกดที่ผลลัพธ์ตัวแรกที่ค้นหาาเจอ
     Wait Until Element Is Visible    //*[@id="root"]/main/div[3]/div/div/div/div[3]/div/div[1]/div/main/div[2]/div[1]/div[2]/div/div/div/div[2]/div/div[1]/div
@@ -250,14 +255,14 @@ TC_VHC_012-กรณีเพิ่มโดยกรอก Vehical Name 2 ต�
 
 TC_VHC_013-เพิ่มโดยกรอกข้อมูลครบถ้วนและถูกต้อง
     #ใส่ข้อมูลทั้งหมดทีต้องการเพิ่มถ้าไม่ใส่จะ Dafault ให้ใน Function add_new_vehicle
-    add_new_vehicle    data_vename=3-13(37)
+    add_new_vehicle    data_vename=6666(1)
     Sleep    5
     Click Element    ${confirm_add}
 
     #Step นี้จะเช็คว่าข้อมูลที่เพิ่มปรากฎในรายการไหม เช็คด้วย Vehicle Name ที่เพิ่ม
-    Input Text    ${search_box}    3-13(37)
+    Input Text    ${search_box}    6666(1)
     Sleep    5
-    Wait Until Element Is Visible    //span[text()[contains(.,'3-13(37)')]]    10
+    Wait Until Element Is Visible    //span[text()[contains(.,'6666(1)')]]    10
 ลบ Vehicle
     #ใส่ License Plate ที่ต้องการลบ
     delete_vehicle    98-Test
@@ -346,11 +351,20 @@ TC_VHC กรณี Edit ด้วยข้อมูลที่ถูกต้�
     Click Element    ${confirm_confirm_edit_button}
 
     #แก้ไขข้อมูลให้กลับมาเป็นค่าเดิม
-    [Teardown]
-    edit_vehicle    old_license=46465    new_veName=646564
-    Click Element    ${confirm_edit_button}
-    Click Element    ${confirm_confirm_edit_button}
+    #[Teardown]
+    #edit_vehicle    old_license=46465    new_veName=646564
+    #Click Element    ${confirm_edit_button}
+    #Click Element    ${confirm_confirm_edit_button}
 
+
+TC_VHC_หน้าต่างยืนยันการแก้ไข
+    edit_vehicle
+    Click Element    ${confirm_edit_button}
+    Sleep    1
+    Run Keyword And Continue On Failure    Element Text Should Be    ${confirm_edit_title}    แก้ไขพาหนะ
+    Run Keyword And Continue On Failure    Element Text Should Be    ${confirm_edit_detail}    คุณแน่ใจหรือไม่ว่าต้องการบันทึกการเปลี่ยนแปลง?
+    Run Keyword And Continue On Failure    Element Text Should Be    ${confirm_confirm_edit_button}    ยืนยัน 
+    Run Keyword And Continue On Failure    Element Text Should Be    ${confirm_edit_cancel_button}    ยกเลิก
 #TC_VHC_015-กรณีกดปุ่ม Confirm การ Add
 
 #TC_VHC_017-

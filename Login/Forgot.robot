@@ -1,8 +1,8 @@
 *** Settings ***
 Library   SeleniumLibrary    screenshot_root_directory=/Users/sakda.l/Desktop/TSB Automate/Login/Failed Screenshot 
 Resource      keyword.robot
-Test Teardown    Clear Element Text    //*[@id="root"]/main/div/div/div[2]/div/div[1]/form/div/div/input
-
+#Test Teardown    Clear Element Text    //*[@id="root"]/main/div/div/div[2]/div/div[1]/form/div/div/input
+Test Teardown    Close Browser
 #robot --outputdir "\Users\sakda.l\Desktop\TSB Automate\Login\Report" Forgot.robot   
 
 *** Variables ***

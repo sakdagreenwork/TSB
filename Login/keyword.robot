@@ -15,6 +15,7 @@ Log In
     [Arguments]    ${email}    ${password}
     Open Browser  ${link}    browser=chrome
     Wait Until Element Is Visible     ${email_field}    10
+    Sleep    1
     Click Element    ${email_field}
     Input Text  ${email_field}  text=${email}
     Input Text  ${password_field}  text=${password}
