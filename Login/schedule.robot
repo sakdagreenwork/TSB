@@ -2,6 +2,8 @@
 Library    ExcelLibrary  
 Library    String
 Library    SeleniumLibrary
+Library    DateTime
+Library    Collections
 Resource    keyword.robot
 
 *** Keywords ***
@@ -12,6 +14,15 @@ Open Schedule Preset Menu
     Click Element    //*[@id="root"]/main/div[2]/div[3]/div[1]/div[2]/div/div/div/ul/li[4]
     Wait Until Element Is Visible    //*[@id="root"]/main/div[2]/div[3]/div[1]/div[2]/div/div/div/ul/li[4]/div[2]/div/ul/li[1]/a/span/span[2]
     Click Element    //*[@id="root"]/main/div[2]/div[3]/div[1]/div[2]/div/div/div/ul/li[4]/div[2]/div/ul/li[1]/a/span/span[2]
+    Sleep    2
+
+Open Schedule Approval
+    Log In Valid
+    Wait Until Element Is Visible    //*[@id="root"]/main/header/div/div/div[1]/div[2]//*[name()='svg']
+    Click Element    //*[@id="root"]/main/header/div/div/div[1]/div[2]//*[name()='svg']
+    Click Element    //*[@id="root"]/main/div[2]/div[3]/div[1]/div[2]/div/div/div/ul/li[4]
+    Wait Until Element Is Visible    //*[@id="root"]/main/div[2]/div[3]/div[1]/div[2]/div/div/div/ul/li[4]/div[2]/div/ul/li[2]/a/span/span[2]
+    Click Element    //*[@id="root"]/main/div[2]/div[3]/div[1]/div[2]/div/div/div/ul/li[4]/div[2]/div/ul/li[2]/a/span/span[2]
     Sleep    2
 
 Select Schedule
@@ -51,6 +62,52 @@ add_new_trip
     Sleep    0.5
     Click Element    //html/body/div[2]/div[3]/div[2]/div[3]/button[2]
     #Sleep    0.5
+
+deploy_schedule_with_name
+    [Arguments]    ${sche_name}
+    Select Schedule    ${sche_name}
+    Sleep    0.5
+    Click Element    //*[@id="root"]/main//main/div/div/div[1]/div[3]/div[3]/button
+    Double Click Element    //*[@id="root"]/main/div[3]//div[2]/div[2]/div/div[1]
+    Click Element    //*[@id="root"]/main//div[3]/div[1]/button
+    Click Element    //*[@id="headlessui-portal-root"]//div[3]/div/div/div[1]
+
+save_schedule
+    Click Element    //*[@id="root"]/main//main/div/div/div[1]/div[3]/div[2]/button
+    Click Element    //*[@id="headlessui-portal-root"]//div[3]/div/div/div[1]
+
+deploy-schedule_no_name
+    [Arguments]    ${day}
+    Sleep    0.5
+    Click Element    //*[@id="root"]/main//main/div/div/div[1]/div[3]/div[3]/button
+    Double Click Element    //*[@id="root"]/main/div[3]//div[2]//div[text()=${day}][@aria-pressed="true"]
+    Click Element    //*[@id="root"]/main//div[3]/div[1]/button
+    Click Element    //*[@id="headlessui-portal-root"]//div[3]/div/div/div[1]
+    Sleep    1
+    Click Element    //*[@id="headlessui-portal-root"]/div/div/div/div/div/div/div/div/button
+    Click Element    //*[@id="root"]/main//div[3]/div[2]/button
+
+get_day
+    ${dmy}    Get Current Date
+    ${day}    Set Variable    ${dmy[8:10]}
+    ${int_day}    Convert To Integer    ${day}    
+    RETURN    ${int_day}
+
+create_schedule_preset
+    [Arguments]    ${sche_name}
+    Click Element    //*[@id="root"]/main//div[1]/div/div[1]/div/main/div[1]/div[2]/div/button
+    Input Text    //*[@id="headlessui-portal-root"]/div//form/div/div/div/input    ${sche_name}
+
+    Click Element    //button[@type="submit"]
+    Wait Until Element Is Visible    //*[@id="headlessui-portal-root"]/div[2]/div/div/div/div/div/div/div/div/div[1]
+    Click Element    //*[@id="headlessui-portal-root"]/div[2]/div/div/div/div/div/div/div/div/div[1]
+    Sleep    10
+
+delete_schedule_preset
+    Wait Until Element Is Visible    //*[@id="root"]/main//main/div[2]/div[1]/div[2]//div[@class="m-0"][2]/div
+    Click Element    //*[@id="root"]/main//main/div[2]/div[1]/div[2]//div[@class="m-0"][2]/div
+    Wait Until Element Is Visible    //*[@id="headlessui-portal-root"]/div/div/div/div/div/div/div/div/div/div[1]
+    Click Element    //*[@id="headlessui-portal-root"]/div/div/div/div/div/div/div/div/div/div[1]
 
 *** Test Cases ***
 Read Excel Until Empty Cell
@@ -194,7 +251,7 @@ Read Excel Until Empty Cell
 
     
 
-หาลำดับรถ
+สร้างเที่ยวตาม Excel
     Select Schedule    Schedule Test Auto Add
     ${fail_all}    Set Variable    0
     ${sum}    Set Variable    1
@@ -338,15 +395,59 @@ Read Excel Until Empty Cell
     Sleep    10000
 
 
+สร้าง Schedule Preset
+    Open Schedule Preset Menu
+    create_schedule_preset    ตารางอัตโนมัติ
+    Sleep    10
 
-ทดลองกดตาราง
-    Select Schedule    Schedule 12 Oct
-    Sleep    2
-    Maximize Browser Window
-    Sleep    1
-    Click Element    //*[@id="root"]/main//div[2]/div/div/div/main/div/div/div[2]/div[1]/div[2]/div/div/div/div/div[2]/div[2]/div[3]/div/div[4]/div[4]/div[3]/div
-    Sleep    200
+ลบ Schedule Preset
+    Select Schedule    ตารางอัตโนมัติ
+    #Sleep    1000
+    delete_schedule_preset
 
-ทดลอง พิม
-    ${fail_all}     Set Variable    0
-    Log To Console    เพิ่มไม่สำเร็จทั้งหมด ${fail_all} รายการ
+Deploy ตารางการเดินทาง
+    ${day}    get_day
+    Open Schedule Preset Menu
+    FOR    ${i}    IN RANGE    1    36
+        Log To Console    ${i}
+        
+        Click Element    //*[@id="root"]//main/div[2]/div[1]/div[2]/div/div/div/div[${i}]
+        deploy-schedule_no_name    ${day}
+        #Close Browser
+    END
+
+    Sleep    100
+    #Click Element    //*[@id="root"]//main/div[2]/div[1]/div[2]/div/div/div/div[1]
+    #deploy-schedule_no_name
+    #Sleep    100
+
+Approve ตารางการเดินทาง
+    Open Schedule Approval
+    ${day}    get_day
+    #Click Element    //*[@id="root"]/main//div[2]//div[2]//div[2]//div[2]/div[2]//div[2]/div[1]/div[2]/div/div/span
+    
+
+    FOR    ${i}    IN RANGE    2    5    
+        Log To Console    ${i}
+         
+        ${check}    Run Keyword And Return Status    Wait Until Element Is Visible    //*[@id="root"]/main//div[2]//div[2]//div[2]//div[2]/div/div/div[1]/div[./div//span[text()="รอตรวจทาน"]] 
+        IF    ${check} == $False
+            Exit For Loop
+        END
+
+        Click Element    //*[@id="root"]/main//div[2]//div[2]//div[2]//div[.//div[text()=${day}][@aria-pressed="true"]]/div[2]/div/div[./div/div/span[text()="รอตรวจทาน"]]
+        Wait Until Element Is Visible    //*[@id="root"]/main/div[3]//main//div[2]/div/div/div/div/div[2]/div[2]/div[3]/div/div[1]/div[2]/div[2]
+        Sleep    2
+        Click Element    //*[@id="root"]/main//div[1]/div[2]/div[2]/div/div/div/div[2]/div/div[1]/div/div/button
+        Wait Until Element Is Visible    //*[@id="headlessui-portal-root"]//div[3]//div/div/div[1]
+        Click Element    //*[@id="headlessui-portal-root"]//div[3]//div/div/div[1]
+        Sleep    2
+        Click Element    //*[@id="root"]/main//div[1]/div[3]/div/button
+        Sleep    2
+    END
+   
+    Sleep    1000
+
+Get Day
+    ${test}    get_day
+    Log To Console    ${test}
