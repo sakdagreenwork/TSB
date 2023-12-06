@@ -1,7 +1,7 @@
 *** Settings ***
 Library    ExcelLibrary  
 Library    String
-Library    SeleniumLibrary
+Library    SeleniumLibrary    screenshot_root_directory=/Users/sakda.l/Desktop/TSB Automate/Login/Failed Screenshot
 Library    DateTime
 Library    Collections
 Resource    keyword.robot
@@ -28,18 +28,19 @@ Open Schedule Approval
 Select Schedule
     [Arguments]    ${schedule_name}
     Open Schedule Preset Menu
+    Wait Until Element Is Visible    //*[@id="root"]/main/div[3]/div/div/div/div/div[1]/div/div[1]/div/main/div[1]/div[1]/input
     Input Text    //*[@id="root"]/main/div[3]/div/div/div/div/div[1]/div/div[1]/div/main/div[1]/div[1]/input    ${schedule_name}
     Click Element    //*[@id="root"]/main/div[3]/div/div/div/div/div[1]/div/div[1]/div/main/div[2]/div[1]/div[2]/div/div/div/div/div/div[1]
 
 add_new_trip
     [Arguments]    ${start_hour}=0    ${start_min}=0    ${select_hour}=0    ${select_min}=0
-
+    Sleep    1
     Click Element    //*[@id="timepicker"]
-    #Sleep    0.5
+    Sleep    1
     Click Element    //*[@class="numInput flatpickr-hour"]
     Sleep    0.5
     Press Keys    //*[@class="numInput flatpickr-hour"]    DELETE
-    Sleep    0.5
+    Sleep    1
     Press Keys    //*[@class="numInput flatpickr-hour"]    ${start_hour}
     Click Element    //*[@class="numInput flatpickr-minute"]
     Press Keys    //*[@class="numInput flatpickr-minute"]    DELETE
@@ -49,14 +50,16 @@ add_new_trip
     Click Element    //body/div[2]/div[3]/div[2]/div[2]/div/div[2]/div/div[2]/div[2]/div/div[2]
     Click Element    //body/div[2]/div[3]/div[2]/div[2]/div/div[2]/div/div[2]/div[1]/div/div[2]
     Sleep    0.5
+    Wait Until Element Is Visible    //html/body//div[2]/div[1]/div[2]/div[1]/div/div[1]/div[2]/input
     Input Text    //html/body//div[2]/div[1]/div[2]/div[1]/div/div[1]/div[2]/input    ${select_hour}
     Sleep    0.5
-    Wait Until Element Is Visible    //html/body/div[4]
+    Wait Until Element Is Visible    //html/body/div[4]//*[text()[contains(.,'${select_hour}')]]
     Click Element    //html/body/div[4]//*[text()[contains(.,'${select_hour}')]]
 
     Click Element    //body/div[2]/div[3]/div[2]/div[2]/div/div[2]/div/div[2]/div[2]/div/div[2]
+    Wait Until Element Is Visible    //html/body/div[2]/div[3]/div[2]/div[2]/div/div[2]/div[1]/div[2]/div[2]/div/div[1]/div[2]/input
     Input Text    //html/body/div[2]/div[3]/div[2]/div[2]/div/div[2]/div[1]/div[2]/div[2]/div/div[1]/div[2]/input    ${select_min}
-    Wait Until Element Is Visible    //html/body/div[4]
+    Wait Until Element Is Visible    //html/body/div[4]//*[text()[contains(.,'${select_min}')]]
     Click Element    //html/body/div[4]//*[text()[contains(.,'${select_min}')]]
     
     Sleep    0.5
@@ -252,7 +255,9 @@ Read Excel Until Empty Cell
     
 
 สร้างเที่ยวตาม Excel
-    Select Schedule    Schedule Test Auto Add
+    ${subline}    Set Variable    3-11(48)    
+    ${file_name}    Set Variable    ${subline}_20231110.xlsx    
+    Select Schedule    สาย ${subline}
     ${fail_all}    Set Variable    0
     ${sum}    Set Variable    1
     ${car}    Set Variable    7912
@@ -263,7 +268,7 @@ Read Excel Until Empty Cell
     ${row}=    Set Variable    2
     ${column}=    Set Variable    1
     ${column_stop}=    Set Variable    5
-    Open Excel Document    C:/Users/sakda.l/Desktop/จัดตารางเดินรถ/1-18E(504)_20231110.xlsx    doc_id=doc1
+    Open Excel Document    C:/Users/sakda.l/Desktop/จัดตารางเดินรถ/${file_name}    doc_id=doc1
 
     Sleep    1
     FOR    ${i}    IN RANGE    100
@@ -341,6 +346,12 @@ Read Excel Until Empty Cell
                         ${diff_hour}    Evaluate    ${int_hour2} - ${int_hour}
                         ${diff_min}    Evaluate    ${int_min2} - ${int_min}
 
+                        IF    ${diff_hour} < 0
+                            ${twentyfour}    Set Variable    24
+                            ${diff_hour}    Evaluate    ${diff_hour} + ${twentyfour}
+                            
+                        END    
+
                         IF    ${diff_min} < 0
                             ${minus}    Set Variable    1
                             ${diff_hour}    Evaluate    ${diff_hour} - ${minus}
@@ -392,6 +403,7 @@ Read Excel Until Empty Cell
     END
     Close Current Excel Document
     Log To Console    เพิ่มไม่สำเร็จทั้งหมด ${fail_all} รายการ
+    save_schedule
     Sleep    10000
 
 
@@ -429,13 +441,13 @@ Approve ตารางการเดินทาง
 
     FOR    ${i}    IN RANGE    2    5    
         Log To Console    ${i}
-         
-        ${check}    Run Keyword And Return Status    Wait Until Element Is Visible    //*[@id="root"]/main//div[2]//div[2]//div[2]//div[2]/div/div/div[1]/div[./div//span[text()="รอตรวจทาน"]] 
+        
+        ${check}    Run Keyword And Return Status    Wait Until Element Is Visible    //*[@id="root"]/main//div[2]//div[2]//div[2]//div[.//div[text()="${day}"][@aria-pressed="true"]]/div[2]/div/div[./div/div/span[text()="รอตรวจทาน"]] 
         IF    ${check} == $False
             Exit For Loop
         END
 
-        Click Element    //*[@id="root"]/main//div[2]//div[2]//div[2]//div[.//div[text()=${day}][@aria-pressed="true"]]/div[2]/div/div[./div/div/span[text()="รอตรวจทาน"]]
+        Click Element    //*[@id="root"]/main//div[2]//div[2]//div[2]//div[.//div[text()="${day}"][@aria-pressed="true"]]/div[2]/div/div[./div/div/span[text()="รอตรวจทาน"]]
         Wait Until Element Is Visible    //*[@id="root"]/main/div[3]//main//div[2]/div/div/div/div/div[2]/div[2]/div[3]/div/div[1]/div[2]/div[2]
         Sleep    2
         Click Element    //*[@id="root"]/main//div[1]/div[2]/div[2]/div/div/div/div[2]/div/div[1]/div/div/button
