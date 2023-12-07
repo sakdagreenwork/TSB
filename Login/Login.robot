@@ -50,7 +50,7 @@ ${top_right_alert}    //div[@class='Toastify__toast-body']/div[2]
 *** Test Cases ***
 TC_LI_001-ข้อความหน้า Sign in
     Open Browser  ${link}    browser=chrome
-    Wait Until Element Is Visible    ${title}    10
+    Wait Until Element Is Visible    ${title}    20
     Run Keyword And Continue On Failure    Element Text Should Be  ${title}     เข้าสู่ระบบ
     Run Keyword And Continue On Failure    Element Text Should Be  ${detail}    ลงชื่อเข้าใช้บัญชีของคุณเพื่อเริ่มใช้ Fleet Management System
     Run Keyword And Continue On Failure    Element Text Should Be  ${email_label}    อีเมล
@@ -65,53 +65,52 @@ TC_LI_001-ข้อความหน้า Sign in
 
 TC_LI_002-เข้าสู่ระบบด้วย Email และ Password ที่ถูกต้อง
     Log In    email=${valid_email}    password=${valid_pass}
-    Sleep    5s
-    Wait Until Element Is Visible    ${dashboard}    10
+    Wait Until Element Is Visible    ${dashboard}    20
     Element Text Should Be   ${dashboard}    expected=แดชบอร์ด
     
 
 TC_LI_003-เข้าสู่ระบบด้วย Email ที่ถูกต้อง แต่ Password ไม่ถูกต้อง
     Log In   email=${valid_email}    password=${invalid_pass}
     Run Keyword And Continue On Failure    Wait Until Element Is Visible    ${top_right_alert}
-    Run Keyword And Continue On Failure    Element Text Should Be    ${top_right_alert}   expected=Invalid password
+    Run Keyword And Continue On Failure    Element Text Should Be    ${top_right_alert}   expected=อีเมลหรือรหัสผ่านไม่ถูกต้อง
     Element Should Not Be Visible    ${dashboard}
 
 TC_LI_004-เข้าสู่ระบบโดยกรอก Email แต่ไม่กรอก Password
     Log In   email=${valid_email}    password=
     Run Keyword And Continue On Failure    Element Should Be Visible    ${no_pass}
-    Run Keyword And Continue On Failure    Element Text Should Be    ${no_pass}  expected=Password is Required
+    Run Keyword And Continue On Failure    Element Text Should Be    ${no_pass}  expected=โปรดระบุรหัสผ่าน
     Element Should Not Be Visible    ${dashboard}
 
 TC_LI_005-เข้าสู่ระบบโดยกรอก Password แต่ไม่กรอก Email 
     Log In   email=    password=${valid_pass}
     Run Keyword And Continue On Failure    Element Should Be Visible    ${no_email}
-    Run Keyword And Continue On Failure    Element Text Should Be    ${no_email}  expected=Email is Required
+    Run Keyword And Continue On Failure    Element Text Should Be    ${no_email}  expected=โปรดระบุอีเมล
     Element Should Not Be Visible    ${dashboard}
 
 TC_LI_006-เข้าสู่ระบบโดยไม่กรอก Email และ Password   
     Log In   email=   password=
     Run Keyword And Continue On Failure    Element Should Be Visible    ${no_email}
     Run Keyword And Continue On Failure    Element Should Be Visible    ${no_pass}
-    Run Keyword And Continue On Failure    Element Text Should Be    ${no_email}  expected=Email is Required
-    Run Keyword And Continue On Failure    Element Text Should Be    ${no_pass}  expected=Password is Required
+    Run Keyword And Continue On Failure    Element Text Should Be    ${no_email}  expected=โปรดระบุอีเมล
+    Run Keyword And Continue On Failure    Element Text Should Be    ${no_pass}  expected=โปรดระบุรหัสผ่าน
     Element Should Not Be Visible    ${dashboard}
 
 TC_LI_007-เข้าสู่ระบบด้วย Email ที่ยังไม่ลงทะเบียน
     Log In   email=${non_registed_email}   password=${valid_pass}
     Run Keyword And Continue On Failure        Wait Until Element Is Visible    ${top_right_alert}
-    Run Keyword And Continue On Failure        Element Text Should Be    ${top_right_alert}   expected=Invalid email
+    Run Keyword And Continue On Failure        Element Text Should Be    ${top_right_alert}   expected=อีเมลหรือรหัสผ่านไม่ถูกต้อง
     Element Should Not Be Visible    ${dashboard}
 
 TC_LI_008-เข้าสู่ระบบด้วย Email ยังไม่ Verified
     Log In   email=${non_verified_email}    password=${non_verified_pass}
     Run Keyword And Continue On Failure        Wait Until Element Is Visible    ${top_right_alert}
-    Run Keyword And Continue On Failure        Element Text Should Be    ${top_right_alert}  expected=User not verified
+    Run Keyword And Continue On Failure        Element Text Should Be    ${top_right_alert}  expected=ผู้ใช้งานยังไม่ได้ยืนยัน
     Element Should Not Be Visible    ${dashboard}
 
 TC_LI_009-เข้าสู่ระบบด้วย Email ที่ถูก Disabled
     Log In   email=${diabled_email}   password=${disabled_pass}
     Run Keyword And Continue On Failure        Wait Until Element Is Visible    ${top_right_alert}
-    Run Keyword And Continue On Failure        Element Text Should Be    ${top_right_alert}  expected=User is currently disabled
+    Run Keyword And Continue On Failure        Element Text Should Be    ${top_right_alert}  expected=ผู้ใช้งานถูกปิดการใช้งาน
     Element Should Not Be Visible    ${dashboard}
 
 TC_LI_010-ช่องกรอก Email กรอกได้สูงสุด 50 ตัว
@@ -133,14 +132,13 @@ TC_LI_012-กดปุ่มปิด Password
     Click Element   ${hide_show_button}
     ${Check}    Get Element Attribute    ${password_field}    type
     Should Be Equal As Strings    ${Check}    password
-    Sleep   5s
 
 TC_LI_013-กดปุ่ม Forgot Password
     Open Browser  ${link}    browser=chrome 
     Wait Until Element Is Visible   ${forgot_pass_button}    10
     Click Element   ${forgot_pass_button}
     Wait Until Element Is Visible    //h4[@class="font-medium mb-4"]
-    Element Text Should Be  //h4[@class="font-medium mb-4"]    Forgot Your Password?
+    Element Text Should Be  //h4[@class="font-medium mb-4"]    ลืมรหัสผ่าน?
 
 
 

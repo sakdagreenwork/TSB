@@ -255,7 +255,7 @@ Read Excel Until Empty Cell
     
 
 สร้างเที่ยวตาม Excel
-    ${subline}    Set Variable    3-11(48)    
+    ${subline}    Set Variable    3-53   
     ${file_name}    Set Variable    ${subline}_20231110.xlsx    
     Select Schedule    สาย ${subline}
     ${fail_all}    Set Variable    0
@@ -274,7 +274,8 @@ Read Excel Until Empty Cell
     FOR    ${i}    IN RANGE    100
     
         ${a1}=  Read Excel Cell    ${row}    ${column}
-        Run Keyword If    '${a1}' == 'None'    Exit For Loop  
+        Run Keyword If    '${a1}' == 'None'    Exit For Loop 
+        Run Keyword If    '${a1}' == ''    Exit For Loop 
         ${s_a1}    Convert To String    ${a1}
         ${excel_license}=    Get Substring    ${s_a1}    4 
         #Log To Console   ทะเบียนปกติ: ${a1}
@@ -314,7 +315,7 @@ Read Excel Until Empty Cell
                         
                         #ถ้าเลื่อน Column จนไปเจอค่าว่างจะหยุดและเลื่อนไป Row ถัดไป
                         Run Keyword If    '${b1}' == 'None'    Exit For Loop  
-                        
+                        Run Keyword If    '${b1}' == ''    Exit For Loop 
                         ${str_b1}    Convert To String    ${b1}
                         ${hour}    Get Substring    ${str_b1}    0    2
                         ${min}    Get Substring    ${str_b1}    3    5
@@ -407,6 +408,8 @@ Read Excel Until Empty Cell
     Sleep    10000
 
 
+
+
 สร้าง Schedule Preset
     Open Schedule Preset Menu
     create_schedule_preset    ตารางอัตโนมัติ
@@ -420,7 +423,8 @@ Read Excel Until Empty Cell
 Deploy ตารางการเดินทาง
     ${day}    get_day
     Open Schedule Preset Menu
-    FOR    ${i}    IN RANGE    1    36
+    #Deploy Schedule 59 ตัวแรก
+    FOR    ${i}    IN RANGE    1    74
         Log To Console    ${i}
         
         Click Element    //*[@id="root"]//main/div[2]/div[1]/div[2]/div/div/div/div[${i}]

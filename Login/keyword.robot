@@ -1,6 +1,5 @@
 *** Settings ***
 Library   SeleniumLibrary 
-
 *** Variables **
 ${valid_email}    phonarun@efinancethai.com
 ${valid_pass}    EVEFT@cs
@@ -14,7 +13,7 @@ ${link}    http://qc-tsb-admin.onlineasset.co.th/
 Log In
     [Arguments]    ${email}    ${password}
     Open Browser  ${link}    browser=chrome
-    Wait Until Element Is Visible     ${email_field}    10
+    Wait Until Element Is Visible     ${email_field}    20
     Sleep    1
     Click Element    ${email_field}
     Input Text  ${email_field}  text=${email}
