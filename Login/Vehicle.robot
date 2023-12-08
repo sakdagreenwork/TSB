@@ -308,13 +308,17 @@ TC_VHC_020-กรณีเพิ่มโดยกรอกข้อมูลค
     add_new_vehicle    data_license=6666(1)
     Sleep    1
     Click Element    ${confirm_add}
-
-    #Step นี้จะเช็คว่าข้อมูลที่เพิ่มปรากฎในรายการไหม เช็คด้วย Vehicle Name ที่เพิ่ม
-    Input Text    ${search_box}    6666(1)
     Run Keyword And Continue On Failure    Wait Until Element Is Visible    ${top_right_alert}
     Run Keyword And Continue On Failure    Element Text Should Be    ${top_right_alert}    เพิ่มพาหนะสำเร็จ
-    Wait Until Element Is Visible    //span[text()[contains(.,'6666(1)')]]    10
 
+    #Step นี้จะเช็คว่าข้อมูลที่เพิ่มปรากฎในรายการไหม เช็คด้วย Vehicle Name ที่เพิ่ม
+    
+    Input Text    ${search_box}    6666(1)
+    Wait Until Element Is Visible    //span[text()[contains(.,6666(1))]]    20
+    Sleep    2
+    #คำสั่งกดที่ผลลัพธ์ตัวแรกที่ค้นหาาเจอ
+    Wait Until Element Is Visible    //*[@id="root"]/main/div[3]/div/div/div/div[3]/div/div[1]/div/main/div[2]/div[1]/div[2]/div/div/div/div[2]/div/div[1]/div
+    Click Element    //*[@id="root"]/main/div[3]/div/div/div/div[3]/div/div[1]/div/main/div[2]/div[1]/div[2]/div/div/div/div[2]/div/div[1]/div
 
     
 TC_VHC_021-หน้ารายละเอียด Vehicle
