@@ -83,6 +83,7 @@ deploy-schedule_no_name
     [Arguments]    ${day}
     Sleep    0.5
     Click Element    //*[@id="root"]/main//main/div/div/div[1]/div[3]/div[3]/button
+    Sleep    0.5
     Double Click Element    //*[@id="root"]/main/div[3]//div[2]//div[text()=${day}][@aria-pressed="true"]
     Click Element    //*[@id="root"]/main//div[3]/div[1]/button
     Click Element    //*[@id="headlessui-portal-root"]//div[3]/div/div/div[1]
@@ -255,7 +256,7 @@ Read Excel Until Empty Cell
     
 
 สร้างเที่ยวตาม Excel
-    ${subline}    Set Variable    3-53   
+    ${subline}    Set Variable    4-52L(146L)   
     ${file_name}    Set Variable    ${subline}_20231110.xlsx    
     Select Schedule    สาย ${subline}
     ${fail_all}    Set Variable    0
@@ -424,7 +425,8 @@ Deploy ตารางการเดินทาง
     ${day}    get_day
     Open Schedule Preset Menu
     #Deploy Schedule 59 ตัวแรก
-    FOR    ${i}    IN RANGE    1    74
+    #FOR    ${i}    IN RANGE    1    74
+    FOR    ${i}    IN RANGE    1    108
         Log To Console    ${i}
         
         Click Element    //*[@id="root"]//main/div[2]/div[1]/div[2]/div/div/div/div[${i}]
@@ -467,3 +469,7 @@ Approve ตารางการเดินทาง
 Get Day
     ${test}    get_day
     Log To Console    ${test}
+
+
+
+    

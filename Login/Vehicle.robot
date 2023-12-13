@@ -1,5 +1,6 @@
 *** Settings ***
 Library    SeleniumLibrary    screenshot_root_directory=/Users/sakda.l/Desktop/TSB Automate/Login/Failed Screenshot 
+Library    Collections
 Test Teardown    Close Browser   
 Resource    keyword.robot
 #robot --outputdir "\Users\sakda.l\Desktop\TSB Automate\Login\Report" Vehicle.robot
@@ -68,6 +69,7 @@ ${confirm_edit_cancel_button}    //div[@role="dialog"]/div[2]/div/div/div[3]/div
 
 ${top_right_alert}    //main[@class='App${SPACE}${SPACE}relative']/div[1]/div/div/div/div[2]
 
+
 *** Keywords ***
 
 Open Vehicle Menu
@@ -119,7 +121,7 @@ select_vehicle
     Open Vehicle Menu
     Wait Until Element Is Visible    ${search_box}    20
     Input Text    ${search_box}    ${correct_license}
-    Wait Until Element Is Visible    //span[text()[contains(.,"${correct_license}")]]    20
+    Wait Until Element Is Visible    //span[text()[contains(.,"${correct_license}")]]    25
     Sleep    2
     #คำสั่งกดที่ผลลัพธ์ตัวแรกที่ค้นหาาเจอ
     Wait Until Element Is Visible    //*[@id="root"]/main/div[3]/div/div/div/div[3]/div/div[1]/div/main/div[2]/div[1]/div[2]/div/div/div/div[2]/div/div[1]/div
@@ -305,7 +307,17 @@ TC_VHC_019-หน้าต่างยืนยันการ Add
 
 TC_VHC_020-กรณีเพิ่มโดยกรอกข้อมูลครบถ้วนและถูกต้อง
     #ใส่ข้อมูลทั้งหมดทีต้องการเพิ่มถ้าไม่ใส่จะ Dafault ให้ใน Function add_new_vehicle
-    add_new_vehicle    data_license=6666(1)
+    
+    ${data_status}    Set Variable    Active
+    ${data_vename}    Set Variable    999680
+    ${data_motor}    Set Variable    999680
+    ${data_brand}    Set Variable    MINE
+    ${data_gps}    Set Variable    999680
+    ${data_chassis}    Set Variable    999680
+    ${data_license}    Set Variable    999680
+    ${data_depot}    Set Variable    อู่แสมดำ
+
+    add_new_vehicle    data_license=${data_license}
     Sleep    1
     Click Element    ${confirm_add}
     Run Keyword And Continue On Failure    Wait Until Element Is Visible    ${top_right_alert}
@@ -313,14 +325,17 @@ TC_VHC_020-กรณีเพิ่มโดยกรอกข้อมูลค
 
     #Step นี้จะเช็คว่าข้อมูลที่เพิ่มปรากฎในรายการไหม เช็คด้วย Vehicle Name ที่เพิ่ม
     
-    Input Text    ${search_box}    6666(1)
-    Wait Until Element Is Visible    //span[text()[contains(.,6666(1))]]    20
+    Input Text    ${search_box}    ${data_license}
+    Wait Until Element Is Visible    //span[text()[contains(.,${data_license})]]    20
     Sleep    2
     #คำสั่งกดที่ผลลัพธ์ตัวแรกที่ค้นหาาเจอ
     Wait Until Element Is Visible    //*[@id="root"]/main/div[3]/div/div/div/div[3]/div/div[1]/div/main/div[2]/div[1]/div[2]/div/div/div/div[2]/div/div[1]/div
     Click Element    //*[@id="root"]/main/div[3]/div/div/div/div[3]/div/div[1]/div/main/div[2]/div[1]/div[2]/div/div/div/div[2]/div/div[1]/div
-
+    Wait Until Element Is Visible    ${field_veName}
+    ${get_license}    Get Element Attribute    ${field_license}    value
+    Should Be Equal    ${get_license}    ${data_license}
     
+    [Teardown]    delete_vehicle    ${data_license}
 TC_VHC_021-หน้ารายละเอียด Vehicle
     Run Keyword And Continue On Failure    select_vehicle    4646544
     Wait Until Element Is Visible    //div[3]//div[1]/button/span[1]    10
@@ -456,16 +471,31 @@ TC_VHC_030-หน้าต่างยืนยันการแก้ไข
 
 
 TC_VHC_031-กรณี Edit vehicle name
-    edit_vehicle_name
+    ${new_vename}    Set Variable    6465642
+    ${old_vename}    Set Variable    64656423
+    edit_vehicle_name    old_license=4646544    new_veName=${new_vename}
     Click Element    ${confirm_edit_button}
     Click Element    ${confirm_confirm_edit_button}
     Run Keyword And Continue On Failure    Wait Until Element Is Visible    ${top_right_alert}
     Run Keyword And Continue On Failure    Element Text Should Be    ${top_right_alert}    อัปเดตพาหนะสำเร็จ 
+    Run Keyword And Continue On Failure    Element Text Should Be    ${field_veName}    ${new_vename}
+    Sleep    5
+    Close Browser
+
+    edit_vehicle_name    old_license=4646544    new_veName=${old_vename}
+    Click Element    ${confirm_edit_button}
+    Click Element    ${confirm_confirm_edit_button}
+    Run Keyword And Continue On Failure    Wait Until Element Is Visible    ${top_right_alert}
+    Run Keyword And Continue On Failure    Element Text Should Be    ${top_right_alert}    อัปเดตพาหนะสำเร็จ
+    Run Keyword And Continue On Failure    Element Text Should Be    ${field_veName}    ${old_vename}   
+    Sleep    5 
     #แก้ไขข้อมูลให้กลับมาเป็นค่าเดิม
     #[Teardown]
     #edit_vehicle    old_license=46465    new_veName=646564
     #Click Element    ${confirm_edit_button}
     #Click Element    ${confirm_confirm_edit_button}
+
+
 
 TC_VHC_032-กรณี Edit status
     ${license}    Set Variable    4646544
@@ -482,7 +512,7 @@ TC_VHC_032-กรณี Edit status
     #Wait Until Element Is Visible   //*[@class="Toastify"]//*[text()="อัปเดตพาหนะสำเร็จ"]
     Run Keyword And Continue On Failure    Wait Until Element Is Visible    ${top_right_alert}
     Run Keyword And Continue On Failure    Element Text Should Be    ${top_right_alert}    อัปเดตพาหนะสำเร็จ 
-    Element Text Should Be    //div[@class="mb-3"][1]/div/div/div/div/span/div[1]/div[1]/div/div[1]/div[1]    ${status}
+    Run Keyword And Continue On Failure    Element Text Should Be    //div[@class="mb-3"][1]/div/div/div/div/span/div[1]/div[1]/div/div[1]/div[1]    ${status}
 TC_VHC_033-กรณี Edit motor number
     ${license}    Set Variable    4646544
     ${motor_number}    Set Variable    6654633        
@@ -636,6 +666,7 @@ TC_VHC_041-กรณีลบ Vehicle
     Element Should Not Be Visible    //span[text()[contains(.,"${delete_license}")]]    10
 
 TC_VHC_042-กรณีลบ Vehicle ที่ถูกใช้งานอยู่
+
     #ยังใช้งานไม่ได้
     ${delete_license}    Set Variable    98-Test
     delete_vehicle    ${delete_license}
@@ -643,3 +674,6 @@ TC_VHC_042-กรณีลบ Vehicle ที่ถูกใช้งานอย
     Run Keyword And Continue On Failure    Element Text Should Be    ${top_right_alert}    ข้อผิดพลาด : พาหนะถูกใช้งานอยู่ ไม่สามารถลบได้
     Input Text    ${search_box}    ${delete_license}
     Wait Until Element Is Visible    //span[text()[contains(.,"${delete_license}")]]    10
+
+
+
