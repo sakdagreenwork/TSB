@@ -1,7 +1,7 @@
 *** Settings ***
 Library    SeleniumLibrary    screenshot_root_directory=/Users/sakda.l/Desktop/TSB Automate/Login/Failed Screenshot
 Resource    keyword.robot
-
+Test Teardown    Close Browser 
 *** Variables ***
 ${title}    //*[@id="root"]/main/header/div/div/div[1]/div[3]/h4
 
@@ -50,6 +50,12 @@ ${confirm_text}    //*[@id="headlessui-portal-root"]/div[2]//div[2]//div[2]/div
 ${confirm_button}    //*[@id="headlessui-portal-root"]/div[2]//div[2]//div[3]/div/div/div[1]
 ${cancel_confirm_button}    //*[@id="headlessui-portal-root"]/div[2]//div[2]//div[3]/div/div/div[2]  
 
+${confirm_delete_title}    //*[@id="headlessui-portal-root"]/div//div[2]//h2
+${confirm_delete_text}    //*[@id="headlessui-portal-root"]/div//div[2]//div[2]/div
+${confirm_delete_button}    //*[@id="headlessui-portal-root"]/div//div[2]//div[3]/div/div/div[1]
+${cancel_confirm_delete_button}    //*[@id="headlessui-portal-root"]/div//div[2]//div[3]/div/div/div[2]
+
+
 ${first_search_result}    //*[@id="root"]/main//main/div[2]/div[1]/div[2]/div/div/div/div[1]
 ${depot_name_search_result}    //*[@id="root"]/main//main/div[2]/div[1]/div[2]/div/div/div/div[1]/div/div[2]/div/span
 ${depot_type_search_result}    //*[@id="root"]/main//main/div[2]/div[1]/div[2]/div/div/div/div[1]/div/div[2]/div/span
@@ -93,7 +99,7 @@ open_add_new_depot_menu
     Wait Until Element Is Visible    ${add_edit_title}
 
 add_new_depot
-    [Arguments]    ${depot_name}="อู่แสมรุ้ง"    ${type}=Bus    ${status}=active    ${latitude}=999.999    ${longitude}=999.999
+    [Arguments]    ${depot_name}=อู่แสมรุ้ง    ${type}=Bus    ${status}=active    ${latitude}=999.999    ${longitude}=999.999
 
     open_add_new_depot_menu
     Clear Element Text    ${latitude_field}
@@ -112,15 +118,24 @@ add_new_depot
 
 
 open_edit_depot_menu
+    [Arguments]    ${depot}=อู่แสมฟ้า
     open_depot_menu
-    Wait Until Element Is Visible    ${first_search_result}
-    Click Element    ${first_search_result}
+    select_depot    ${depot}
     Wait Until Element Is Visible    ${edit_button}
     Click Element    ${edit_button}
     Wait Until Element Is Visible    ${add_edit_title}
 
+select_depot
+    [Arguments]    ${depot}=อู่แสมฟ้า
+    Input Text    ${search_box}    ${depot}
+    Wait Until Element Is Visible    ${first_search_result}    10
+    Click Element    ${first_search_result}
+    Wait Until Element Is Visible    ${middle_depot_name}
+    Run Keyword And Continue On Failure    Element Text Should Be    ${middle_depot_name}    ${depot}
+    Wait Until Element Is Visible    ${right_depot_name}
+    Run Keyword And Continue On Failure    Element Text Should Be    ${right_depot_name}    ${depot}
 
-
+    
 *** Test Cases ***
 หน้า Depot
     open_depot_menu
@@ -153,6 +168,110 @@ open_edit_depot_menu
     Run Keyword And Continue On Failure    Should Be Equal    ${latitude_placeholder}    ลองจิจูด
     Run Keyword And Continue On Failure    Element Text Should Be    ${add_edit_button}    เพิ่ม
 
+กรณีเพิ่มโดยไม่กรอกข้อมูล
+    open_add_new_depot_menu
+    Wait Until Element Is Visible    ${add_edit_button}
+    Clear Element Text    ${latitude_field}
+    Clear Element Text    ${longitude_field}
+    Click Element    ${add_edit_button}
+    Run Keyword And Continue On Failure    Wait Until Element Is Visible    ${depot_name_alert}
+    Run Keyword And Continue On Failure    Element Text Should Be    ${depot_name_alert}    โปรดระบุชื่ออู่ 
+    Run Keyword And Continue On Failure    Wait Until Element Is Visible    ${type_alert}
+    Run Keyword And Continue On Failure    Element Text Should Be    ${type_alert}    โปรดระบุประเภท
+    Run Keyword And Continue On Failure    Wait Until Element Is Visible    ${status_alert}
+    Run Keyword And Continue On Failure    Element Text Should Be    ${status_alert}    โปรดระบุสถานะ
+    Run Keyword And Continue On Failure    Wait Until Element Is Visible    ${latitude_alert}
+    Run Keyword And Continue On Failure    Element Text Should Be    ${latitude_alert}    โปรดระบุละติจูด
+    Run Keyword And Continue On Failure    Wait Until Element Is Visible    ${longitude_alert}
+    Run Keyword And Continue On Failure    Element Text Should Be    ${longitude_alert}    โปรดระบุลองจิจูด
+
+กรณีเพิ่มโดยกรอก Depot Name ซ้ำกับที่มีอยู่ในระบบ
+    add_new_depot    depot_name=Pk Test Depot7
+    Run Keyword And Continue On Failure    Wait Until Element Is Visible    ${depot_name_alert}
+    Run Keyword And Continue On Failure    Element Text Should Be    ${depot_name_alert}    ชื่ออู่นี้ถูกใช้งานแล้ว
+
+กรณีเพิ่ม Latitude ที่มีค่า < -999.999999
+    add_new_depot    latitude=-999.9999999
+    Run Keyword And Continue On Failure    Wait Until Element Is Visible    ${latitude_alert}
+    Run Keyword And Continue On Failure    Element Text Should Be    ${latitude_alert}     ละติจูดต้องมีค่ามากกว่าหรือเท่ากับ -999.999999
+
+กรณีเพิ่ม Latitude ที่มีค่า > 999.999999
+    add_new_depot    latitude=999.9999999
+    Run Keyword And Continue On Failure    Wait Until Element Is Visible    ${latitude_alert}
+    Run Keyword And Continue On Failure    Element Text Should Be    ${latitude_alert}     ละติจูดต้องมีค่าน้อยหรือเท่ากับ 999.999999
+
+กรณีเพิ่ม Longitude ที่มีค่า < -999.999999
+    add_new_depot    longitude=-999.9999999
+    Run Keyword And Continue On Failure    Wait Until Element Is Visible    ${longitude_alert}
+    Run Keyword And Continue On Failure    Element Text Should Be    ${longitude_alert}     ลองจิจูดต้องมีค่ามากกว่าหรือเท่ากับ -999.999999
+
+กรณีเพิ่ม Longitude ที่มีค่า > 999.999999
+    add_new_depot    longitude=999.9999999
+    Run Keyword And Continue On Failure    Wait Until Element Is Visible    ${longitude_alert}
+    Run Keyword And Continue On Failure    Element Text Should Be    ${longitude_alert}     ลองจิจูดต้องมีค่าน้อยกว่าหรือเท่ากับ 999.999999
+
+หน้าต่างยืนยันการ Add
+    add_new_depot
+    Wait Until Element Is Visible    ${confirm_title}
+    Run Keyword And Continue On Failure    Element Text Should Be    ${confirm_title}    เพิ่มอู่
+    Run Keyword And Continue On Failure    Element Text Should Be    ${confirm_text}    คุณยืนยันที่จะเพิ่มอู่ใช่หรือไม่?
+    Run Keyword And Continue On Failure    Element Text Should Be    ${confirm_button}    ยืนยัน
+    Run Keyword And Continue On Failure    Element Text Should Be    ${cancel_confirm_button}    ยกเลิก
+    
+
+
+กรณีเพิ่ม Depot ด้วยข้อมูลที่ครบถ้วนและถูกต้อง
+    ${depot_name}    Set Variable    อู่แสมรุ้ง    
+    ${type}    Set Variable    Bus    
+    ${status}    Set Variable    active    
+    ${latitude}    Set Variable    999.999    
+    ${longitude}    Set Variable    999.999
+
+
+    add_new_depot    depot_name=${depot_name}   type=${type}    status=${status}
+    ...              latitude=${latitude}    longitude=${longitude}
+    Click Element    ${confirm_button}
+    Run Keyword And Continue On Failure    Wait Until Element Is Visible    ${top_right_alert}
+    Run Keyword And Continue On Failure    Element Text Should Be    ${top_right_alert}    เพิ่มอู่สำเร็จ
+    Click Element    ${add_edit_close_button}
+    
+    select_depot    ${depot_name}
+
+    #ตรวจสอบข้อมูลทางด้านขวาว่าตรงกับที่เพิ่มไหม
+    Run Keyword And Continue On Failure    Element Text Should Be    ${right_depot_name}    ${depot_name}
+    Run Keyword And Continue On Failure    Element Text Should Be    ${right_status_data}    ${status}
+    Run Keyword And Continue On Failure    Element Text Should Be    ${right_type_data}    ${type}
+    Run Keyword And Continue On Failure    Element Text Should Be    ${right_latitude_data}    ${latitude}
+    Run Keyword And Continue On Failure    Element Text Should Be    ${right_longitude_data}    ${longitude} 
+
+    #ตรวจสอบข้อมูลหน้า Edit ว่าตรงกับที่เพิ่มไหม
+    Click Element    ${edit_button}
+    Wait Until Element Is Visible    ${depot_name_field}
+    #Run Keyword And Continue On Failure    Element Text Should Be    ${depot_name_field}    ${depot_name}
+    Run Keyword And Continue On Failure    Element Text Should Be    //*[@id="headlessui-portal-root"]//form/div[2]/div[2]/div/div/div[1]/div[1]    ${status}
+    Run Keyword And Continue On Failure    Element Text Should Be    //*[@id="headlessui-portal-root"]//form/div[2]/div[1]/div/div/div[1]/div[1]    ${type}
+    #Run Keyword And Continue On Failure    Element Text Should Be    ${latitude_field}    ${latitude}
+    #Run Keyword And Continue On Failure    Element Text Should Be    ${longitude_field}    ${longitude} 
+    
+    #depot latitude longitude เช็คข้อมูลไม่ได้
+    #depot ที่เพิ่มจะไปลบตอน case delete
+
+ส่วน Subline ตรงกลาง
+    ${depot}    Set Variable    อู่แสมฟ้า
+    open_depot_menu
+    select_depot    ${depot}
+    Element Text Should Be    ${start_sub_line}    เริ่มต้นสายย่อย
+    Element Text Should Be    ${stop_sub_line}    สิ้นสุดสายย่อย
+
+ส่วน Depot ทางขวา
+    ${depot}    Set Variable    อู่แสมฟ้า
+    open_depot_menu
+    select_depot    ${depot}
+    Run Keyword And Continue On Failure    Element Text Should Be    ${right_latitude_label}    ละคิจูด
+    Run Keyword And Continue On Failure    Element Text Should Be    ${right_longitude_label}    ลองจิจูด
+    Run Keyword And Continue On Failure    Element Text Should Be    ${right_type_label}    ประเภท
+    Run Keyword And Continue On Failure    Element Text Should Be    ${right_status_label}    สถานะ
+
 หน้า Edit Depot
     open_edit_depot_menu
     Run Keyword And Continue On Failure    Element Text Should Be    ${add_edit_title}    แก้ไขอู่รถ
@@ -169,42 +288,221 @@ open_edit_depot_menu
     Run Keyword And Continue On Failure    Should Be Equal    ${latitude_placeholder}    ลองจิจูด
     Run Keyword And Continue On Failure    Element Text Should Be    ${add_edit_button}    บันทึก
 
-กรณีเพิ่มโดยไม่กรอกข้อมูล
-    open_add_new_depot_menu
-    Wait Until Element Is Visible    ${add_edit_button}
+กรณี Edit โดยข้อมูลว่าง
+    open_edit_depot_menu    อู่แสมฟ้า
+    Clear Element Text    ${depot_name_field}
     Clear Element Text    ${latitude_field}
     Clear Element Text    ${longitude_field}
     Click Element    ${add_edit_button}
     Run Keyword And Continue On Failure    Wait Until Element Is Visible    ${depot_name_alert}
-    Run Keyword And Continue On Failure    Element Text Should Be    ${depot_name_alert}    โปรดระบุชื่ออู่ 
-    Run Keyword And Continue On Failure    Wait Until Element Is Visible    ${type_alert}
-    Run Keyword And Continue On Failure    Element Text Should Be    ${type_alert}    โปรดระบุประเภท
-    Run Keyword And Continue On Failure    Element Text Should Be    ${status_alert}    โปรดระบุสถานะ
+    Run Keyword And Continue On Failure    Element Text Should Be    ${depot_name_alert}    โปรดระบุชื่ออู่
     Run Keyword And Continue On Failure    Element Text Should Be    ${latitude_alert}    โปรดระบุละติจูด
     Run Keyword And Continue On Failure    Element Text Should Be    ${longitude_alert}    โปรดระบุลองจิจูด
 
-กรณีเพิ่มโดยกรอก Depot Name ซ้ำกับที่มีอยู่ในระบบ
-    add_new_depot    depot_name=Pk Test Depot7
-    Run Keyword And Continue On Failure    Wait Until Element Is Visible    ${depot_name_alert}
-    Run Keyword And Continue On Failure    Element Text Should Be    ${depot_name_alert}    ชื่ออู่นี้ถูกใช้งานแล้ว
+กรณี Edit Depot Name ที่ซ้ำ
+    open_edit_depot_menu    อู่แสมฟ้า
+    Input Text    ${depot_name_field}    อู่แสมม่วง
+    Click Element    ${add_edit_button}
+    Wait Until Element Is Visible    ${depot_name_alert}
+    Element Text Should Be    ${depot_name_alert}    ชื่ออู่นี้ถูกใช้งานแล้ว 
 
-กรณีเพิ่ม Latitude ที่มีค่า < -999.999999
-    add_new_depot    latitude=-999.9999999
-    Run Keyword And Continue On Failure    Wait Until Element Is Visible    ${latitude_alert}
-    Run Keyword And Continue On Failure    Element Text Should Be    ${latitude_alert}     ละติจูดต้องมีค่ามากกว่าหรือเท่ากับ -999.999999
+กรณ๊ Edit Latitude ที่มีค่า < -999.999999
+    open_edit_depot_menu    อู่แสมฟ้า
+    Input Text    ${latitude_field}    -999.9999999
+    Click Element    ${add_edit_button}
+    Wait Until Element Is Visible    ${latitude_alert}
+    Element Text Should Be    ${latitude_alert}    ละติจูดต้องมีค่ามากกว่าหรือเท่ากับ -999.999999
 
-กรณีเพิ่ม Longitude ที่มีค่า > 999.999999
-    add_new_depot    longitude=999.9999999
-    Run Keyword And Continue On Failure    Wait Until Element Is Visible    ${longitude_alert}
-    Run Keyword And Continue On Failure    Element Text Should Be    ${longitude_alert}     ลองจิจูดต้องมีค่าน้อยกว่าหรือเท่ากับ 999.999999
+กรณ๊ Edit Latitude ที่มีค่า > 999.999999
+    open_edit_depot_menu    อู่แสมฟ้า
+    Input Text    ${latitude_field}    999.9999999
+    Click Element    ${add_edit_button}
+    Wait Until Element Is Visible    ${latitude_alert}
+    Element Text Should Be    ${latitude_alert}    ละติจูดต้องมีค่าน้อยกว่าหรือเท่ากับ 999.999999
 
-กรณีเพิ่ม Depot ด้วยข้อมูลที่ครบถ้วนและถูกต้อง
-    add_new_depot    depot_name=อู่แสมรุ้ง
+กรณ๊ Edit Longitude ที่มีค่า < -999.999999
+    open_edit_depot_menu    อู่แสมฟ้า
+    Input Text    ${longitude_field}    -999.9999999
+    Click Element    ${add_edit_button}
+    Wait Until Element Is Visible    ${longitude_alert}
+    Element Text Should Be    ${longitude_alert}        ลองจิจูดต้องมีค่ามากกว่าหรือเท่ากับ -999.999999
+
+กรณ๊ Edit Longitude ที่มีค่า > 999.999999
+    open_edit_depot_menu    อู่แสมฟ้า
+    Input Text    ${longitude_field}    999.9999999
+    Click Element    ${add_edit_button}
+    Wait Until Element Is Visible    ${longitude_alert}
+    Element Text Should Be    ${longitude_alert}        ลองจิจูดต้องมีค่าน้อยกว่าหรือเท่ากับ 999.999999
+
+หน้าต่างยืนยันการ Edit
+    open_edit_depot_menu    อู่แสมฟ้า
+    Click Element    ${add_edit_button}
+    Wait Until Element Is Visible    ${confirm_title}
+    Run Keyword And Continue On Failure    Element Text Should Be    ${confirm_title}    แก้ไขอู่
+    Run Keyword And Continue On Failure    Element Text Should Be    ${confirm_text}    คุณยืนยันที่จะแก้ไขอู่ใช่หรือไม่?
+    Run Keyword And Continue On Failure    Element Text Should Be    ${confirm_button}    ยืนยัน
+    Run Keyword And Continue On Failure    Element Text Should Be    ${cancel_confirm_button}    ยกเลิก
+
+กรณี Edit Depot Name
+    ${new_depot_name}    Set Variable    อู่แสมแดง
+    ${old_depot_name}    Set Variable    อู่แสมฟ้า
+
+    open_edit_depot_menu    ${old_depot_name}
+    Input Text    ${depot_name_field}    ${new_depot_name}
+    Click Element    ${add_edit_button}
     Click Element    ${confirm_button}
-    Run Keyword And Continue On Failure    Wait Until Element Is Visible    ${top_right_alert}
-    Run Keyword And Continue On Failure    Element Text Should Be    ${top_right_alert}    เพิ่มอู่สำเร็จ
-    Click Element    ${add_edit_close_button}
-    Input Text    ${search_box}    อู่แสมรุ้ง
-    Wait Until Element Is Visible    ${first_search_result}
-    Sleep    5
+    Wait Until Element Is Visible    ${top_right_alert}
+    Run Keyword And Continue On Failure    Element Text Should Be    ${top_right_alert}    อัปเดตอู่สำเร็จ
+    Run Keyword And Continue On Failure    Element Text Should Be    ${right_depot_name}    ${new_depot_name}
+    Run Keyword And Continue On Failure    Element Text Should Be    ${middle_depot_name}    ${new_depot_name}
+    Sleep    2
+    Close Browser
 
+
+    #ส่วนนี้จะเปลี่ยนค่ากลับมาเป็นค่าเดิม
+    open_edit_depot_menu    ${new_depot_name}
+    Input Text    ${depot_name_field}    ${old_depot_name}
+    Click Element    ${add_edit_button}
+    Click Element    ${confirm_button}
+    Wait Until Element Is Visible    ${top_right_alert}
+    Run Keyword And Continue On Failure    Element Text Should Be    ${top_right_alert}    อัปเดตอู่สำเร็จ
+    Sleep    2
+
+กรณี Edit Latitude
+    ${depot_name}    Set Variable    อู่แสมฟ้า
+    ${new_latitude}    Set Variable    888.888
+    ${old_latitude}    Set Variable    777.777
+    
+    open_edit_depot_menu    ${depot_name}
+    Input Text    ${latitude_field}    ${new_latitude}
+    Click Element    ${add_edit_button}
+    Click Element    ${confirm_button}
+    Wait Until Element Is Visible    ${top_right_alert}
+    Run Keyword And Continue On Failure    Element Text Should Be    ${top_right_alert}    อัปเดตอู่สำเร็จ
+    Run Keyword And Continue On Failure    Element Text Should Be    ${right_latitude_data}    ${new_latitude}
+    Sleep    2
+    Close Browser
+
+    #ส่วนนี้จะเปลี่ยนค่ากลับมาเป็นค่าเดิม
+    open_depot_menu
+    select_depot    ${depot_name}
+    Run Keyword And Continue On Failure    Element Text Should Be    ${right_latitude_data}    ${new_latitude}
+    Click Element    ${edit_button}
+    Wait Until Element Is Visible    ${add_edit_button}
+    #Run Keyword And Continue On Failure    Element Text Should Be    ${depot_name_field}    ${depot_name}
+    #Run Keyword And Continue On Failure    Element Text Should Be    ${latitude_field}    ${new_latitude}
+    Input Text    ${latitude_field}    ${old_latitude}
+    Click Element    ${add_edit_button}
+    Click Element    ${confirm_button}
+    Wait Until Element Is Visible    ${top_right_alert}
+    Run Keyword And Continue On Failure    Element Text Should Be    ${top_right_alert}    อัปเดตอู่สำเร็จ
+
+กรณี Edit Longitude
+    ${depot_name}    Set Variable    อู่แสมฟ้า
+    ${new_longitude}    Set Variable    888.888
+    ${old_longitude}    Set Variable    777.777
+    
+    open_edit_depot_menu    ${depot_name}
+    Input Text    ${longitude_field}    ${new_longitude}
+    Click Element    ${add_edit_button}
+    Click Element    ${confirm_button}
+    Wait Until Element Is Visible    ${top_right_alert}
+    Run Keyword And Continue On Failure    Element Text Should Be    ${top_right_alert}    อัปเดตอู่สำเร็จ
+    Run Keyword And Continue On Failure    Element Text Should Be    ${right_longitude_data}    ${new_longitude}
+    Sleep    2
+    Close Browser
+
+    #ส่วนนี้จะเปลี่ยนค่ากลับมาเป็นค่าเดิม
+    open_depot_menu
+    select_depot    ${depot_name}
+    Run Keyword And Continue On Failure    Element Text Should Be    ${right_longitude_data}    ${new_longitude}
+    Click Element    ${edit_button}
+    Wait Until Element Is Visible    ${add_edit_button}
+    #Run Keyword And Continue On Failure    Element Text Should Be    ${depot_name_field}    ${depot_name}
+    #Run Keyword And Continue On Failure    Element Text Should Be    ${latitude_field}    ${new_latitude}
+    Input Text    ${longitude_field}    ${old_longitude}
+    Click Element    ${add_edit_button}
+    Click Element    ${confirm_button}
+    Wait Until Element Is Visible    ${top_right_alert}
+    Run Keyword And Continue On Failure    Element Text Should Be    ${top_right_alert}    อัปเดตอู่สำเร็จ
+
+
+
+กรณี Edit Type
+    ${depot_name}    Set Variable    อู่แสมฟ้า
+    ${new_type}    Set Variable    Boat
+    ${old_type}    Set Variable    Bus
+    
+    open_edit_depot_menu    ${depot_name}
+
+    Click Element    ${type_dropdown_button}
+    Input Text    ${type_dropdown_field}    ${new_type}
+    Click Element    //*[@id="headlessui-portal-root"]//form/div[2]/div[1]/div/div[2]//*[text()[contains(.,"${new_type}")]]
+
+    Click Element    ${add_edit_button}
+    Click Element    ${confirm_button}
+    Wait Until Element Is Visible    ${top_right_alert}
+    Run Keyword And Continue On Failure    Element Text Should Be    ${top_right_alert}    อัปเดตอู่สำเร็จ
+    Run Keyword And Continue On Failure    Element Text Should Be    ${right_type_data}    ${new_type}
+    Close Browser
+
+    #ส่วนนี้จะเปลี่ยนค่ากลับมาเป็นค่าเดิม
+    open_depot_menu
+    select_depot    ${depot_name}
+    Run Keyword And Continue On Failure    Element Text Should Be    ${right_type_data}    ${new_type}
+    Click Element    ${edit_button}
+    Wait Until Element Is Visible    ${add_edit_button}
+    #Run Keyword And Continue On Failure    Element Text Should Be    ${depot_name_field}    ${depot_name}
+    #Run Keyword And Continue On Failure    Element Text Should Be    ${latitude_field}    ${new_latitude}
+    Click Element    ${type_dropdown_button}
+    Input Text    ${type_dropdown_field}    ${old_type}
+    Click Element    //*[@id="headlessui-portal-root"]//form/div[2]/div[1]/div/div[2]//*[text()[contains(.,"${old_type}")]]
+    Click Element    ${add_edit_button}
+    Click Element    ${confirm_button}
+    Wait Until Element Is Visible    ${top_right_alert}
+    Run Keyword And Continue On Failure    Element Text Should Be    ${top_right_alert}    อัปเดตอู่สำเร็จ
+
+
+กรณี Edit Status
+    ${depot_name}    Set Variable    อู่แสมฟ้า
+    ${new_status}    Set Variable    inactive
+    ${old_status}    Set Variable    active
+    
+    open_edit_depot_menu    ${depot_name}
+    Click Element    ${status_dropdown_button}
+    Input Text    ${status_dropdown_field}    ${new_status}
+    Click Element    //*[@id="headlessui-portal-root"]//form/div[2]/div[2]/div/div[2]//*[text()="${new_status}"]
+
+    Click Element    ${add_edit_button}
+    Click Element    ${confirm_button}
+    Wait Until Element Is Visible    ${top_right_alert}
+    Run Keyword And Continue On Failure    Element Text Should Be    ${top_right_alert}    อัปเดตอู่สำเร็จ
+    Run Keyword And Continue On Failure    Element Text Should Be    ${right_status_data}    ${new_status}
+    Close Browser
+
+    #ส่วนนี้จะเปลี่ยนค่ากลับมาเป็นค่าเดิม
+    open_depot_menu
+    select_depot    ${depot_name}
+    Run Keyword And Continue On Failure    Element Text Should Be    ${right_status_data}    ${new_status}
+    Click Element    ${edit_button}
+    Wait Until Element Is Visible    ${add_edit_button}
+    #Run Keyword And Continue On Failure    Element Text Should Be    ${depot_name_field}    ${depot_name}
+    #Run Keyword And Continue On Failure    Element Text Should Be    ${latitude_field}    ${new_latitude}
+    Click Element    ${status_dropdown_button}
+    Input Text    ${status_dropdown_field}    ${old_status}
+    Click Element    //*[@id="headlessui-portal-root"]//form/div[2]/div[2]/div/div[2]//*[text()="${old_status}"]
+    Click Element    ${add_edit_button}
+    Click Element    ${confirm_button}
+    Wait Until Element Is Visible    ${top_right_alert}
+    Run Keyword And Continue On Failure    Element Text Should Be    ${top_right_alert}    อัปเดตอู่สำเร็จ
+
+หน้าต่างยืนยันการ Delete
+    ${depot}    Set Variable    Pk Test Depot3
+    open_depot_menu
+    select_depot    ${depot}
+    Click Element    ${delete_button}
+    Wait Until Element Is Visible    ${confirm_delete_button}
+    Run Keyword And Continue On Failure    Element Text Should Be    ${confirm_delete_title}    ลบอู่
+    Run Keyword And Continue On Failure    Element Text Should Be    ${confirm_delete_text}    คุณยืนยันที่จะแก้ไขอู่ ${depot} ใช่หรือไม่?
+    Run Keyword And Continue On Failure    Element Text Should Be    ${confirm_delete_button}    ยืนยัน
+    Run Keyword And Continue On Failure    Element Text Should Be    ${cancel_confirm_delete_button}    ยกเลิก

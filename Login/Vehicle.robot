@@ -89,8 +89,8 @@ Open Add New Vehicle Page
     Wait Until Element Is Visible    css:div:nth-child(1) > div > div > div > div > span > div > label    20
 
 add_new_vehicle
-    [Arguments]    ${data_status}=Active    ${data_vename}=999680    ${data_motor}=999680    ${data_brand}=MINE   
-    ...            ${data_gps}=999680       ${data_chassis}=999680   ${data_license}=999680  ${data_depot}=อู่แสมดำ    
+    [Arguments]    ${data_status}=Active    ${data_vename}=999680    ${data_motor}=999680    ${data_brand}=MINE    ${data_model}=Benz   
+    ...            ${data_gps}=999680       ${data_chassis}=999680   ${data_license}=999680  ${data_depot}=อู่แสมดำ    ${data_subline}=2-34R_อู่มีนบุรี-หนองจอก>อู่รามคำแหง 74   
     #Argument ขาด Model อยู่
     Open Add New Vehicle Page
     Click Element    //div[@class="mb-3"][1]/div/div/div/div/span/div[1]/div[1]/div/div[2]
@@ -100,7 +100,7 @@ add_new_vehicle
     Input Text    ${field_motor}    ${data_motor}
     Click Element    //div[@class="mb-3"][1]//span/div[3]/div[1]/div[1]/div/div[2]
     Wait Until Element Is Visible    ${field_model}    10
-    Click Element    ${field_model}//*[text()[contains(.,'Benz')]]
+    Click Element    ${field_model}//*[text()[contains(.,'${data_model}')]]
     Click Element    //div[@class="mb-3"][1]//span/div[3]/div[2]/div[1]/div/div[2]
     Click Element    ${field_brand}//*[text()[contains(.,'${data_brand}')]]
     Input Text    ${field_gps}    ${data_gps}
@@ -132,8 +132,8 @@ select_vehicle
     Should Be Equal    ${get_license}    ${correct_license}
 
 edit_vehicle_name
-    [Arguments]    ${old_license}=4646544    ${new_veName}=6465642
-    select_vehicle    ${old_license}
+    [Arguments]    ${license}=4646544    ${new_veName}=6465642
+    select_vehicle    ${license}
     Click Element    ${factory_edit_button}
     Input Text    ${field_veName}    ${new_veName}
     Click Element    ${factory_save_button}
@@ -311,20 +311,25 @@ TC_VHC_020-กรณีเพิ่มโดยกรอกข้อมูลค
     ${data_status}    Set Variable    Active
     ${data_vename}    Set Variable    999680
     ${data_motor}    Set Variable    999680
+    ${data_model}    Set Variable    Benz
     ${data_brand}    Set Variable    MINE
     ${data_gps}    Set Variable    999680
     ${data_chassis}    Set Variable    999680
     ${data_license}    Set Variable    999680
     ${data_depot}    Set Variable    อู่แสมดำ
+    ${data_subline}    Set Variable    2-34R_อู่มีนบุรี-หนองจอก>อู่รามคำแหง 74
 
-    add_new_vehicle    data_license=${data_license}
+    add_new_vehicle    data_status=${data_status}    data_vename=${data_vename}    data_motor=${data_motor}
+    ...                data_brand=${data_brand}      data_model=${data_model}      data_gps=${data_gps}     
+    ...                data_chassis=${data_chassis}  data_license=${data_license}  data_depot=${data_depot}  
+    ...                data_subline=${data_subline}
+
     Sleep    1
     Click Element    ${confirm_add}
     Run Keyword And Continue On Failure    Wait Until Element Is Visible    ${top_right_alert}
     Run Keyword And Continue On Failure    Element Text Should Be    ${top_right_alert}    เพิ่มพาหนะสำเร็จ
 
-    #Step นี้จะเช็คว่าข้อมูลที่เพิ่มปรากฎในรายการไหม เช็คด้วย Vehicle Name ที่เพิ่ม
-    
+    #Step นี้จะเช็คว่าข้อมูลที่เพิ่มปรากฎในรายการไหม
     Input Text    ${search_box}    ${data_license}
     Wait Until Element Is Visible    //span[text()[contains(.,${data_license})]]    20
     Sleep    2
@@ -334,8 +339,19 @@ TC_VHC_020-กรณีเพิ่มโดยกรอกข้อมูลค
     Wait Until Element Is Visible    ${field_veName}
     ${get_license}    Get Element Attribute    ${field_license}    value
     Should Be Equal    ${get_license}    ${data_license}
-    
-    [Teardown]    delete_vehicle    ${data_license}
+    Element Text Should Be    //div[@class="mb-3"][1]/div/div/div/div/span/div[1]/div[1]/div/div[1]/div[1]    ${data_status}
+    ${check_vename}    Get Element Attribute    ${field_veName}    value 
+    Should Be Equal    ${check_vename}    ${data_vename}
+    # motor number เป็น case เดียวที่เช็คค่าในช่องไม่ได้
+    Element Text Should Be    //div[@class="mb-3"][1]//span/div[3]/div[1]/div[1]/div/div[1]/div[1]    ${data_model}
+    ${check_GPS}    Get Element Attribute    ${field_gps}    value 
+    Should Be Equal    ${check_GPS}    ${data_GPS}
+    ${check_chassis}    Get Element Attribute    ${field_chassis}    value 
+    Should Be Equal    ${check_chassis}    ${data_chassis}
+    Element Text Should Be    //div[@class="mb-3"][4]//span/div[1]/div/div/div[1]/div[1]    ${data_depot}
+    Element Text Should Be    //div[@class="mb-3"][4]//span/div[2]/div[1]/div[1]/div/div[1]/div[1]    ${data_subline}
+    #ตัวที่สร้างใหม่จะไปลบออกตอน case delete 
+
 TC_VHC_021-หน้ารายละเอียด Vehicle
     Run Keyword And Continue On Failure    select_vehicle    4646544
     Wait Until Element Is Visible    //div[3]//div[1]/button/span[1]    10
@@ -472,157 +488,303 @@ TC_VHC_030-หน้าต่างยืนยันการแก้ไข
 
 TC_VHC_031-กรณี Edit vehicle name
     ${new_vename}    Set Variable    6465642
-    ${old_vename}    Set Variable    64656423
-    edit_vehicle_name    old_license=4646544    new_veName=${new_vename}
+    ${old_vename}    Set Variable    64656429
+    ${license}    Set Variable    4646544
+    edit_vehicle_name    ${license}    new_veName=${new_vename}
     Click Element    ${confirm_edit_button}
     Click Element    ${confirm_confirm_edit_button}
     Run Keyword And Continue On Failure    Wait Until Element Is Visible    ${top_right_alert}
     Run Keyword And Continue On Failure    Element Text Should Be    ${top_right_alert}    อัปเดตพาหนะสำเร็จ 
-    Run Keyword And Continue On Failure    Element Text Should Be    ${field_veName}    ${new_vename}
-    Sleep    5
+    ${check_vename}    Get Element Attribute    ${field_veName}    value 
+    Should Be Equal    ${check_vename}    ${new_vename}
+    Sleep    3
     Close Browser
 
-    edit_vehicle_name    old_license=4646544    new_veName=${old_vename}
+
+    #ส่วนนี้จะแก้ไขข้อมูลกลับมาเป็นค่าเดิม
+    select_vehicle    ${license}
+    ${check_vename}    Get Element Attribute    ${field_veName}    value 
+    #คำสั่งนี้จะเช็คว่าค่าที่เปลี่ยนยังแสดงถูกต้องอยู่ไหม
+    Should Be Equal    ${check_vename}    ${new_vename}
+    Click Element    ${factory_edit_button}
+    Input Text    ${field_veName}    ${old_veName}
+    Click Element    ${factory_save_button}
+    Click Element    ${factory_save_button}
     Click Element    ${confirm_edit_button}
     Click Element    ${confirm_confirm_edit_button}
     Run Keyword And Continue On Failure    Wait Until Element Is Visible    ${top_right_alert}
     Run Keyword And Continue On Failure    Element Text Should Be    ${top_right_alert}    อัปเดตพาหนะสำเร็จ
-    Run Keyword And Continue On Failure    Element Text Should Be    ${field_veName}    ${old_vename}   
-    Sleep    5 
-    #แก้ไขข้อมูลให้กลับมาเป็นค่าเดิม
-    #[Teardown]
-    #edit_vehicle    old_license=46465    new_veName=646564
-    #Click Element    ${confirm_edit_button}
-    #Click Element    ${confirm_confirm_edit_button}
-
+    ${check_vename}    Get Element Attribute    ${field_veName}    value 
+    Should Be Equal    ${check_vename}    ${old_vename}
+    Sleep    3 
+    
 
 
 TC_VHC_032-กรณี Edit status
     ${license}    Set Variable    4646544
-    ${status}    Set Variable    Active
+    ${new_status}    Set Variable    Active
+    ${old_status}    Set Variable    InActive
     #${status}    Set Variable    InActive            
     select_vehicle    ${license}
     Click Element    ${factory_edit_button}
     Click Element    //div[@class="mb-3"][1]/div/div/div/div/span/div[1]/div[1]/div/div[2]
-    Wait Until Element Is Visible    ${field_status}//*[text()[contains(.,'${status}')]]    10
-    Click Element     ${field_status}//*[text()[contains(.,'${status}')]]    
+    Wait Until Element Is Visible    ${field_status}//*[text()[contains(.,'${new_status}')]]    10
+    Click Element     ${field_status}//*[text()[contains(.,'${new_status}')]]    
     Click Element    ${factory_save_button}
     Click Element    ${confirm_edit_button}
     Click Element    ${confirm_confirm_edit_button}
-    #Wait Until Element Is Visible   //*[@class="Toastify"]//*[text()="อัปเดตพาหนะสำเร็จ"]
     Run Keyword And Continue On Failure    Wait Until Element Is Visible    ${top_right_alert}
     Run Keyword And Continue On Failure    Element Text Should Be    ${top_right_alert}    อัปเดตพาหนะสำเร็จ 
-    Run Keyword And Continue On Failure    Element Text Should Be    //div[@class="mb-3"][1]/div/div/div/div/span/div[1]/div[1]/div/div[1]/div[1]    ${status}
-TC_VHC_033-กรณี Edit motor number
-    ${license}    Set Variable    4646544
-    ${motor_number}    Set Variable    6654633        
-    #${motor_number}    Set Variable    66546333    
+    Element Text Should Be    //div[@class="mb-3"][1]/div/div/div/div/span/div[1]/div[1]/div/div[1]/div[1]    ${new_status}
+    Sleep    3
+    Close Browser
+
+    #ส่วนนี้จะแก้ไขข้อมูลกลับมาเป็นค่าเดิม
     select_vehicle    ${license}
     Click Element    ${factory_edit_button}
-    Input Text    ${field_motor}    ${motor_number} 
+    #คำสั่งนี้จะเช็คว่าค่าที่เปลี่ยนยังแสดงถูกต้องอยู่ไหม
+    Element Text Should Be    //div[@class="mb-3"][1]/div/div/div/div/span/div[1]/div[1]/div/div[1]/div[1]    ${new_status}
+    Click Element    //div[@class="mb-3"][1]/div/div/div/div/span/div[1]/div[1]/div/div[2]
+    Wait Until Element Is Visible    ${field_status}//*[text()[contains(.,'${old_status}')]]    10
+    Click Element     ${field_status}//*[text()[contains(.,'${old_status}')]]    
+    Click Element    ${factory_save_button}
+    Click Element    ${confirm_edit_button}
+    Click Element    ${confirm_confirm_edit_button}
+    Run Keyword And Continue On Failure    Wait Until Element Is Visible    ${top_right_alert}
+    Run Keyword And Continue On Failure    Element Text Should Be    ${top_right_alert}    อัปเดตพาหนะสำเร็จ 
+    Element Text Should Be    //div[@class="mb-3"][1]/div/div/div/div/span/div[1]/div[1]/div/div[1]/div[1]    ${old_status}
+    Sleep    3
+    Close Browser
+
+
+
+TC_VHC_033-กรณี Edit motor number
+    # motor number เป็น case เดียวที่เช็คค่าในช่องไม่ได้
+    ${license}    Set Variable    4646544
+    ${new_motor_number}    Set Variable    6654633        
+    ${old_motor_number}    Set Variable    66546339    
+    select_vehicle    ${license}
+    Click Element    ${factory_edit_button}
+    Input Text    ${field_motor}    ${new_motor_number} 
     Click Element    ${factory_save_button}
     Click Element    ${factory_save_button}
     Click Element    ${confirm_edit_button}
     Click Element    ${confirm_confirm_edit_button}
-    #Wait Until Element Is Visible   //*[@class="Toastify"]//*[text()="อัปเดตพาหนะสำเร็จ"]
     Run Keyword And Continue On Failure    Wait Until Element Is Visible    ${top_right_alert}
     Run Keyword And Continue On Failure    Element Text Should Be    ${top_right_alert}    อัปเดตพาหนะสำเร็จ     
     #Element Text Should Be    ${field_motor}    ${motor_number} เช็คไม่ได้เพราะ Element ไม่มีค่าให้เช็ค
+    Sleep    3
+    Close Browser
+
+    #ส่วนนี้จะแก้ไขข้อมูลกลับมาเป็นค่าเดิม
+    select_vehicle    ${license}
+    Click Element    ${factory_edit_button}
+    Input Text    ${field_motor}    ${old_motor_number} 
+    Click Element    ${factory_save_button}
+    Click Element    ${factory_save_button}
+    Click Element    ${confirm_edit_button}
+    Click Element    ${confirm_confirm_edit_button}
+    Run Keyword And Continue On Failure    Wait Until Element Is Visible    ${top_right_alert}
+    Run Keyword And Continue On Failure    Element Text Should Be    ${top_right_alert}    อัปเดตพาหนะสำเร็จ     
+    #Element Text Should Be    ${field_motor}    ${motor_number} เช็คไม่ได้เพราะ Element ไม่มีค่าให้เช็ค
+    Sleep    3
+    Close Browser
+
+
 
 TC_VHC_034-กรณี Edit model
     ${license}    Set Variable    4646544
-    ${model}    Set Variable    scania  
-    #${model}    Set Variable    Benz             
+    ${new_model}    Set Variable    scania  
+    ${old_model}    Set Variable    Benz             
     select_vehicle    ${license}
     Click Element    ${factory_edit_button}
     Click Element    //div[@class="mb-3"][1]//span/div[3]/div[1]/div[1]/div/div[2]
     Wait Until Element Is Visible    ${field_model}    10
-    Click Element    ${field_model}//*[text()[contains(.,'${model}')]]
+    Click Element    ${field_model}//*[text()[contains(.,'${new_model}')]]
     Click Element    ${factory_save_button}
     Click Element    ${confirm_edit_button}
     Click Element    ${confirm_confirm_edit_button}
-    #Wait Until Element Is Visible   //*[@class="Toastify"]//*[text()="อัปเดตพาหนะสำเร็จ"]
     Run Keyword And Continue On Failure    Wait Until Element Is Visible    ${top_right_alert}
     Run Keyword And Continue On Failure    Element Text Should Be    ${top_right_alert}    อัปเดตพาหนะสำเร็จ 
-    Element Text Should Be    //div[@class="mb-3"][1]//span/div[3]/div[1]/div[1]/div/div[1]/div[1]    ${model}
+    Element Text Should Be    //div[@class="mb-3"][1]//span/div[3]/div[1]/div[1]/div/div[1]/div[1]    ${new_model}
+    Sleep    3
+    Close Browser
+
+    #ส่วนนี้จะแก้ไขข้อมูลกลับมาเป็นค่าเดิม
+    select_vehicle    ${license}
+    #คำสั่งนี้จะเช็คว่าค่าที่เปลี่ยนยังแสดงถูกต้องอยู่ไหม
+    Element Text Should Be    //div[@class="mb-3"][1]//span/div[3]/div[1]/div[1]/div/div[1]/div[1]    ${new_model}
+    Click Element    ${factory_edit_button}
+    Click Element    //div[@class="mb-3"][1]//span/div[3]/div[1]/div[1]/div/div[2]
+    Wait Until Element Is Visible    ${field_model}    10
+    Click Element    ${field_model}//*[text()[contains(.,'${old_model}')]]
+    Click Element    ${factory_save_button}
+    Click Element    ${confirm_edit_button}
+    Click Element    ${confirm_confirm_edit_button}
+    Run Keyword And Continue On Failure    Wait Until Element Is Visible    ${top_right_alert}
+    Run Keyword And Continue On Failure    Element Text Should Be    ${top_right_alert}    อัปเดตพาหนะสำเร็จ 
+    Element Text Should Be    //div[@class="mb-3"][1]//span/div[3]/div[1]/div[1]/div/div[1]/div[1]    ${old_model}
+    Sleep    3
+    Close Browser
+
+
 
 TC_VHC_035-กรณี Edit brand
     ${license}    Set Variable    4646544
-    ${brand}    Set Variable    NISSAN 
-    #${brand}    Set Variable    ISUZU       
+    ${new_brand}    Set Variable    NISSAN 
+    ${old_brand}    Set Variable    ISUZU       
     select_vehicle    ${license}
     Click Element    ${factory_edit_button}
     Click Element    //div[@class="mb-3"][1]//span/div[3]/div[2]/div[1]/div/div[2]
-    Click Element    ${field_brand}//*[text()[contains(.,'${brand}')]]
+    Click Element    ${field_brand}//*[text()[contains(.,'${new_brand}')]]
     Click Element    ${factory_save_button}
     Click Element    ${confirm_edit_button}
     Click Element    ${confirm_confirm_edit_button}
-    #Wait Until Element Is Visible   //*[@class="Toastify"]//*[text()="อัปเดตพาหนะสำเร็จ"]  
     Run Keyword And Continue On Failure    Wait Until Element Is Visible    ${top_right_alert}
     Run Keyword And Continue On Failure    Element Text Should Be    ${top_right_alert}    อัปเดตพาหนะสำเร็จ   
-    Element Text Should Be    //div[@class="mb-3"][1]//span/div[3]/div[2]/div[1]/div/div[1]/div[1]    ${brand}
+    Element Text Should Be    //div[@class="mb-3"][1]//span/div[3]/div[2]/div[1]/div/div[1]/div[1]    ${new_brand}
+    Sleep    3
+    Close Browser
+
+    #ส่วนนี้จะแก้ไขข้อมูลกลับมาเป็นค่าเดิม
+    select_vehicle    ${license}
+    #คำสั่งนี้จะเช็คว่าค่าที่เปลี่ยนยังแสดงถูกต้องอยู่ไหม
+    Element Text Should Be    //div[@class="mb-3"][1]//span/div[3]/div[2]/div[1]/div/div[1]/div[1]    ${new_brand}
+    Click Element    ${factory_edit_button}
+    Click Element    //div[@class="mb-3"][1]//span/div[3]/div[2]/div[1]/div/div[2]
+    Click Element    ${field_brand}//*[text()[contains(.,'${old_brand}')]]
+    Click Element    ${factory_save_button}
+    Click Element    ${confirm_edit_button}
+    Click Element    ${confirm_confirm_edit_button}
+    Run Keyword And Continue On Failure    Wait Until Element Is Visible    ${top_right_alert}
+    Run Keyword And Continue On Failure    Element Text Should Be    ${top_right_alert}    อัปเดตพาหนะสำเร็จ   
+    Element Text Should Be    //div[@class="mb-3"][1]//span/div[3]/div[2]/div[1]/div/div[1]/div[1]    ${old_brand}
+    Sleep    3
+    Close Browser
+
+
 
 TC_VHC_036-กรณี Edit GPS IMEI
     ${license}    Set Variable    4646544
-    ${GPS}    Set Variable    46565665
-    #${GPS}    Set Variable    465656653        
+    ${new_GPS}    Set Variable    46565665
+    ${old_GPS}    Set Variable    465656659        
     select_vehicle    ${license}
     Click Element    ${factory_edit_button}
-    Input Text    ${field_gps}    ${GPS}
+    Input Text    ${field_gps}    ${new_GPS}
     Click Element    ${factory_save_button}
     Click Element    ${factory_save_button}
     Click Element    ${confirm_edit_button}
     Click Element    ${confirm_confirm_edit_button}
-    #Wait Until Element Is Visible   //*[@class="Toastify"]//*[text()="อัปเดตพาหนะสำเร็จ"]
     Run Keyword And Continue On Failure    Wait Until Element Is Visible    ${top_right_alert}
     Run Keyword And Continue On Failure    Element Text Should Be    ${top_right_alert}    อัปเดตพาหนะสำเร็จ    
     ${check_GPS}    Get Element Attribute    ${field_gps}    value 
-    Should Be Equal    ${check_GPS}    ${GPS}
-    
-TC_VHC_037-กรณี Edit chassis number
-    ${license}    Set Variable    4646544
-    ${chassis}    Set Variable    4565463
-    #${chassis}    Set Variable    45654633         
+    Should Be Equal    ${check_GPS}    ${new_GPS}
+    Sleep    3
+    Close Browser
+
+    #ส่วนนี้จะแก้ไขข้อมูลกลับมาเป็นค่าเดิม
     select_vehicle    ${license}
+    #คำสั่งนี้จะเช็คว่าค่าที่เปลี่ยนยังแสดงถูกต้องอยู่ไหม
+    ${check_GPS}    Get Element Attribute    ${field_gps}    value 
+    Should Be Equal    ${check_GPS}    ${new_GPS}
     Click Element    ${factory_edit_button}
-    Input Text    ${field_chassis}    ${chassis}
+    Input Text    ${field_gps}    ${old_GPS}
     Click Element    ${factory_save_button}
     Click Element    ${factory_save_button}
     Click Element    ${confirm_edit_button}
     Click Element    ${confirm_confirm_edit_button}
-    #Wait Until Element Is Visible   //*[@class="Toastify"]//*[text()="อัปเดตพาหนะสำเร็จ"]
+    Run Keyword And Continue On Failure    Wait Until Element Is Visible    ${top_right_alert}
+    Run Keyword And Continue On Failure    Element Text Should Be    ${top_right_alert}    อัปเดตพาหนะสำเร็จ    
+    ${check_GPS}    Get Element Attribute    ${field_gps}    value 
+    Should Be Equal    ${check_GPS}    ${old_GPS}
+    Sleep    3
+    Close Browser
+
+TC_VHC_037-กรณี Edit chassis number
+    ${license}    Set Variable    4646544
+    ${new_chassis}    Set Variable    4565463
+    ${old_chassis}    Set Variable    45654639         
+    select_vehicle    ${license}
+    Click Element    ${factory_edit_button}
+    Input Text    ${field_chassis}    ${new_chassis}
+    Click Element    ${factory_save_button}
+    Click Element    ${factory_save_button}
+    Click Element    ${confirm_edit_button}
+    Click Element    ${confirm_confirm_edit_button}
     Run Keyword And Continue On Failure    Wait Until Element Is Visible    ${top_right_alert}
     Run Keyword And Continue On Failure    Element Text Should Be    ${top_right_alert}    อัปเดตพาหนะสำเร็จ   
     ${check_chassis}    Get Element Attribute    ${field_chassis}    value 
-    Should Be Equal    ${check_chassis}    ${chassis}
+    Should Be Equal    ${check_chassis}    ${new_chassis}
+    Sleep    3
+    Close Browser
+
+    #ส่วนนี้จะแก้ไขข้อมูลกลับมาเป็นค่าเดิม
+    select_vehicle    ${license}
+    #คำสั่งนี้จะเช็คว่าค่าที่เปลี่ยนยังแสดงถูกต้องอยู่ไหม
+    ${check_chassis}    Get Element Attribute    ${field_chassis}    value 
+    Should Be Equal    ${check_chassis}    ${new_chassis}
+    Click Element    ${factory_edit_button}
+    Input Text    ${field_chassis}    ${old_chassis}
+    Click Element    ${factory_save_button}
+    Click Element    ${factory_save_button}
+    Click Element    ${confirm_edit_button}
+    Click Element    ${confirm_confirm_edit_button}
+    Run Keyword And Continue On Failure    Wait Until Element Is Visible    ${top_right_alert}
+    Run Keyword And Continue On Failure    Element Text Should Be    ${top_right_alert}    อัปเดตพาหนะสำเร็จ   
+    ${check_chassis}    Get Element Attribute    ${field_chassis}    value 
+    Should Be Equal    ${check_chassis}    ${old_chassis}
+    Sleep    3
+    Close Browser
+
 
 #TC_VHC กรณี Edit license plate
 #    Open Add New Vehicle Page
 
 TC_VHC_038-กรณี Edit depot
     ${license}    Set Variable    4646544
-    ${depot}    Set Variable    อู่เคหะธนบุรี
-    #${depot}    Set Variable    อู่เคหะบางพลี         
+    ${new_depot}    Set Variable    อู่เคหะธนบุรี
+    ${old_depot}    Set Variable    อู่เคหะบางพลี         
     select_vehicle    ${license}
     Click Element    ${operation_edit_button}
     Click Element    //div[@class="mb-3"][4]//span/div[1]/div/div/div[2]
-    Wait Until Element Is Visible    ${field_depot}//*[text()[contains(.,'${depot}')]]    10
-    Click Element    ${field_depot}//*[text()[contains(.,'${depot}')]]
+    Wait Until Element Is Visible    ${field_depot}//*[text()[contains(.,'${new_depot}')]]    10
+    Click Element    ${field_depot}//*[text()[contains(.,'${new_depot}')]]
     Click Element    //div[@class="mb-3"][4]//span/div[2]/div[1]/div/div/div[2]
     Click Element    ${field_subline}//*
     Click Element    ${operation_save_button}
     Click Element    ${confirm_edit_button}
-    Click Element    ${confirm_confirm_edit_button}
-    #Wait Until Element Is Visible   //*[@class="Toastify"]//*[text()="อัปเดตพาหนะสำเร็จ"]   
+    Click Element    ${confirm_confirm_edit_button}  
     Run Keyword And Continue On Failure    Wait Until Element Is Visible    ${top_right_alert}
     Run Keyword And Continue On Failure    Element Text Should Be    ${top_right_alert}    อัปเดตพาหนะสำเร็จ 
-    Element Text Should Be    //div[@class="mb-3"][4]//span/div[1]/div/div/div[1]/div[1]    ${depot}
+    Element Text Should Be    //div[@class="mb-3"][4]//span/div[1]/div/div/div[1]/div[1]    ${new_depot}
+    Sleep    3
+    Close Browser
+
+    #ส่วนนี้จะแก้ไขข้อมูลกลับมาเป็นค่าเดิม
+    select_vehicle    ${license}
+    #คำสั่งนี้จะเช็คว่าค่าที่เปลี่ยนยังแสดงถูกต้องอยู่ไหม
+    Element Text Should Be    //div[@class="mb-3"][4]//span/div[1]/div/div/div[1]/div[1]    ${new_depot}
+    Click Element    ${operation_edit_button}
+    Click Element    //div[@class="mb-3"][4]//span/div[1]/div/div/div[2]
+    Wait Until Element Is Visible    ${field_depot}//*[text()[contains(.,'${old_depot}')]]    10
+    Click Element    ${field_depot}//*[text()[contains(.,'${old_depot}')]]
+    Click Element    //div[@class="mb-3"][4]//span/div[2]/div[1]/div/div/div[2]
+    Click Element    ${field_subline}//*
+    Click Element    ${operation_save_button}
+    Click Element    ${confirm_edit_button}
+    Click Element    ${confirm_confirm_edit_button}  
+    Run Keyword And Continue On Failure    Wait Until Element Is Visible    ${top_right_alert}
+    Run Keyword And Continue On Failure    Element Text Should Be    ${top_right_alert}    อัปเดตพาหนะสำเร็จ 
+    Element Text Should Be    //div[@class="mb-3"][4]//span/div[1]/div/div/div[1]/div[1]    ${old_depot}
+    Sleep    3
+    Close Browser
+    
 
 TC_VHC_039-กรณี Edit sub line
     ${license}    Set Variable    4646544
     ${depot}    Set Variable    อู่เคหะธนบุรี  
-    #${subline}    Set Variable    99-99(3)
-    ${subline}    Set Variable    99-99(4)       
+    ${new_subline}    Set Variable    99-99(3)
+    ${old_subline}    Set Variable    99-99(4)       
     select_vehicle    ${license}
     Click Element    ${operation_edit_button}
     
@@ -634,18 +796,40 @@ TC_VHC_039-กรณี Edit sub line
 
     Click Element    //div[@class="mb-3"][4]//span/div[2]/div[1]/div/div/div[2]
     Element Text Should Not Be    ${field_subline}//*    No options
-    Click Element    //div[@class="mb-3"][4]//span/div[2]/div[1]/div[1]/div//*[text()="${subline}"]
-
-
+    Click Element    //div[@class="mb-3"][4]//span/div[2]/div[1]/div[1]/div//*[text()="${new_subline}"]
     Click Element    ${operation_save_button}
     Click Element    ${confirm_edit_button}
     Click Element    ${confirm_confirm_edit_button}
-    #Wait Until Element Is Visible   //*[@class="Toastify"]//*[text()="อัปเดตพาหนะสำเร็จ"]  
     Run Keyword And Continue On Failure    Wait Until Element Is Visible    ${top_right_alert}
     Run Keyword And Continue On Failure    Element Text Should Be    ${top_right_alert}    อัปเดตพาหนะสำเร็จ  
-    Element Text Should Be    //div[@class="mb-3"][4]//span/div[2]/div[1]/div[1]/div/div[1]/div[1]    ${subline}
+    Element Text Should Be    //div[@class="mb-3"][4]//span/div[2]/div[1]/div[1]/div/div[1]/div[1]    ${new_subline}
+    Sleep    3
+    Close Browser
 
 
+    #ส่วนนี้จะแก้ไขข้อมูลกลับมาเป็นค่าเดิม
+    select_vehicle    ${license}
+    #คำสั่งนี้จะเช็คว่าค่าที่เปลี่ยนยังแสดงถูกต้องอยู่ไหม
+    Element Text Should Be    //div[@class="mb-3"][4]//span/div[2]/div[1]/div[1]/div/div[1]/div[1]    ${new_subline}
+    Click Element    ${operation_edit_button}
+    
+    #ตอนนี้มี ISSUE ที่ถ้าไม่เลือก depot ใหม่จะไม่แสดง subline ให้เลือก จึงต้องใช้ 3 คำสั่งด้านล่างนี้เพื่อเลือก depot 
+    Click Element    //div[@class="mb-3"][4]//span/div[1]/div/div/div[2]
+    Wait Until Element Is Visible    ${field_depot}//*[text()[contains(.,'${depot}')]]    10
+    Click Element    ${field_depot}//*[text()[contains(.,'${depot}')]]
+    ###
+
+    Click Element    //div[@class="mb-3"][4]//span/div[2]/div[1]/div/div/div[2]
+    Element Text Should Not Be    ${field_subline}//*    No options
+    Click Element    //div[@class="mb-3"][4]//span/div[2]/div[1]/div[1]/div//*[text()="${old_subline}"]
+    Click Element    ${operation_save_button}
+    Click Element    ${confirm_edit_button}
+    Click Element    ${confirm_confirm_edit_button}
+    Run Keyword And Continue On Failure    Wait Until Element Is Visible    ${top_right_alert}
+    Run Keyword And Continue On Failure    Element Text Should Be    ${top_right_alert}    อัปเดตพาหนะสำเร็จ  
+    Element Text Should Be    //div[@class="mb-3"][4]//span/div[2]/div[1]/div[1]/div/div[1]/div[1]    ${old_subline}
+    Sleep    3
+    Close Browser
 TC_VHC_040-หน้าต่างยืนยันการ Delete Vehicle
     select_vehicle
     Click Element    ${delete_button}
@@ -658,7 +842,7 @@ TC_VHC_040-หน้าต่างยืนยันการ Delete Vehicle
 TC_VHC_041-กรณีลบ Vehicle
     #ใส่ License Plate ที่ต้องการลบ
     #License Plate ที่เลือกลบจะใช้ตัวเดียวกับที่ Add ใหม่
-    ${delete_license}    Set Variable    6666(1)
+    ${delete_license}    Set Variable    999680
     delete_vehicle    ${delete_license}
     Run Keyword And Continue On Failure    Wait Until Element Is Visible    ${top_right_alert}
     Run Keyword And Continue On Failure    Element Text Should Be    ${top_right_alert}    ลบพาหนะสำเร็จ
