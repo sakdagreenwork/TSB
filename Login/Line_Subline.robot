@@ -103,7 +103,7 @@ ${first_delete_sub_line_button}    //*[@id="root"]/main//main//div[1]/div/div[2]
 ${add_edit_sub_line_title}    //*[@id="headlessui-portal-root"]/div/div/div/div/div/div/div/h2
 ${add_edit_sub_line_name_label}    //*[@id="headlessui-portal-root"]//form/div[1]/span/label
 ${add_edit_sub_line_depot_start_label}    //*[@id="headlessui-portal-root"]//form/div[2]/div[1]/label
-${add_edit_sub_line_depot_stoop_label}    //*[@id="headlessui-portal-root"]//form/div[2]/div[2]/label
+${add_edit_sub_line_depot_stop_label}    //*[@id="headlessui-portal-root"]//form/div[2]/div[2]/label
 
 ${add_edit_sub_line_name_field}    //*[@id="headlessui-portal-root"]//form/div[1]/div/input
 ${add_edit_sub_line_depot_start_field}    //*[@id="headlessui-portal-root"]//form/div[2]/div[1]/div/div//div/div/input
@@ -117,6 +117,12 @@ ${add_edit_depot_stop_dropdown_button}    //*[@id="headlessui-portal-root"]//for
 ${add_edit_sub_line_button}    //*[@id="headlessui-portal-root"]//form/div[3]/div/button
 ${add_edit_sub_line_button_text}    //*[@id="headlessui-portal-root"]//form/div[3]/div/button/span/span
 ${close_add_edit_sub_line_button}    //*[@id="headlessui-portal-root"]/div/div/div/div/div/div/div/button
+
+${confirm_add_edit_sub_line_title}    //*[@id="headlessui-portal-root"]/div[2]/div/div/div/div/div/div/h2    
+${close_confirm_add_edit_sub_line_button}    //*[@id="headlessui-portal-root"]/div[2]/div/div/div/div/div/div/button
+${confirm_add_edit_sub_line_text}    //*[@id="headlessui-portal-root"]/div[2]/div/div/div/div/div/div[2]/div
+${confirm_add_edit_sub_line_button}    //*[@id="headlessui-portal-root"]/div[2]/div/div/div/div/div/div[3]/div/div/div[1]    
+${cancel_confirm_add_edit_sub_line_button}    //*[@id="headlessui-portal-root"]/div[2]/div/div/div/div/div/div[3]/div/div/div[2]
 
 ${sub_line_alert}    //*[@id="headlessui-portal-root"]//form/div[1]/div[2]
 ${depot_start_alert}    //*[@id="headlessui-portal-root"]//form/div[2]/div[1]/div[2]
@@ -153,7 +159,6 @@ ${stop_date_alert}    //*[@id="headlessui-portal-root"]/div/div/div/div/div/div/
 
 ${add_route_button}    //*[@id="headlessui-portal-root"]/div/div/div/div/div/div/div[2]/form/div[3]/button
 
-
 ${confirm_add_route_title}    //*[@id="headlessui-portal-root"]/div[2]/div/div/div/div/div/div/h2
 ${close_confirm_add_route_button}    //*[@id="headlessui-portal-root"]/div[2]/div/div/div/div/div/div/button
 ${confirm_add_route_text}    //*[@id="headlessui-portal-root"]/div[2]/div/div/div/div/div/div[2]/div
@@ -176,7 +181,7 @@ open_line_subline_menu
     Click Element    ${datamanage_button}
     Wait Until Element Is Visible    ${line_subline_button}
     Click Element    ${line_subline_button}
-    Wait Until Element Is Visible    ${add_new_line_button}    10
+    Wait Until Element Is Visible    ${add_new_line_button}    15
     Sleep    1
 
 open_add_line_menu
@@ -212,6 +217,17 @@ select_line
     Element Text Should Be    ${first_result_line_name}    ${line_name}
     Run Keyword And Continue On Failure    Element Text Should Be    ${middle_line_name}    ${line_name}
     Run Keyword And Continue On Failure    Element Text Should Be    ${right_line_name}    ${line_name}
+
+add_sub_line
+    [Arguments]    ${sub_line}=99-99(9)    ${depot_start}=อู่บางพลี    ${depot_stop}=อู่บางพลี
+    Wait Until Element Is Visible    ${add_edit_sub_line_button}
+    Input Text    ${add_edit_sub_line_name_field}    ${sub_line}
+    Click Element    ${add_edit_sub_line_button}
+    Input Text    ${add_edit_sub_line_depot_start_field}    ${depot_start}
+    Click Element    //body/div[3]//*[text()="${depot_start}"]
+    Input Text    ${add_edit_sub_line_depot_stop_field}    ${depot_stop}
+    Click Element    //body/div[3]//*[text()="${depot_stop}"]
+    Click Element    ${add_edit_sub_line_button}
 
 *** Test Cases ***
 หน้า Line
@@ -280,7 +296,7 @@ select_line
     Run Keyword And Continue On Failure    Element Should Be Visible    ${line_min_ve_alert}    
     Run Keyword And Continue On Failure    Element Text Should Be    ${line_min_ve_alert}    โปรดระบุพาหนะขั้นต่ำ
 
-จำนวนตัวอักษรสูงสุดกรณีเพิ่ม
+จำนวนตัวอักษรสูงสุดกรณีเพิ่ม Line
     open_add_line_menu
     ${max_line_name}    Get Element Attribute    ${line_name_field}    maxlength
     Run Keyword And Continue On Failure    Should Be Equal    ${max_line_name}    30
@@ -340,12 +356,12 @@ select_line
     Wait Until Element Is Visible    ${line_max_ve_alert}
     Run Keyword And Continue On Failure    Element Text Should Be    ${line_max_ve_alert}    พาหนะสูงสุดไม่ถูกต้อง
 
-กรณีเพิ่ม Maximum Vehicle < Minimum Vehicle
+กรณีเพิ่ม Minimum Vehicle < Maximum Vehicle
     add_line    min_ve=5    max_ve=6
     Wait Until Element Is Not Visible    ${line_max_ve_alert}
     Wait Until Element Is Visible    ${confirm_add_edit_line_text}
 
-กรณีเพิ่ม Maximum Vehicle > Minimum Vehicle
+กรณีเพิ่ม Minimum Vehicle > Maximum Vehicle
     add_line    min_ve=6    max_ve=5
      Wait Until Element Is Visible    ${line_max_ve_alert}
     Run Keyword And Continue On Failure    Element Text Should Be    ${line_max_ve_alert}    พาหนะสูงสุดต้องมีจำนวนมากกว่าหรือเท่ากับพาหนะขั้นต่ำ
@@ -450,7 +466,24 @@ select_line
     select_line
     Click Element    ${edit_line_button}
     Wait Until Element Is Visible    ${add_edit_line_button}
-    Sleep    10
+
+จำนวนตัวอักษรสูงสุดกรณี Edit Line
+    open_line_subline_menu
+    select_line
+    Click Element    ${edit_line_button}
+    Wait Until Element Is Visible    ${add_edit_line_button}
+    ${max_line_name}    Get Element Attribute    ${line_name_field}    maxlength
+    Run Keyword And Continue On Failure    Should Be Equal    ${max_line_name}    30
+    ${max_label}    Get Element Attribute    ${line_label_field}    maxlength
+    Run Keyword And Continue On Failure    Should Be Equal    ${max_label}    30
+    ${max_description}    Get Element Attribute    ${line_description_field}    maxlength
+    Run Keyword And Continue On Failure    Should Be Equal    ${max_description}    100
+    ${max_min_ve}    Get Element Attribute    ${line_min_ve_field}    maxlength
+    Run Keyword And Continue On Failure    Should Be Equal    ${max_min_ve}    2
+    ${max_max_ve}    Get Element Attribute    ${line_max_ve_field}    maxlength
+    Run Keyword And Continue On Failure    Should Be Equal    ${max_max_ve}    2
+    ${max_min_trip}    Get Element Attribute    ${line_min_trip_field}    maxlength
+    Run Keyword And Continue On Failure    Should Be Equal    ${max_min_trip}    2
 
 กรณี Edit Line โดยลบ Line Name ให้ว่าง
     open_line_subline_menu
@@ -458,6 +491,7 @@ select_line
     Click Element    ${edit_line_button}
     Wait Until Element Is Visible    ${add_edit_line_button}
     Clear Element Text    ${line_name_field}
+    Click Element    ${add_edit_line_button}
     Click Element    ${add_edit_line_button}
     Wait Until Element Is Visible    ${line_name_alert}
     Run Keyword And Continue On Failure    Element Text Should Be    ${line_name_alert}    โปรดระบุชื่อสาย
@@ -469,6 +503,7 @@ select_line
     Wait Until Element Is Visible    ${add_edit_line_button}
     Clear Element Text    ${line_label_field}
     Click Element    ${add_edit_line_button}
+    Click Element    ${add_edit_line_button}
     Wait Until Element Is Visible    ${line_label_alert}
     Run Keyword And Continue On Failure    Element Text Should Be    ${line_label_alert}    โปรดระบุป้าย
     
@@ -478,6 +513,7 @@ select_line
     Click Element    ${edit_line_button}
     Wait Until Element Is Visible    ${add_edit_line_button}
     Clear Element Text    ${line_description_field}
+    Click Element    ${add_edit_line_button}
     Click Element    ${add_edit_line_button}
     Wait Until Element Is Visible    ${line_description_alert}
     Run Keyword And Continue On Failure    Element Text Should Be    ${line_description_alert}    โปรดระบุรายละเอียด
@@ -489,6 +525,7 @@ select_line
     Wait Until Element Is Visible    ${add_edit_line_button}
     Clear Element Text    ${line_min_ve_field}
     Click Element    ${add_edit_line_button}
+    Click Element    ${add_edit_line_button}
     Wait Until Element Is Visible    ${line_min_ve_alert}
     Run Keyword And Continue On Failure    Element Text Should Be    ${line_min_ve_alert}    โปรดระบุพาหนะขั้นต่ำ
 
@@ -498,6 +535,7 @@ select_line
     Click Element    ${edit_line_button}
     Wait Until Element Is Visible    ${add_edit_line_button}
     Clear Element Text    ${line_max_ve_field}
+    Click Element    ${add_edit_line_button}
     Click Element    ${add_edit_line_button}
     Wait Until Element Is Visible    ${line_max_ve_alert}
     Run Keyword And Continue On Failure    Element Text Should Be    ${line_max_ve_alert}    โปรดระบุพาหนะสูงสุด
@@ -509,15 +547,581 @@ select_line
     Wait Until Element Is Visible    ${add_edit_line_button}
     Clear Element Text    ${line_min_trip_field}
     Click Element    ${add_edit_line_button}
+    Click Element    ${add_edit_line_button}
     Wait Until Element Is Visible    ${line_min_trip_alert}
     Run Keyword And Continue On Failure    Element Text Should Be    ${line_min_trip_alert}    โปรดระบุเที่ยวขั้นต่ำ
 
+กรณี Edit Line Name ซ้ำกับที่มีอยู่ในระบบ
+    open_line_subline_menu
+    select_line
+    Click Element    ${edit_line_button}
+    Wait Until Element Is Visible    ${add_edit_line_button}
+    Input Text    ${line_name_field}    PkTest Line1
+    Click Element    ${add_edit_line_button}
+    Click Element    ${add_edit_line_button}
+    Wait Until Element Is Visible    ${line_name_alert}
+    Run Keyword And Continue On Failure    Element Text Should Be    ${line_name_alert}    ชื่อสายนี้ถูกใช้งานแล้ว
+
+กรณี Edit Minimum Vehicle < 0
+    open_line_subline_menu
+    select_line
+    Click Element    ${edit_line_button}
+    Wait Until Element Is Visible    ${add_edit_line_button}
+    Input Text    ${line_min_ve_field}    -1
+    Click Element    ${add_edit_line_button}
+    Click Element    ${add_edit_line_button}
+    Wait Until Element Is Visible    ${line_min_ve_alert}
+    Run Keyword And Continue On Failure    Element Text Should Be    ${line_min_ve_alert}    พาหนะขั้นต่ำต้องมีจำนวนมากกว่าหรือเท่ากับ 1
+
+กรณี Edit Minimum Vehicle = 0
+    open_line_subline_menu
+    select_line
+    Click Element    ${edit_line_button}
+    Wait Until Element Is Visible    ${add_edit_line_button}
+    Input Text    ${line_min_ve_field}    0
+    Click Element    ${add_edit_line_button}
+    Click Element    ${add_edit_line_button}
+    Wait Until Element Is Visible    ${line_min_ve_alert}
+    Run Keyword And Continue On Failure    Element Text Should Be    ${line_min_ve_alert}    พาหนะขั้นต่ำต้องมีจำนวนมากกว่าหรือเท่ากับ 1
+
+กรณี Edit Minimum Vehicle > 0
+    ${new_min_ve}    Set Variable    1
+    ${old_min_ve}    Set Variable    2
+
+    open_line_subline_menu
+    select_line    99-99
+    Click Element    ${edit_line_button}
+    Wait Until Element Is Visible    ${add_edit_line_button}
+    Input Text    ${line_min_ve_field}    ${new_min_ve}
+    Click Element    ${add_edit_line_button}
+    Click Element    ${add_edit_line_button}
+    Run Keyword And Continue On Failure    Wait Until Element Is Not Visible    ${line_min_ve_alert}
+    Run Keyword And Continue On Failure    Wait Until Element Is Visible    ${confirm_add_edit_line_text}
     
+    Click Element    ${confirm_confirm_add_edit_line_button}
+    
+    Run Keyword And Continue On Failure    Wait Until Element Is Visible    ${top_right_alert}
+    Run Keyword And Continue On Failure    Element Text Should Be    ${top_right_alert}    แก้ไขสายสำเร็จ
+    select_line    99-99
+    Run Keyword And Continue On Failure    Element Text Should Be    ${right_min_ve_data}    ${new_min_ve}
+
+    #ส่วนนี้จะแก้ไขค่าให้เป็นค่าเดิม
+    Click Element    ${edit_line_button}
+    Wait Until Element Is Visible    ${add_edit_line_button}
+    Input Text    ${line_min_ve_field}    ${old_min_ve}
+    Click Element    ${add_edit_line_button}
+    Click Element    ${add_edit_line_button}
+    Run Keyword And Continue On Failure    Wait Until Element Is Not Visible    ${line_min_ve_alert}
+    Run Keyword And Continue On Failure    Wait Until Element Is Visible    ${confirm_add_edit_line_text}
+    
+    Click Element    ${confirm_confirm_add_edit_line_button}
+
+กรณี Edit Minimum Vehicle ด้วยเลขทศนิยม
+    open_line_subline_menu
+    select_line
+    Click Element    ${edit_line_button}
+    Wait Until Element Is Visible    ${add_edit_line_button}
+    Input Text    ${line_min_ve_field}    1.5
+    Click Element    ${add_edit_line_button}
+    Click Element    ${add_edit_line_button}
+    Wait Until Element Is Visible    ${line_min_ve_alert}
+    Run Keyword And Continue On Failure    Element Text Should Be    ${line_min_ve_alert}    พาหนะขั้นต่ำไม่ถูกต้อง
+
+กรณี Edit Minimum Vehicle > Maximum Vehicle
+    open_line_subline_menu
+    select_line
+    Click Element    ${edit_line_button}
+    Wait Until Element Is Visible    ${add_edit_line_button}
+    Input Text    ${line_min_ve_field}    10
+    Click Element    ${add_edit_line_button}
+    Click Element    ${add_edit_line_button}
+    Wait Until Element Is Visible    ${line_max_ve_alert}
+    Run Keyword And Continue On Failure    Element Text Should Be    ${line_max_ve_alert}    พาหนะสูงสุดต้องมีจำนวนมากกว่าหรือเท่ากับพาหนะขั้นต่ำ
+
+กรณี Edit Maximum Vehicle < 0
+    open_line_subline_menu
+    select_line
+    Click Element    ${edit_line_button}
+    Wait Until Element Is Visible    ${add_edit_line_button}
+    Input Text    ${line_max_ve_field}    -1
+    Click Element    ${add_edit_line_button}
+    Click Element    ${add_edit_line_button}
+    Wait Until Element Is Visible    ${line_max_ve_alert}
+    Run Keyword And Continue On Failure    Element Text Should Be    ${line_max_ve_alert}    พาหนะสูงสุดต้องมีจำนวนมากกว่าหรือเท่ากับ 1
+
+กรณี Edit Maximum Vehicle = 0
+    open_line_subline_menu
+    select_line
+    Click Element    ${edit_line_button}
+    Wait Until Element Is Visible    ${add_edit_line_button}
+    Input Text    ${line_max_ve_field}    0
+    Click Element    ${add_edit_line_button}
+    Click Element    ${add_edit_line_button}
+    Wait Until Element Is Visible    ${line_max_ve_alert}
+    Run Keyword And Continue On Failure    Element Text Should Be    ${line_max_ve_alert}    พาหนะสูงสุดต้องมีจำนวนมากกว่าหรือเท่ากับ 1
+
+กรณี Edit Maximum Vehicle > 0
+    ${new_max_ve}    Set Variable    3
+    ${old_max_ve}    Set Variable    4
+
+    open_line_subline_menu
+    select_line    99-99
+    Click Element    ${edit_line_button}
+    Wait Until Element Is Visible    ${add_edit_line_button}
+    Input Text    ${line_max_ve_field}    ${new_max_ve}
+    Click Element    ${add_edit_line_button}
+    Click Element    ${add_edit_line_button}
+    Run Keyword And Continue On Failure    Wait Until Element Is Not Visible    ${line_max_ve_alert}
+    Run Keyword And Continue On Failure    Wait Until Element Is Visible    ${confirm_add_edit_line_text}
+    
+    Click Element    ${confirm_confirm_add_edit_line_button}
+    
+    Run Keyword And Continue On Failure    Wait Until Element Is Visible    ${top_right_alert}
+    Run Keyword And Continue On Failure    Element Text Should Be    ${top_right_alert}    แก้ไขสายสำเร็จ
+    select_line    99-99
+    Run Keyword And Continue On Failure    Element Text Should Be    ${right_max_ve_data}    ${new_max_ve}
+
+    #ส่วนนี้จะแก้ไขค่าให้เป็นค่าเดิม
+    Click Element    ${edit_line_button}
+    Wait Until Element Is Visible    ${add_edit_line_button}
+    Input Text    ${line_max_ve_field}    ${old_max_ve}
+    Click Element    ${add_edit_line_button}
+    Click Element    ${add_edit_line_button}
+    Run Keyword And Continue On Failure    Wait Until Element Is Not Visible    ${line_max_ve_alert}
+    Run Keyword And Continue On Failure    Wait Until Element Is Visible    ${confirm_add_edit_line_text}
+    
+    Click Element    ${confirm_confirm_add_edit_line_button}
+
+กรณี Edit Maximum Vehicle ด้วยเลขทศนิยม
+    open_line_subline_menu
+    select_line
+    Click Element    ${edit_line_button}
+    Wait Until Element Is Visible    ${add_edit_line_button}
+    Input Text    ${line_max_ve_field}    1.5
+    Click Element    ${add_edit_line_button}
+    Click Element    ${add_edit_line_button}
+    Wait Until Element Is Visible    ${line_max_ve_alert}
+    Run Keyword And Continue On Failure    Element Text Should Be    ${line_max_ve_alert}    พาหนะขั้นต่ำไม่ถูกต้อง
+
+กรณี Edit Maximum Vehicle < Minimum Vehicle
+    ${max_ve}    Set Variable    1
+    ${min_ve}    Set Variable    2    
+    
+    open_line_subline_menu
+    select_line
+    Click Element    ${edit_line_button}
+    Wait Until Element Is Visible    ${add_edit_line_button}
+    Input Text    ${line_min_ve_field}    ${min_ve}
+    Input Text    ${line_max_ve_field}    ${max_ve}
+    Click Element    ${add_edit_line_button}
+    Click Element    ${add_edit_line_button}
+    Wait Until Element Is Visible    ${line_max_ve_alert}
+    Run Keyword And Continue On Failure    Element Text Should Be    ${line_max_ve_alert}    พาหนะสูงสุดต้องมีจำนวนมากกว่าหรือเท่ากับพาหนะขั้นต่ำ
+
+กรณี Edit Maximum Vehicle > Minimum Vehicle
+    ${max_ve}    Set Variable    2
+    ${min_ve}    Set Variable    1    
+    
+    open_line_subline_menu
+    select_line
+    Click Element    ${edit_line_button}
+    Wait Until Element Is Visible    ${add_edit_line_button}
+    Input Text    ${line_min_ve_field}    ${min_ve}
+    Input Text    ${line_max_ve_field}    ${max_ve}
+    Click Element    ${add_edit_line_button}
+    Click Element    ${add_edit_line_button}
+    Run Keyword And Continue On Failure    Wait Until Element Is Not Visible    ${line_max_ve_alert}
+    Run Keyword And Continue On Failure    Wait Until Element Is Visible    ${confirm_add_edit_line_text}
+
+กรณี Edit Maximum Vehicle = Minimum Vehicle
+    ${max_ve}    Set Variable    1
+    ${min_ve}    Set Variable    1    
+    
+    open_line_subline_menu
+    select_line
+    Click Element    ${edit_line_button}
+    Wait Until Element Is Visible    ${add_edit_line_button}
+    Input Text    ${line_min_ve_field}    ${min_ve}
+    Input Text    ${line_max_ve_field}    ${max_ve}
+    Click Element    ${add_edit_line_button}
+    Click Element    ${add_edit_line_button}
+    Run Keyword And Continue On Failure    Wait Until Element Is Not Visible    ${line_max_ve_alert}
+    Run Keyword And Continue On Failure    Wait Until Element Is Visible    ${confirm_add_edit_line_text}
+
+กรณี Edit Minimum Trip < 0
+    open_line_subline_menu
+    select_line
+    Click Element    ${edit_line_button}
+    Wait Until Element Is Visible    ${add_edit_line_button}
+    Input Text    ${line_min_trip_field}    -1
+    Click Element    ${add_edit_line_button}
+    Click Element    ${add_edit_line_button}
+    Wait Until Element Is Visible    ${line_min_trip_alert}
+    Run Keyword And Continue On Failure    Element Text Should Be    ${line_min_trip_alert}    เที่ยวขั้นต่ำต้องมีจำนวนมากกว่าหรือเท่ากับ 1
+
+กรณี Edit Minimum Trip = 0
+    open_line_subline_menu
+    select_line
+    Click Element    ${edit_line_button}
+    Wait Until Element Is Visible    ${add_edit_line_button}
+    Input Text    ${line_min_trip_field}    0
+    Click Element    ${add_edit_line_button}
+    Click Element    ${add_edit_line_button}
+    Wait Until Element Is Visible    ${line_min_trip_alert}
+    Run Keyword And Continue On Failure    Element Text Should Be    ${line_min_trip_alert}    เที่ยวขั้นต่ำต้องมีจำนวนมากกว่าหรือเท่ากับ 1
+
+กรณี Edit Minimum Trip > 0
+    ${new_min_trip}    Set Variable    1
+    ${old_min_trip}    Set Variable    2
+
+    open_line_subline_menu
+    select_line    99-99
+    Click Element    ${edit_line_button}
+    Wait Until Element Is Visible    ${add_edit_line_button}
+    Input Text    ${line_min_trip_field}    ${new_min_trip}
+    Click Element    ${add_edit_line_button}
+    Click Element    ${add_edit_line_button}
+    Run Keyword And Continue On Failure    Wait Until Element Is Not Visible    ${line_min_trip_alert}
+    Run Keyword And Continue On Failure    Wait Until Element Is Visible    ${confirm_add_edit_line_text}
+    
+    Click Element    ${confirm_confirm_add_edit_line_button}
+    
+    Run Keyword And Continue On Failure    Wait Until Element Is Visible    ${top_right_alert}
+    Run Keyword And Continue On Failure    Element Text Should Be    ${top_right_alert}    แก้ไขสายสำเร็จ
+    select_line    99-99
+    Run Keyword And Continue On Failure    Element Text Should Be    ${right_min_trip_data}    ${new_min_trip}
+
+    #ส่วนนี้จะแก้ไขค่าให้เป็นค่าเดิม
+    Click Element    ${edit_line_button}
+    Wait Until Element Is Visible    ${add_edit_line_button}
+    Input Text    ${line_min_trip_field}    ${old_min_trip}
+    Click Element    ${add_edit_line_button}
+    Click Element    ${add_edit_line_button}
+    Run Keyword And Continue On Failure    Wait Until Element Is Not Visible    ${line_min_trip_alert}
+    Run Keyword And Continue On Failure    Wait Until Element Is Visible    ${confirm_add_edit_line_text}
+    
+    Click Element    ${confirm_confirm_add_edit_line_button}
+
+กรณี Edit Minimum Trip ด้วยเลขทศนิยม
+    open_line_subline_menu
+    select_line
+    Click Element    ${edit_line_button}
+    Wait Until Element Is Visible    ${add_edit_line_button}
+    Input Text    ${line_min_ve_field}    1.5
+    Click Element    ${add_edit_line_button}
+    Click Element    ${add_edit_line_button}
+    Wait Until Element Is Visible    ${line_min_ve_alert}
+    Run Keyword And Continue On Failure    Element Text Should Be    ${line_min_ve_alert}    เที่ยวขั้นต่ำไม่ถูกต้อง
+
+กรณี Edit Line Name
+    ${new_line_name}    Set Variable    99-99 New
+    ${old_line_name}    Set Variable    99-99
+
+    open_line_subline_menu
+    select_line    ${old_line_name}
+    Click Element    ${edit_line_button}
+    Wait Until Element Is Visible    ${add_edit_line_button}
+    Input Text    ${line_name_field}    ${new_line_name}
+    Click Element    ${add_edit_line_button}
+    Run Keyword And Continue On Failure    Wait Until Element Is Not Visible    ${line_name_alert}
+    Run Keyword And Continue On Failure    Wait Until Element Is Visible    ${confirm_add_edit_line_text}
+    
+    Click Element    ${confirm_confirm_add_edit_line_button}
+    
+    Run Keyword And Continue On Failure    Wait Until Element Is Visible    ${top_right_alert}
+    Run Keyword And Continue On Failure    Element Text Should Be    ${top_right_alert}    แก้ไขสายสำเร็จ
+    select_line    ${new_line_name}
+    Run Keyword And Continue On Failure    Element Text Should Be    ${middle_line_name}    ${new_line_name}
+    Run Keyword And Continue On Failure    Element Text Should Be    ${right_line_name}    ${new_line_name}
+    #ส่วนนี้จะแก้ไขค่าให้เป็นค่าเดิม
+    Click Element    ${edit_line_button}
+    Wait Until Element Is Visible    ${add_edit_line_button}
+    Input Text    ${line_name_field}    ${old_line_name}
+    Click Element    ${add_edit_line_button}
+    Run Keyword And Continue On Failure    Wait Until Element Is Not Visible    ${line_name_alert}
+    Run Keyword And Continue On Failure    Wait Until Element Is Visible    ${confirm_add_edit_line_text}
+    
+    Click Element    ${confirm_confirm_add_edit_line_button}
+
+กรณี Edit Label
+    ${new_label}    Set Variable    99-99 New
+    ${old_label}    Set Variable    99-99
+
+    open_line_subline_menu
+    select_line    99-99
+    Click Element    ${edit_line_button}
+    Wait Until Element Is Visible    ${add_edit_line_button}
+    Input Text    ${line_label_field}    ${new_label}
+    Click Element    ${add_edit_line_button}
+    Run Keyword And Continue On Failure    Wait Until Element Is Not Visible    ${line_label_alert}
+    Run Keyword And Continue On Failure    Wait Until Element Is Visible    ${confirm_add_edit_line_text}
+    
+    Click Element    ${confirm_confirm_add_edit_line_button}
+    
+    Run Keyword And Continue On Failure    Wait Until Element Is Visible    ${top_right_alert}
+    Run Keyword And Continue On Failure    Element Text Should Be    ${top_right_alert}    แก้ไขสายสำเร็จ
+    select_line    99-99
+    Run Keyword And Continue On Failure    Element Text Should Be    ${right_label}    ${new_label}
+    #ส่วนนี้จะแก้ไขค่าให้เป็นค่าเดิม
+    Click Element    ${edit_line_button}
+    Wait Until Element Is Visible    ${add_edit_line_button}
+    Input Text    ${line_label_field}    ${old_label}
+    Click Element    ${add_edit_line_button}
+    Run Keyword And Continue On Failure    Wait Until Element Is Not Visible    ${line_label_alert}
+    Run Keyword And Continue On Failure    Wait Until Element Is Visible    ${confirm_add_edit_line_text}
+    
+    Click Element    ${confirm_confirm_add_edit_line_button}
+
+กรณี Edit Description
+    ${new_des}    Set Variable    Test กับ บริษัท ศักดา New
+    ${old_des}    Set Variable    Test กับ บริษัท ศักดา
+
+    open_line_subline_menu
+    select_line    99-99
+    Click Element    ${edit_line_button}
+    Wait Until Element Is Visible    ${add_edit_line_button}
+    Input Text    ${line_description_field}    ${new_des}
+    Click Element    ${add_edit_line_button}
+    Run Keyword And Continue On Failure    Wait Until Element Is Not Visible    ${line_description_alert}
+    Run Keyword And Continue On Failure    Wait Until Element Is Visible    ${confirm_add_edit_line_text}
+    
+    Click Element    ${confirm_confirm_add_edit_line_button}
+    
+    Run Keyword And Continue On Failure    Wait Until Element Is Visible    ${top_right_alert}
+    Run Keyword And Continue On Failure    Element Text Should Be    ${top_right_alert}    แก้ไขสายสำเร็จ
+    select_line    99-99
+    Run Keyword And Continue On Failure    Element Text Should Be    ${right_description}    ${new_des}
+    #ส่วนนี้จะแก้ไขค่าให้เป็นค่าเดิม
+    Click Element    ${edit_line_button}
+    Wait Until Element Is Visible    ${add_edit_line_button}
+    Input Text    ${line_description_field}    ${old_des}
+    Click Element    ${add_edit_line_button}
+    Run Keyword And Continue On Failure    Wait Until Element Is Not Visible    ${line_description_alert}
+    Run Keyword And Continue On Failure    Wait Until Element Is Visible    ${confirm_add_edit_line_text}
+    
+    Click Element    ${confirm_confirm_add_edit_line_button}
+
+กรณี Edit Company
+    ${new_company}    Set Variable    บริษัท พู ออนไลน์ จำกัด 11
+    ${old_company}    Set Variable    บริษัท ไทย สมายล์ โบ้ท จำกัด
+
+    open_line_subline_menu
+    select_line    99-99
+    Click Element    ${edit_line_button}
+    Wait Until Element Is Visible    ${add_edit_line_button}
+    Input Text    ${line_company_field}    ${new_company}
+    Click Element    //*[@id="icon_s"]//*[text()="${new_company}"]
+    Click Element    ${add_edit_line_button}
+    Run Keyword And Continue On Failure    Wait Until Element Is Not Visible    ${line_company_alert}
+    Run Keyword And Continue On Failure    Wait Until Element Is Visible    ${confirm_add_edit_line_text}
+    
+    Click Element    ${confirm_confirm_add_edit_line_button}
+    
+    Run Keyword And Continue On Failure    Wait Until Element Is Visible    ${top_right_alert}
+    Run Keyword And Continue On Failure    Element Text Should Be    ${top_right_alert}    แก้ไขสายสำเร็จ
+    select_line    99-99
+    Run Keyword And Continue On Failure    Element Text Should Be    ${right_company}    ${new_company}
+
+    #ส่วนนี้จะแก้ไขค่าให้เป็นค่าเดิม
+    Click Element    ${edit_line_button}
+    Wait Until Element Is Visible    ${add_edit_line_button}
+    Input Text    ${line_company_field}    ${old_company}
+    Click Element    //*[@id="icon_s"]//*[text()="${old_company}"]
+    Click Element    ${add_edit_line_button}
+    Run Keyword And Continue On Failure    Wait Until Element Is Not Visible    ${line_company_alert}
+    Run Keyword And Continue On Failure    Wait Until Element Is Visible    ${confirm_add_edit_line_text}
+    
+    Click Element    ${confirm_confirm_add_edit_line_button}
+
+กรณี Edit Status
+    ${new_status}    Set Variable    InActive
+    ${old_status}    Set Variable    Active
+
+    open_line_subline_menu
+    select_line    99-99
+    Click Element    ${edit_line_button}
+    Wait Until Element Is Visible    ${add_edit_line_button}
+    Input Text    ${line_status_field}    ${new_status}
+    Click Element    //*[@id="icon_s"]//*[text()="${new_status}"]
+    Click Element    ${add_edit_line_button}
+    Run Keyword And Continue On Failure    Wait Until Element Is Not Visible    ${line_status_alert}
+    Run Keyword And Continue On Failure    Wait Until Element Is Visible    ${confirm_add_edit_line_text}
+    
+    Click Element    ${confirm_confirm_add_edit_line_button}
+    
+    Run Keyword And Continue On Failure    Wait Until Element Is Visible    ${top_right_alert}
+    Run Keyword And Continue On Failure    Element Text Should Be    ${top_right_alert}    แก้ไขสายสำเร็จ
+    select_line    99-99
+    #Run Keyword And Continue On Failure    Element Text Should Be    ${right_status_text}    ${new_status}
+    Run Keyword And Continue On Failure    Element Text Should Be    ${middle_line_status}    ${new_status}
+    #ส่วนนี้จะแก้ไขค่าให้เป็นค่าเดิม
+    Click Element    ${edit_line_button}
+    Wait Until Element Is Visible    ${add_edit_line_button}
+    Input Text    ${line_status_field}    ${old_status}
+    Click Element    //*[@id="icon_s"]//*[text()="${old_status}"]
+    Click Element    ${add_edit_line_button}
+    Run Keyword And Continue On Failure    Wait Until Element Is Not Visible    ${line_status_alert}
+    Run Keyword And Continue On Failure    Wait Until Element Is Visible    ${confirm_add_edit_line_text}
+    
+    Click Element    ${confirm_confirm_add_edit_line_button}
+
+หน้าต่างยืนยันการ Edit Line    
+    open_line_subline_menu
+    select_line    99-99
+    Click Element    ${edit_line_button}
+    Wait Until Element Is Visible    ${add_edit_line_button}
+    Click Element    ${add_edit_line_button}    
+    Wait Until Element Is Visible    ${confirm_confirm_add_edit_line_button}
+    Run Keyword And Continue On Failure    Element Text Should Be    ${confirm_add_edit_line_title}    แก้ไขสาย
+    Run Keyword And Continue On Failure    Element Text Should Be    ${confirm_add_edit_line_text}    คุณยืนยันที่จะเพิ่มสายใช่หรือไม่?    
+    Run Keyword And Continue On Failure    Element Text Should Be    ${confirm_confirm_add_edit_line_button}    ยืนยัน
+    Run Keyword And Continue On Failure    Element Text Should Be    ${confirm_add_edit_cancel_line_button}    ยกเลิก
+
 
 ส่วนแสดงตรงกลาง
     open_line_subline_menu
     Click Element    ${first_result}
-    Wait Until Element Is Visible    ${middle_line_name}
-    Wait Until Element Is Visible    ${middle_line_status}
-    Wait Until Element Is Visible    ${add_new_sub_line_button}
+    Run Keyword And Continue On Failure    Wait Until Element Is Visible    ${middle_line_name}
+    Run Keyword And Continue On Failure    Wait Until Element Is Visible    ${middle_line_status}
+    Run Keyword And Continue On Failure    Wait Until Element Is Visible    ${add_new_sub_line_button}
     
+หน้าต่าง Add New Sub Line
+    open_line_subline_menu
+    select_line    99-99
+    Click Element    ${add_new_sub_line_button}
+    Wait Until Element Is Visible    ${add_edit_sub_line_button}
+    Run Keyword And Continue On Failure    Element Text Should Be    ${add_edit_sub_line_title}    เพิ่มสายย่อย
+    Run Keyword And Continue On Failure    Element Text Should Be    ${add_edit_sub_line_name_label}    สายย่อย
+    ${sub_line_name_place}    Get Element Attribute    ${add_edit_sub_line_name_field}    placeholder
+    Run Keyword And Continue On Failure    Should Be Equal    ${sub_line_name_place}    สายย่อย
+    Run Keyword And Continue On Failure    Element Text Should Be    ${add_edit_sub_line_depot_start_label}    อู่ต้นทาง
+    Run Keyword And Continue On Failure    Element Text Should Be    ${add_edit_sub_line_depot_start_placeholder}    Select...
+    Run Keyword And Continue On Failure    Element Text Should Be    ${add_edit_sub_line_depot_stop_label}    อู่ปลายทาง
+    Run Keyword And Continue On Failure    Element Text Should Be    ${add_edit_sub_line_depot_stop_placeholder}    Select...
+    Run Keyword And Continue On Failure    Element Text Should Be    ${add_edit_sub_line_button_text}    เพิ่ม
+
+จำนวนตัวอักษรสูงสุดกรณี Add Sub Line
+    open_line_subline_menu
+    select_line    99-99
+    Click Element    ${add_new_sub_line_button}
+    Wait Until Element Is Visible    ${add_edit_sub_line_button}
+    ${max_sub_line}    Get Element Attribute    ${add_edit_sub_line_name_field}    maxlength
+    Should Be Equal    ${max_sub_line}    30
+    
+กรณี Add Sub Line โดยไม่กรอกข้อมูล
+    open_line_subline_menu
+    select_line    99-99
+    Click Element    ${add_new_sub_line_button}
+    Wait Until Element Is Visible    ${add_edit_sub_line_button}
+    Click Element    ${add_edit_sub_line_button}
+    Run Keyword And Continue On Failure    Wait Until Element Is Visible    ${sub_line_alert}
+    Run Keyword And Continue On Failure    Element Text Should Be    ${sub_line_alert}    โปรดระบุชื่อสายย่อย
+    Run Keyword And Continue On Failure    Element Text Should Be    ${depot_start_alert}    โปรดระบุอู่เริ่มต้น
+    Run Keyword And Continue On Failure    Element Text Should Be    ${depot_stop_alert}    โปรดระบุอู่ปลายทาง
+
+กรณี Add Sub Line โดยกรอก Sub Line ที่ถูกใช้งานแล้ว
+    open_line_subline_menu
+    select_line    99-99
+    Click Element    ${add_new_sub_line_button}
+    add_sub_line    sub_line=99-99(5)
+    Run Keyword And Continue On Failure    Wait Until Element Is Visible    ${sub_line_alert}
+    Run Keyword And Continue On Failure    Element Text Should Be    ${sub_line_alert}    ชื่อสายย่อยนี้ถูกใช้งานแล่ว
+    Run Keyword And Continue On Failure    Wait Until Element Is Not Visible    ${confirm_confirm_add_edit_line_button}
+
+หน้าต่างยืนยันการ Add Sub Line
+    open_line_subline_menu
+    select_line    99-99
+    Click Element    ${add_new_sub_line_button}
+    add_sub_line
+    Wait Until Element Is Visible    ${confirm_add_edit_sub_line_button}
+    Run Keyword And Continue On Failure    Element Text Should Be    ${confirm_add_edit_sub_line_title}    เพิ่มสายย่อย
+    Run Keyword And Continue On Failure    Element Text Should Be    ${confirm_add_edit_sub_line_text}    คุณยืนยันที่จะเพิ่มสายย่อยใช่หรือไม่?
+    Run Keyword And Continue On Failure    Element Text Should Be    ${confirm_add_edit_sub_line_button}    ยืนยัน
+    Run Keyword And Continue On Failure    Element Text Should Be    ${cancel_confirm_add_edit_sub_line_button}    ยกเลิก
+
+กรณี Add Sub Line ด้วยข้อมูลที่ครบถ้วนและถูกต้อง
+    ${sub_line}    Set Variable    99-99(99)
+    ${depot_start}    Set Variable    อู่บางพลี
+    ${depot_stop}    Set Variable    อู่บางพลี
+    open_line_subline_menu
+    select_line    99-99
+    Click Element    ${add_new_sub_line_button}
+    add_sub_line    sub_line=${sub_line}    depot_start=${depot_start}    depot_stop=${depot_stop}
+    Click Element    ${confirm_add_edit_sub_line_button}
+    Run Keyword And Continue On Failure    Wait Until Element Is Visible    ${top_right_alert}
+    Run Keyword And Continue On Failure    Element Text Should Be    ${top_right_alert}    เพิ่มสายย่อยสำเร็จ
+    Wait Until Element Is Visible    //*[@id="root"]/main//main/div//div[2]/div/div/div/div[./div/div/div[text()="${sub_line}"]]
+    Run Keyword And Continue On Failure    Element Text Should Be    //*[@id="root"]/main//main/div//div[2]/div/div/div/div/div/div/div[text()="${sub_line}"]/div    ${depot_start} - ${depot_stop}
+
+    Click Element    //*[@id="root"]/main//main/div//div[2]/div/div/div/div[./div/div/div[text()="${sub_line}"]]
+    Wait Until Element Is Visible    ${right_sub_line_name}
+    Element Text Should Be    ${right_sub_line_name}    ${sub_line}
+
+    #ส่วนนี้จะลบ Sub Line ที่เพิ่มออก
+    Click Element    //*[@id="root"]/main//main/div//div[2]/div/div/div/div/div[./div/div[text()="${sub_line}"]]/div[2]/div/div/div
+    Click Element    ${confirm_delete_sub_line_button}
+
+หน้าต่าง Edit Sub Line
+    open_line_subline_menu
+    select_line    99-99
+    Wait Until Element Is Visible    //*[@id="root"]/main//main/div//div[2]/div/div/div/div/div[./div/div[text()="99-99(5)"]]/div[2]/div/div[1]/button
+    Click Element    //*[@id="root"]/main//main/div//div[2]/div/div/div/div/div[./div/div[text()="99-99(5)"]]/div[2]/div/div[1]/button
+    Wait Until Element Is Visible    ${add_edit_sub_line_button}
+    Run Keyword And Continue On Failure    Element Text Should Be    ${add_edit_sub_line_title}    แก้ไขสายย่อย
+    Run Keyword And Continue On Failure    Element Text Should Be    ${add_edit_sub_line_name_label}    สายย่อย
+    ${sub_line_name_place}    Get Element Attribute    ${add_edit_sub_line_name_field}    placeholder
+    Run Keyword And Continue On Failure    Should Be Equal    ${sub_line_name_place}    สายย่อย
+    Run Keyword And Continue On Failure    Element Text Should Be    ${add_edit_sub_line_depot_start_label}    อู่ต้นทาง
+    Run Keyword And Continue On Failure    Element Text Should Be    ${add_edit_sub_line_depot_stop_label}    อู่ปลายทาง
+    Run Keyword And Continue On Failure    Element Text Should Be    ${add_edit_sub_line_button_text}    บันทึก
+
+กรณี Edit Sub Line Name ซ้ำกับที่มีอยู่
+    ${old_sub_line_name}    Set Variable    99-99(4)
+    ${new_sub_line_name}    Set Variable    99-99(3)
+    open_line_subline_menu
+    select_line    99-99
+    Wait Until Element Is Visible    //*[@id="root"]/main//main/div//div[2]/div/div/div/div/div[./div/div[text()="${old_sub_line_name}"]]/div[2]/div/div[1]/button
+    Click Element    //*[@id="root"]/main//main/div//div[2]/div/div/div/div/div[./div/div[text()="${old_sub_line_name}"]]/div[2]/div/div[1]/button
+    Wait Until Element Is Visible    ${add_edit_sub_line_button}
+    Input Text    ${add_edit_sub_line_name_field}    ${new_sub_line_name}
+    Click Element    ${add_edit_sub_line_button}
+    Click Element    ${add_edit_sub_line_button}
+    Run Keyword And Continue On Failure    Wait Until Element Is Visible    ${sub_line_alert}
+    Run Keyword And Continue On Failure    Element Text Should Be    ${sub_line_alert}    ชื่อสายนี้ถูกใช้งานแล้ว
+    Run Keyword And Continue On Failure    Wait Until Element Is Not Visible    ${confirm_add_edit_sub_line_button}
+
+กรณี Edit โดยลบค่า Sub Line Name ให้ว่าง
+    ${sub_line_name}    Set Variable    99-99(4)
+    open_line_subline_menu
+    select_line    99-99
+    Wait Until Element Is Visible    //*[@id="root"]/main//main/div//div[2]/div/div/div/div/div[./div/div[text()="${sub_line_name}"]]/div[2]/div/div[1]/button
+    Click Element    //*[@id="root"]/main//main/div//div[2]/div/div/div/div/div[./div/div[text()="${sub_line_name}"]]/div[2]/div/div[1]/button
+    Wait Until Element Is Visible    ${add_edit_sub_line_button}
+    Clear Element Text    ${add_edit_sub_line_name_field}
+    Click Element    ${add_edit_sub_line_button}
+    Click Element    ${add_edit_sub_line_button}
+    Run Keyword And Continue On Failure    Wait Until Element Is Visible    ${sub_line_alert}
+    Run Keyword And Continue On Failure    Element Text Should Be    ${sub_line_alert}    โปรดระบุชื่อสาย
+    Run Keyword And Continue On Failure    Wait Until Element Is Not Visible    ${confirm_add_edit_sub_line_button}
+
+กรณี Edit Sub Line Name
+    ${old_sub_line_name}    Set Variable    99-99(9)
+    ${new_sub_line_name}    Set Variable    99-99(7)
+    open_line_subline_menu
+    select_line    99-99
+    Wait Until Element Is Visible    //*[@id="root"]/main//main/div//div[2]/div/div/div/div/div[./div/div[text()="${old_sub_line_name}"]]/div[2]/div/div[1]/button
+    Click Element    //*[@id="root"]/main//main/div//div[2]/div/div/div/div/div[./div/div[text()="${old_sub_line_name}"]]/div[2]/div/div[1]/button
+    Wait Until Element Is Visible    ${add_edit_sub_line_button}
+    Input Text    ${add_edit_sub_line_name_field}    ${new_sub_line_name}
+    Click Element    ${add_edit_sub_line_button}
+    Click Element    ${add_edit_sub_line_button}
+    Run Keyword And Continue On Failure    Wait Until Element Is Visible    ${confirm_add_edit_sub_line_button}
+    Click Element    ${confirm_add_edit_sub_line_button}
+    Run Keyword And Continue On Failure    Wait Until Element Is Visible    ${top_right_alert}
+    Run Keyword And Continue On Failure    Element Text Should Be    ${top_right_alert}    แก้ไขสายย่อยสำเร็จ
+
+    Wait Until Element Is Visible    //*[@id="root"]/main//main/div//div[2]/div/div/div/div[./div/div/div[text()="${new_sub_line_name}"]]
+    Click Element    //*[@id="root"]/main//main/div//div[2]/div/div/div/div[./div/div/div[text()="${new_sub_line_name}"]]
+    Run Keyword And Continue On Failure    Wait Until Element Is Visible    ${right_sub_line_name}
+    Run Keyword And Continue On Failure    Element Text Should Be    ${right_sub_line_name}    ${new_sub_line_name}
+    Sleep    5
