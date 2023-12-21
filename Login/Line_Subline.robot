@@ -1,5 +1,7 @@
 *** Settings ***
 Library    SeleniumLibrary    screenshot_root_directory=/Users/sakda.l/Desktop/TSB Automate/Login/Failed Screenshot
+Library    Collections
+Library    DateTime
 Resource    keyword.robot
 Test Teardown    Close Browser 
 
@@ -172,6 +174,10 @@ ${delete_route_text}    //*[@id="headlessui-portal-root"]/div/div/div/div/div/di
 ${confirm_delete_route_button}    //*[@id="headlessui-portal-root"]/div/div/div/div/div/div/div[3]/div/div/div[1]
 ${cancel_delete_route_button}    //*[@id="headlessui-portal-root"]/div/div/div/div/div/div/div[3]/div/div/div[2]
 
+&{month_convert}    1=January    2=February    3=March    4=April    5=May    6=June
+...         7=July    8=August    9=September    10=October    11=November    12=December
+
+
 *** Keywords ***
 open_line_subline_menu
     Log In Valid
@@ -224,10 +230,65 @@ add_sub_line
     Input Text    ${add_edit_sub_line_name_field}    ${sub_line}
     Click Element    ${add_edit_sub_line_button}
     Input Text    ${add_edit_sub_line_depot_start_field}    ${depot_start}
+    Wait Until Element Is Visible    //body/div[3]//*[text()="${depot_start}"]
     Click Element    //body/div[3]//*[text()="${depot_start}"]
     Input Text    ${add_edit_sub_line_depot_stop_field}    ${depot_stop}
+    Wait Until Element Is Visible    //body/div[3]//*[text()="${depot_stop}"]
     Click Element    //body/div[3]//*[text()="${depot_stop}"]
     Click Element    ${add_edit_sub_line_button}
+
+get_current_month
+    ${dmy}    Get Current Date
+    ${month}    Set Variable    ${dmy[5:7]}
+    #${int_month}    Convert To Integer    ${month}    
+    RETURN    ${month}
+
+get_current_year
+    ${dmy}    Get Current Date
+    ${year}    Set Variable    ${dmy[0:4]}
+    #${int_year}    Convert To Integer    ${year}    
+    RETURN    ${year}
+
+get_current_day
+    ${dmy}    Get Current Date
+    ${day}    Set Variable    ${dmy[8:10]}
+    #${int_day}    Convert To Integer    ${day}    
+    RETURN    ${day}
+
+add_route  
+    [Arguments]    ${sub_line}=99-99(9)    ${route_name}=เส้นทางการวิ่ง_Test1    ${start_year}=2070    ${start_month}=7    
+    ...            ${start_day}=10         ${end_year}=2080    ${end_month}=3    ${end_day}=25    
+
+    ${start_month_text}    Set Variable    ${month_convert}[${start_month}] 
+    ${end_month_text}    Set Variable    ${month_convert}[${end_month}]
+
+    Wait Until Element Is Visible    //*[@id="root"]/main//main/div//div[2]/div/div/div/div[./div/div/div[text()="${sub_line}"]]
+    Click Element    //*[@id="root"]/main//main/div//div[2]/div/div/div/div[./div/div/div[text()="${sub_line}"]]
+    Wait Until Element Is Visible    ${right_sub_line_name}
+    Element Text Should Be    ${right_sub_line_name}    ${sub_line}
+    Element Should Be Visible    ${add_new_route_button}
+    Click Element    ${add_new_route_button}
+    Wait Until Element Is Visible    ${add_route_button}
+    Click Element    ${add_route_button}
+    Input Text    ${route_field}    ${route_name}
+    Click Element    //body/div[5]//*[text()="เส้นทางการวิ่ง_Test1"]
+    Click Element    //*[@id="headlessui-portal-root"]//div[2]/form/div[2]/div[1]/div
+    Click Element    //*[@class="flatpickr-calendar animate open arrowTop arrowLeft"]//select
+    Sleep    1
+    Click Element    //html/body/div[@class="flatpickr-calendar animate open arrowTop arrowLeft"][1]/div[1]/div/div/select/option[${start_month}]
+    #Click Element    //html/body/div[3]/div[1]/div/div/select/option[1]
+    Input Text    //html/body/div[@class="flatpickr-calendar animate open arrowTop arrowLeft"][1]/div/div/div/div/input    ${start_year}
+    Click Element    //html/body/div[@class="flatpickr-calendar animate open arrowTop arrowLeft"][1]/div[2]/div/div[2]/div/span[@aria-label="${start_month_text} ${start_day}, ${start_year}"] 
+
+
+    Click Element    //*[@id="headlessui-portal-root"]//div[2]/form/div[2]/div[2]/div
+    Click Element    //*[@class="flatpickr-calendar animate open arrowTop arrowLeft"]//select
+    Sleep    1
+    Click Element    //html/body/div[@class="flatpickr-calendar animate open arrowTop arrowLeft"][1]/div[1]/div/div/select/option[${end_month}]
+    #Click Element    //html/body/div[3]/div[1]/div/div/select/option[1]
+    Input Text    //html/body/div[@class="flatpickr-calendar animate open arrowTop arrowLeft"][1]/div/div/div/div/input    ${end_year}
+    Click Element    //html/body/div[@class="flatpickr-calendar animate open arrowTop arrowLeft"][1]/div[2]/div/div[2]/div/span[@aria-label="${end_month_text} ${end_day}, ${end_year}"] 
+    Click Element    ${add_route_button}
 
 *** Test Cases ***
 หน้า Line
@@ -435,9 +496,26 @@ add_sub_line
     Run Keyword And Continue On Failure    Element Text Should Be    ${right_max_ve_data}    ${max_ve}
     Run Keyword And Continue On Failure    Element Text Should Be    ${right_min_trip_data}    ${min_trip}
     Run Keyword And Continue On Failure    Element Text Should Be    ${right_status_text}    ${status}
+    
+หน้าต่างยืนยันการ Delete Line
+    ${line_name}    Set Variable    Test99    
+    open_line_subline_menu
+    select_line    ${line_name}
+    Click Element    ${delete_line_button}
+    Wait Until Element Is Visible    ${confirm_delete_line_button}
+    Run Keyword And Continue On Failure    Element Text Should Be    ${delete_line_title}    ลบสาย
+    Run Keyword And Continue On Failure    Element Text Should Be    ${delete_line_text}    คุณยืนยันที่จะลบสาย : ${line_name} ใช่หรือไม่?   
+    Run Keyword And Continue On Failure    Element Text Should Be    ${confirm_delete_line_button}    ยืนยัน
+    Run Keyword And Continue On Failure    Element Text Should Be    ${cancel_delete_line_button}    ยกเลิก
+
+กรณี Delete Line
+    #ลบ Line จากที่สร้างใหม่จาก case สร้าง Line
+    open_line_subline_menu
+    select_line    888
     Click Element    ${delete_line_button}
     Wait Until Element Is Visible    ${confirm_delete_line_button}
     Click Element    ${confirm_delete_line_button}
+
 
 กรณีเลือก Line
     open_line_subline_menu
@@ -558,8 +636,7 @@ add_sub_line
     Wait Until Element Is Visible    ${add_edit_line_button}
     Input Text    ${line_name_field}    PkTest Line1
     Click Element    ${add_edit_line_button}
-    Click Element    ${add_edit_line_button}
-    Wait Until Element Is Visible    ${line_name_alert}
+    Run Keyword And Continue On Failure    Wait Until Element Is Visible    ${line_name_alert}
     Run Keyword And Continue On Failure    Element Text Should Be    ${line_name_alert}    ชื่อสายนี้ถูกใช้งานแล้ว
 
 กรณี Edit Minimum Vehicle < 0
@@ -1042,9 +1119,9 @@ add_sub_line
 กรณี Add Sub Line ด้วยข้อมูลที่ครบถ้วนและถูกต้อง
     ${sub_line}    Set Variable    99-99(99)
     ${depot_start}    Set Variable    อู่บางพลี
-    ${depot_stop}    Set Variable    อู่บางพลี
+    ${depot_stop}    Set Variable    อู่ศาลายา
     open_line_subline_menu
-    select_line    99-99
+    select_line    99-99    
     Click Element    ${add_new_sub_line_button}
     add_sub_line    sub_line=${sub_line}    depot_start=${depot_start}    depot_stop=${depot_stop}
     Click Element    ${confirm_add_edit_sub_line_button}
@@ -1057,10 +1134,30 @@ add_sub_line
     Wait Until Element Is Visible    ${right_sub_line_name}
     Element Text Should Be    ${right_sub_line_name}    ${sub_line}
 
-    #ส่วนนี้จะลบ Sub Line ที่เพิ่มออก
-    Click Element    //*[@id="root"]/main//main/div//div[2]/div/div/div/div/div[./div/div[text()="${sub_line}"]]/div[2]/div/div/div
-    Click Element    ${confirm_delete_sub_line_button}
+หน้าต่างยืนยันการ Delete Sub Line
+    ${sub_line_name}    Set Variable    99-99(99)
+    open_line_subline_menu
+    select_line    99-99
+    Wait Until Element Is Visible    //*[@id="root"]/main//main/div//div[2]/div/div/div/div/div[./div/div[text()="${sub_line_name}"]]/div[2]/div/div/div
+    Click Element    //*[@id="root"]/main//main/div//div[2]/div/div/div/div/div[./div/div[text()="${sub_line_name}"]]/div[2]/div/div/div
+    Wait Until Element Is Visible    ${confirm_delete_sub_line_button}
+    Run Keyword And Continue On Failure    Element Text Should Be    ${delete_sub_line_title}    ลบสายย่อย
+    Run Keyword And Continue On Failure    Element Text Should Be    ${delete_sub_line_title}    คุณยืนยันที่จะลบสายย่อย : ${sub_line_name} ใช่หรือไม่?
+    Run Keyword And Continue On Failure    Element Text Should Be    ${confirm_delete_sub_line_button}    ยืนยัน
+    Run Keyword And Continue On Failure    Element Text Should Be    ${cancel_delete_sub_line_button}    ยกเลิก
 
+กรณี Delete Sub Line
+    ${sub_line_name}    Set Variable    99-99(99)
+    open_line_subline_menu
+    select_line    99-99
+    Wait Until Element Is Visible    //*[@id="root"]/main//main/div//div[2]/div/div/div/div/div[./div/div[text()="${sub_line_name}"]]/div[2]/div/div/div
+    Click Element    //*[@id="root"]/main//main/div//div[2]/div/div/div/div/div[./div/div[text()="${sub_line_name}"]]/div[2]/div/div/div
+    Wait Until Element Is Visible    ${confirm_delete_sub_line_button}
+    Click Element    ${confirm_delete_sub_line_button}
+    Run Keyword And Continue On Failure    Wait Until Element Is Visible    ${top_right_alert}
+    Run Keyword And Continue On Failure    Element Text Should Be    ${top_right_alert}    ลบสายย่อยสำเร็จ
+    Wait Until Element Is Not Visible    //*[@id="root"]/main//main/div//div[2]/div/div/div/div/div[./div/div[text()="${sub_line_name}"]]/div[2]/div/div/div    
+  
 หน้าต่าง Edit Sub Line
     open_line_subline_menu
     select_line    99-99
@@ -1104,6 +1201,22 @@ add_sub_line
     Run Keyword And Continue On Failure    Element Text Should Be    ${sub_line_alert}    โปรดระบุชื่อสาย
     Run Keyword And Continue On Failure    Wait Until Element Is Not Visible    ${confirm_add_edit_sub_line_button}
 
+หน้าต่างยืนยันการ Edit Sub Line
+    ${sub_line_name}    Set Variable    99-99(9)
+    open_line_subline_menu
+    select_line    99-99
+    Wait Until Element Is Visible    //*[@id="root"]/main//main/div//div[2]/div/div/div/div/div[./div/div[text()="${sub_line_name}"]]/div[2]/div/div[1]/button
+    Click Element    //*[@id="root"]/main//main/div//div[2]/div/div/div/div/div[./div/div[text()="${sub_line_name}"]]/div[2]/div/div[1]/button
+    Wait Until Element Is Visible    ${add_edit_sub_line_button}
+    Input Text    ${add_edit_sub_line_name_field}    ${sub_line_name}
+    Click Element    ${add_edit_sub_line_button}
+    Click Element    ${add_edit_sub_line_button}
+    Run Keyword And Continue On Failure    Wait Until Element Is Visible    ${confirm_add_edit_sub_line_button}
+    Run Keyword And Continue On Failure    Element Text Should Be    ${confirm_add_edit_sub_line_title}    แก้ไขสายย่อย
+    Run Keyword And Continue On Failure    Element Text Should Be    ${confirm_add_edit_sub_line_text}   คุณยืนยันที่จะแก้ไขสายย่อยใช่หรือไม่?
+    Run Keyword And Continue On Failure    Element Text Should Be    ${confirm_add_edit_sub_line_button}    ยืนยัน
+    Run Keyword And Continue On Failure    Element Text Should Be    ${cancel_confirm_add_edit_sub_line_button}    ยกเลิก
+
 กรณี Edit Sub Line Name
     ${old_sub_line_name}    Set Variable    99-99(9)
     ${new_sub_line_name}    Set Variable    99-99(7)
@@ -1124,4 +1237,192 @@ add_sub_line
     Click Element    //*[@id="root"]/main//main/div//div[2]/div/div/div/div[./div/div/div[text()="${new_sub_line_name}"]]
     Run Keyword And Continue On Failure    Wait Until Element Is Visible    ${right_sub_line_name}
     Run Keyword And Continue On Failure    Element Text Should Be    ${right_sub_line_name}    ${new_sub_line_name}
+
+    Click Element    //*[@id="root"]/main//main/div//div[2]/div/div/div/div/div[./div/div[text()="${new_sub_line_name}"]]/div[2]/div/div[1]/button
+    Wait Until Element Is Visible    ${add_edit_sub_line_button}
+    Input Text    ${add_edit_sub_line_name_field}    ${old_sub_line_name}
+    Click Element    ${add_edit_sub_line_button}
+    Click Element    ${add_edit_sub_line_button}
+    Run Keyword And Continue On Failure    Wait Until Element Is Visible    ${confirm_add_edit_sub_line_button}
+    Click Element    ${confirm_add_edit_sub_line_button}
+    Run Keyword And Continue On Failure    Wait Until Element Is Visible    ${top_right_alert}
+    Run Keyword And Continue On Failure    Element Text Should Be    ${top_right_alert}    แก้ไขสายย่อยสำเร็จ
+
+กรณี Edit Sub Line Depot Start
+    ${sub_line_name}    Set Variable    99-99(9)
+    ${old_depot_start}    Set Variable    อู่วงเวียนพระประแดง
+    ${new_depot_start}    Set Variable    อู่บึงกุ่ม
+    open_line_subline_menu
+    select_line    99-99
+    Wait Until Element Is Visible    //*[@id="root"]/main//main/div//div[2]/div/div/div/div/div[./div/div[text()="${sub_line_name}"]]/div[2]/div/div[1]/button
+    Click Element    //*[@id="root"]/main//main/div//div[2]/div/div/div/div/div[./div/div[text()="${sub_line_name}"]]/div[2]/div/div[1]/button
+    Wait Until Element Is Visible    ${add_edit_sub_line_button}
+    Input Text    ${add_edit_sub_line_depot_start_field}    ${new_depot_start}
+    Wait Until Element Is Visible    //body/div[3]//*[text()="${new_depot_start}"]
+    Click Element    //body/div[3]//*[text()="${new_depot_start}"]
+    Click Element    ${add_edit_sub_line_button}
+    Run Keyword And Continue On Failure    Wait Until Element Is Visible    ${confirm_add_edit_sub_line_button}
+    Click Element    ${confirm_add_edit_sub_line_button}
+    Run Keyword And Continue On Failure    Wait Until Element Is Visible    ${top_right_alert}
+    Run Keyword And Continue On Failure    Element Text Should Be    ${top_right_alert}    แก้ไขสายย่อยสำเร็จ
+    Wait Until Element Is Visible    //*[@id="root"]/main//main/div//div[2]/div/div/div/div[./div/div/div[text()="${sub_line_name}"]]
+    Run Keyword And Continue On Failure    Wait Until Element Contains    //*[@id="root"]/main//main/div//div[2]/div/div/div/div/div/div/div[text()="${sub_line_name}"]/div    ${new_depot_start} -
+
+    #ส่วนนี้จะเปลี่ยนข้อมูลกลับมาเป็นค่าเดิม
+    Wait Until Element Is Visible    //*[@id="root"]/main//main/div//div[2]/div/div/div/div/div[./div/div[text()="${sub_line_name}"]]/div[2]/div/div[1]/button
+    Click Element    //*[@id="root"]/main//main/div//div[2]/div/div/div/div/div[./div/div[text()="${sub_line_name}"]]/div[2]/div/div[1]/button
+    Wait Until Element Is Visible    ${add_edit_sub_line_button}
+    Input Text    ${add_edit_sub_line_depot_start_field}    ${old_depot_start}
+    Wait Until Element Is Visible    //body/div[3]//*[text()="${old_depot_start}"]
+    Click Element    //body/div[3]//*[text()="${old_depot_start}"]
+    Click Element    ${add_edit_sub_line_button}
+    Run Keyword And Continue On Failure    Wait Until Element Is Visible    ${confirm_add_edit_sub_line_button}
+    Click Element    ${confirm_add_edit_sub_line_button}
+
+กรณี Edit Sub Line Depot Stop
+    ${sub_line_name}    Set Variable    99-99(9)
+    ${old_depot_stop}    Set Variable    อู่บางพลี
+    ${new_depot_stop}    Set Variable    อู่วัดไร่ขิง
+    open_line_subline_menu
+    select_line    99-99
+    Wait Until Element Is Visible    //*[@id="root"]/main//main/div//div[2]/div/div/div/div/div[./div/div[text()="${sub_line_name}"]]/div[2]/div/div[1]/button
+    Click Element    //*[@id="root"]/main//main/div//div[2]/div/div/div/div/div[./div/div[text()="${sub_line_name}"]]/div[2]/div/div[1]/button
+    Wait Until Element Is Visible    ${add_edit_sub_line_button}
+    Input Text    ${add_edit_sub_line_depot_stop_field}    ${new_depot_stop}
+    Wait Until Element Is Visible    //body/div[3]//*[text()="${new_depot_stop}"]
+    Click Element    //body/div[3]//*[text()="${new_depot_stop}"]
+    Click Element    ${add_edit_sub_line_button}
+    Run Keyword And Continue On Failure    Wait Until Element Is Visible    ${confirm_add_edit_sub_line_button}
+    Click Element    ${confirm_add_edit_sub_line_button}
+    Run Keyword And Continue On Failure    Wait Until Element Is Visible    ${top_right_alert}
+    Run Keyword And Continue On Failure    Element Text Should Be    ${top_right_alert}    แก้ไขสายย่อยสำเร็จ
+    Wait Until Element Is Visible    //*[@id="root"]/main//main/div//div[2]/div/div/div/div[./div/div/div[text()="${sub_line_name}"]]
+    Run Keyword And Continue On Failure    Wait Until Element Contains    //*[@id="root"]/main//main/div//div[2]/div/div/div/div/div/div/div[text()="${sub_line_name}"]/div     - ${new_depot_stop}
+
+    #ส่วนนี้จะเปลี่ยนข้อมูลกลับมาเป็นค่าเดิม
+    Wait Until Element Is Visible    //*[@id="root"]/main//main/div//div[2]/div/div/div/div/div[./div/div[text()="${sub_line_name}"]]/div[2]/div/div[1]/button
+    Click Element    //*[@id="root"]/main//main/div//div[2]/div/div/div/div/div[./div/div[text()="${sub_line_name}"]]/div[2]/div/div[1]/button
+    Wait Until Element Is Visible    ${add_edit_sub_line_button}
+    Input Text    ${add_edit_sub_line_depot_stop_field}    ${old_depot_stop}
+    Wait Until Element Is Visible    //body/div[3]//*[text()="${old_depot_stop}"]
+    Click Element    //body/div[3]//*[text()="${old_depot_stop}"]
+    Click Element    ${add_edit_sub_line_button}
+    Run Keyword And Continue On Failure    Wait Until Element Is Visible    ${confirm_add_edit_sub_line_button}
+    Click Element    ${confirm_add_edit_sub_line_button}
+
+ส่วนรายละเอียด Route
+    ${sub_line}    Set Variable    99-99(9)
+    open_line_subline_menu
+    select_line    99-99
+    Wait Until Element Is Visible    //*[@id="root"]/main//main/div//div[2]/div/div/div/div[./div/div/div[text()="${sub_line}"]]
+    Click Element    //*[@id="root"]/main//main/div//div[2]/div/div/div/div[./div/div/div[text()="${sub_line}"]]
+    Wait Until Element Is Visible    ${right_sub_line_name}
+    Element Text Should Be    ${right_sub_line_name}    ${sub_line}
+    Element Should Be Visible    ${add_new_route_button}
+
+หน้าต่าง Add Route To Sub Line
+    ${sub_line}    Set Variable    99-99(9)
+    open_line_subline_menu
+    select_line    99-99
+    Wait Until Element Is Visible    //*[@id="root"]/main//main/div//div[2]/div/div/div/div[./div/div/div[text()="${sub_line}"]]
+    Click Element    //*[@id="root"]/main//main/div//div[2]/div/div/div/div[./div/div/div[text()="${sub_line}"]]
+    Wait Until Element Is Visible    ${right_sub_line_name}
+    Element Text Should Be    ${right_sub_line_name}    ${sub_line}
+    Element Should Be Visible    ${add_new_route_button}
+    Click Element    ${add_new_route_button}
+    Wait Until Element Is Visible    ${add_route_button}
+    Run Keyword And Continue On Failure    Element Text Should Be    ${add_route_title}    เพิ่มเส้นทางให้สายย่อย
+    Run Keyword And Continue On Failure    Element Text Should Be    ${route_value_placeholder}    Select...
+    Run Keyword And Continue On Failure    Element Text Should Be    ${route_label}    เส้นทาง
+    Run Keyword And Continue On Failure    Element Text Should Be    ${start_date_label}    วันที่เริ่มต้น
+    Run Keyword And Continue On Failure    Element Text Should Be    ${end_date_label}    วันที่สิ้นสุด
+    Run Keyword And Continue On Failure    Element Text Should Be    ${add_route_button}    เพิ่ม
+
+กรณี Add Route To Sub Line โดยไม่กรอกข้อมูล
+    ${sub_line}    Set Variable    99-99(9)
+    open_line_subline_menu
+    select_line    99-99
+    Wait Until Element Is Visible    //*[@id="root"]/main//main/div//div[2]/div/div/div/div[./div/div/div[text()="${sub_line}"]]
+    Click Element    //*[@id="root"]/main//main/div//div[2]/div/div/div/div[./div/div/div[text()="${sub_line}"]]
+    Wait Until Element Is Visible    ${right_sub_line_name}
+    Element Text Should Be    ${right_sub_line_name}    ${sub_line}
+    Element Should Be Visible    ${add_new_route_button}
+    Click Element    ${add_new_route_button}
+    Wait Until Element Is Visible    ${add_route_button}
+    Click Element    ${add_route_button}
+    Run Keyword And Continue On Failure    Element Text Should Be    ${route_alert}    โปรดระบุเส้นทาง
+    Run Keyword And Continue On Failure    Element Text Should Be    ${start_date_alert}    โปรดระบุวันที่เริ่มต้น
+    Run Keyword And Continue On Failure    Element Text Should Be    ${stop_date_alert}    โปรดระบุวันที่สิ้นสุด
+    Run Keyword And Continue On Failure    Wait Until Element Is Not Visible    ${confirm_confirm_add_route_button}
+
+กรณีเลือก Start Date ที่วันปัจจุบัน
+    ${sub_line}    Set Variable    99-99(9)
+    ${current_month_not_ready}    get_current_month
+    ${current_year}    get_current_year
+    ${current_day}    get_current_day
+
+    ${month}    Set Variable    ${current_month_not_ready[0:2]}
+    ${day}    Set Variable    ${current_day}
+    ${year}    Set Variable    ${current_year}
+    ${month_text}    Set Variable    ${month_convert}[${month}] 
+    
+    open_line_subline_menu
+    select_line    99-99
+    Wait Until Element Is Visible    //*[@id="root"]/main//main/div//div[2]/div/div/div/div[./div/div/div[text()="${sub_line}"]]
+    Click Element    //*[@id="root"]/main//main/div//div[2]/div/div/div/div[./div/div/div[text()="${sub_line}"]]
+    Wait Until Element Is Visible    ${right_sub_line_name}
+    Element Text Should Be    ${right_sub_line_name}    ${sub_line}
+    Element Should Be Visible    ${add_new_route_button}
+    Click Element    ${add_new_route_button}
+    Wait Until Element Is Visible    ${add_route_button}
+    Click Element    ${add_route_button}
+    Input Text    ${route_field}    เส้นทางการวิ่ง_Test1
+    Click Element    //body/div[5]//*[text()="เส้นทางการวิ่ง_Test1"]
+    Click Element    //*[@id="headlessui-portal-root"]//div[2]/form/div[2]/div[1]/div
+    Click Element    //*[@class="flatpickr-calendar animate open arrowTop arrowLeft"]//select
+    Sleep    1
+    Click Element    //html/body/div[@class="flatpickr-calendar animate open arrowTop arrowLeft"][1]/div[1]/div/div/select/option[${month}]
+    #Click Element    //html/body/div[3]/div[1]/div/div/select/option[1]
+    Input Text    //html/body/div[@class="flatpickr-calendar animate open arrowTop arrowLeft"][1]/div/div/div/div/input    ${year}
+    Click Element    //html/body/div[@class="flatpickr-calendar animate open arrowTop arrowLeft"][1]/div[2]/div/div[2]/div/span[@aria-label="${month_text} ${day}, ${year}"]
+    ${month_test}    get_current_month        
     Sleep    5
+
+
+กรณีเลือก Start Date ที่ตรงกับวันปัจจุบัน
+    ${sub_line}    Set Variable    99-99(9)    
+    ${current_month_not_ready}    get_current_month
+    ${current_month}    Set Variable    ${current_month_not_ready[0:2]}
+    ${current_year}    get_current_year
+    ${current_day}    get_current_day
+
+    open_line_subline_menu
+    select_line    99-99
+    add_route    sub_line=${sub_line}    start_year=${current_year}    start_month=${current_month}    start_day=${current_day}
+    Run Keyword And Continue On Failure    Element Should Be Visible    ${start_date_alert}
+    Run Keyword And Continue On Failure    Element Text Should Be    ${start_date_alert}    วันที่เริ่มต้นต้องมีค่ามากกว่าวันปัจจุบัน   
+
+หน้าต่างยืนยันการเพิ่ม Route
+    open_line_subline_menu
+    select_line    99-99
+    add_route
+    Wait Until Element Is Visible    ${confirm_confirm_add_route_button}
+    Run Keyword And Continue On Failure    Element Text Should Be    ${confirm_add_route_title}    เพิ่มเส้นทางให้สายย่อย
+    Run Keyword And Continue On Failure    Element Text Should Be    ${confirm_add_route_text}    คุณยืนยันทีจะเพิ่มเส้นทางให้สายย่อยให้สายย่อยใช่หรือไม่?        
+    Run Keyword And Continue On Failure    Element Text Should Be    ${confirm_confirm_add_route_button}    ยืนยัน
+    Run Keyword And Continue On Failure    Element Text Should Be    ${cancel_confirm_route_button}    ยกเลิก
+
+กรณีเพิ่ม Route ด้วยข้อมูลที่ครบถ้วนและถูกต้อง
+    open_line_subline_menu
+    select_line    99-99
+    add_route
+    Wait Until Element Is Visible    ${confirm_confirm_add_route_button}
+
+#กรณีเลือก Start Date เป็นวันที่ปัจจุบัน
+#กรณีเลือก End Date เป็นวันที่ปัจจุบัน
+#กรณีเลือก Start > End Date 
+#กรณีเลือก Start < End Date 
+#กรณีเลือก Start = End Date 
+#กรณีเลือกช่วงวันที่ Start Date ซ้ำกับที่มีอยู่ในระบบ
+#กรณีเลือกช่วงวันที่ End Date ซ้ำกับที่มีอยู่ในระบบ
+#กรณีเลือกข้อมูลครบถ้วนและถูกต้อง
