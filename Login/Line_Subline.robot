@@ -256,8 +256,8 @@ get_current_day
     RETURN    ${day}
 
 add_route  
-    [Arguments]    ${sub_line}=99-99(9)    ${route_name}=เส้นทางการวิ่ง_Test1    ${start_year}=2070    ${start_month}=7    
-    ...            ${start_day}=10         ${end_year}=2080    ${end_month}=3    ${end_day}=25    
+    [Arguments]    ${sub_line}=99-99(9)    ${route_name}=เส้นทางการวิ่ง_Test1    ${start_year}=2050    ${start_month}=7    
+    ...            ${start_day}=10         ${end_year}=2060    ${end_month}=3    ${end_day}=25    
 
     ${start_month_text}    Set Variable    ${month_convert}[${start_month}] 
     ${end_month_text}    Set Variable    ${month_convert}[${end_month}]
@@ -271,7 +271,7 @@ add_route
     Wait Until Element Is Visible    ${add_route_button}
     Click Element    ${add_route_button}
     Input Text    ${route_field}    ${route_name}
-    Click Element    //body/div[5]//*[text()="เส้นทางการวิ่ง_Test1"]
+    Click Element    //body/div[5]//*[text()="${route_name}"]
     Click Element    //*[@id="headlessui-portal-root"]//div[2]/form/div[2]/div[1]/div
     Click Element    //*[@class="flatpickr-calendar animate open arrowTop arrowLeft"]//select
     Sleep    1
@@ -460,7 +460,6 @@ add_route
     Run Keyword And Continue On Failure    Element Text Should Be    ${confirm_add_edit_line_text}    คุณยืนยันที่จะเพิ่มสายใช่หรือไม่?
     Run Keyword And Continue On Failure    Element Text Should Be    ${confirm_confirm_add_edit_line_button}    ยืนยัน
     Run Keyword And Continue On Failure    Element Text Should Be    ${confirm_add_edit_cancel_line_button}    ยกเลิก
-
 
 กรณีเพิ่ม Line ด้วยข้อมูลที่ครบถ้วนและถูกต้อง
     ${line_name}    Set Variable    888
@@ -1355,40 +1354,6 @@ add_route
     Run Keyword And Continue On Failure    Element Text Should Be    ${stop_date_alert}    โปรดระบุวันที่สิ้นสุด
     Run Keyword And Continue On Failure    Wait Until Element Is Not Visible    ${confirm_confirm_add_route_button}
 
-กรณีเลือก Start Date ที่วันปัจจุบัน
-    ${sub_line}    Set Variable    99-99(9)
-    ${current_month_not_ready}    get_current_month
-    ${current_year}    get_current_year
-    ${current_day}    get_current_day
-
-    ${month}    Set Variable    ${current_month_not_ready[0:2]}
-    ${day}    Set Variable    ${current_day}
-    ${year}    Set Variable    ${current_year}
-    ${month_text}    Set Variable    ${month_convert}[${month}] 
-    
-    open_line_subline_menu
-    select_line    99-99
-    Wait Until Element Is Visible    //*[@id="root"]/main//main/div//div[2]/div/div/div/div[./div/div/div[text()="${sub_line}"]]
-    Click Element    //*[@id="root"]/main//main/div//div[2]/div/div/div/div[./div/div/div[text()="${sub_line}"]]
-    Wait Until Element Is Visible    ${right_sub_line_name}
-    Element Text Should Be    ${right_sub_line_name}    ${sub_line}
-    Element Should Be Visible    ${add_new_route_button}
-    Click Element    ${add_new_route_button}
-    Wait Until Element Is Visible    ${add_route_button}
-    Click Element    ${add_route_button}
-    Input Text    ${route_field}    เส้นทางการวิ่ง_Test1
-    Click Element    //body/div[5]//*[text()="เส้นทางการวิ่ง_Test1"]
-    Click Element    //*[@id="headlessui-portal-root"]//div[2]/form/div[2]/div[1]/div
-    Click Element    //*[@class="flatpickr-calendar animate open arrowTop arrowLeft"]//select
-    Sleep    1
-    Click Element    //html/body/div[@class="flatpickr-calendar animate open arrowTop arrowLeft"][1]/div[1]/div/div/select/option[${month}]
-    #Click Element    //html/body/div[3]/div[1]/div/div/select/option[1]
-    Input Text    //html/body/div[@class="flatpickr-calendar animate open arrowTop arrowLeft"][1]/div/div/div/div/input    ${year}
-    Click Element    //html/body/div[@class="flatpickr-calendar animate open arrowTop arrowLeft"][1]/div[2]/div/div[2]/div/span[@aria-label="${month_text} ${day}, ${year}"]
-    ${month_test}    get_current_month        
-    Sleep    5
-
-
 กรณีเลือก Start Date ที่ตรงกับวันปัจจุบัน
     ${sub_line}    Set Variable    99-99(9)    
     ${current_month_not_ready}    get_current_month
@@ -1411,18 +1376,107 @@ add_route
     Run Keyword And Continue On Failure    Element Text Should Be    ${confirm_add_route_text}    คุณยืนยันทีจะเพิ่มเส้นทางให้สายย่อยให้สายย่อยใช่หรือไม่?        
     Run Keyword And Continue On Failure    Element Text Should Be    ${confirm_confirm_add_route_button}    ยืนยัน
     Run Keyword And Continue On Failure    Element Text Should Be    ${cancel_confirm_route_button}    ยกเลิก
-
-กรณีเพิ่ม Route ด้วยข้อมูลที่ครบถ้วนและถูกต้อง
+    
+กรณี Add Route To Sub Line โดยเลือก Route ที่ซ้ำกับมีอยู่แต่เวลาไม่ทับกัน
     open_line_subline_menu
     select_line    99-99
-    add_route
+    add_route    start_year=3000    end_year=3001
     Wait Until Element Is Visible    ${confirm_confirm_add_route_button}
 
-#กรณีเลือก Start Date เป็นวันที่ปัจจุบัน
-#กรณีเลือก End Date เป็นวันที่ปัจจุบัน
-#กรณีเลือก Start > End Date 
-#กรณีเลือก Start < End Date 
-#กรณีเลือก Start = End Date 
-#กรณีเลือกช่วงวันที่ Start Date ซ้ำกับที่มีอยู่ในระบบ
-#กรณีเลือกช่วงวันที่ End Date ซ้ำกับที่มีอยู่ในระบบ
-#กรณีเลือกข้อมูลครบถ้วนและถูกต้อง
+กรณี Add Route To Sub Line เลือก Start Time ที่ทับกับ Start Time ที่มีอยู่
+    #จะเทียบกับข้อมูล Route เดิมที่ถูกสร้างไว้ที่มี Start Time เหมือนกัน
+    open_line_subline_menu
+    select_line    99-99
+    add_route    start_year=2070    end_year=3000
+    Run Keyword And Continue On Failure    Element Text Should Be    ${start_date_alert}    วันเริ่มต้นนี้ถูกใช้งานแล้ว        
+    Wait Until Element Is Not Visible    ${confirm_confirm_add_route_button}
+
+กรณี Add Route To Sub Line เลือก Start Time ที่ทับกับ End Time ที่มีอยู่
+    #จะเทียบกับข้อมูล Route เดิมที่ถูกสร้างไว้ที่มี Stop Time เหมือนกัน
+    open_line_subline_menu
+    select_line    99-99
+    add_route    start_day=25    start_month=3    start_year=2080    end_year=3000
+    Run Keyword And Continue On Failure    Element Text Should Be    ${start_date_alert}    วันเริ่มต้นนี้ถูกใช้งานแล้ว        
+    Run Keyword And Continue On Failure    Wait Until Element Is Not Visible    ${confirm_confirm_add_route_button}
+
+กรณี Add Route To Sub Line เลือก End Time ที่ทับกับ Start Time ที่มีอยู่
+    #จะเทียบกับข้อมูล Route เดิมที่ถูกสร้างไว้ที่มี Start Time เหมือนกัน
+    open_line_subline_menu
+    select_line    99-99
+    add_route    start_year=2065    end_day=10    end_month=7    end_year=2070
+    Run Keyword And Continue On Failure    Element Text Should Be    ${stop_date_alert}    วันสิ้นสุดนี้ถูกใช้งานแล้ว        
+    Run Keyword And Continue On Failure    Wait Until Element Is Not Visible    ${confirm_confirm_add_route_button}
+
+กรณี Add Route To Sub Line เลือก End Time ที่ทับกับ End Time ที่มีอยู่
+    #จะเทียบกับข้อมูล Route เดิมที่ถูกสร้างไว้ที่มี Start Time เหมือนกัน
+    open_line_subline_menu
+    select_line    99-99
+    add_route    start_year=2065    end_day=25    end_month=3    end_year=2080
+    Run Keyword And Continue On Failure    Element Text Should Be    ${stop_date_alert}    วันสิ้นสุดนี้ถูกใช้งานแล้ว        
+    Run Keyword And Continue On Failure    Wait Until Element Is Not Visible    ${confirm_confirm_add_route_button}
+
+กรณี Add Route To Sub Line เลือก Start Date เท่ากับ End Date
+    open_line_subline_menu
+    select_line    99-99
+    add_route    start_day=25    start_month=3    start_year=2090    end_day=25    end_month=3    end_year=2090
+    Wait Until Element Is Visible    ${confirm_confirm_add_route_button}
+    
+กรณี Add Route To Sub Line เลือก Start Date มากกว่า End Date
+    open_line_subline_menu
+    select_line    99-99
+    add_route    start_year=3000    end_day=25    end_month=3    end_year=2090
+    Run Keyword And Continue On Failure    Wait Until Element Is Visible    ${stop_date_alert}
+    Run Keyword And Continue On Failure    Element Text Should Be    ${stop_date_alert}    วันสิ้นสุดต้องมีค่ามากกว่าวันเริ่มต้น
+    
+กรณีเพิ่ม Route ด้วยข้อมูลที่ครบถ้วนและถูกต้อง
+    ${route_name}    Set Variable    เส้นทางการวิ่ง_1-13(126)Testtt
+    open_line_subline_menu
+    select_line    99-99
+    add_route    route_name=${route_name}
+    Wait Until Element Is Visible    ${confirm_confirm_add_route_button}
+    Click Element     ${confirm_confirm_add_route_button}
+    Run Keyword And Continue On Failure    Wait Until Element Is Visible    ${top_right_alert}
+    Run Keyword And Continue On Failure    Element Text Should Be    ${top_right_alert}    เพิ่มเส้นทางให้สายย่อยสำเร็จ
+    Run Keyword And Continue On Failure    Element Should Be Visible     //*[@id="root"]/main//main//div[3]/div/div[1]/div[2]/div/div/div/div/div/div[2][text()="${route_name}"]
+    Sleep    1
+
+หน้าต่างยืนยันการลบ Route
+    ${route_name}    Set Variable    เส้นทางการวิ่ง_1-13(126)Testtt
+    ${sub_line}    Set Variable    99-99(9)
+    open_line_subline_menu
+    select_line    99-99
+    Wait Until Element Is Visible    //*[@id="root"]/main//main/div//div[2]/div/div/div/div[./div/div/div[text()="${sub_line}"]]
+    Click Element    //*[@id="root"]/main//main/div//div[2]/div/div/div/div[./div/div/div[text()="${sub_line}"]]
+    Sleep    1
+    Click Element    //*[@id="root"]/main//main//div[3]/div/div[1]/div[2]/div/div/div/div/div[./div[text()="เส้นทางการวิ่ง_1-13(126)Testtt"]]/div[3]/div/div
+    Wait Until Element Is Visible    ${confirm_delete_route_button}
+    Run Keyword And Continue On Failure    Element Text Should Be    ${delete_route_title}    ลบเส้นทางของสายย่อย
+    Run Keyword And Continue On Failure    Element Text Should Be    ${delete_route_text}    คุณยืนยันลบเส้นทาง : ${route_name} ใช่หรือไม่?
+    Run Keyword And Continue On Failure    Element Text Should Be    ${confirm_delete_route_button}    ยืนยัน
+    Run Keyword And Continue On Failure    Element Text Should Be    ${cancel_delete_route_button}    ยกเลิก
+
+กรณีลบ Route
+    ${route_name}    Set Variable    เส้นทางการวิ่ง_1-13(126)Testtt
+    ${sub_line}    Set Variable    99-99(9)
+    open_line_subline_menu
+    select_line    99-99
+    Wait Until Element Is Visible    //*[@id="root"]/main//main/div//div[2]/div/div/div/div[./div/div/div[text()="${sub_line}"]]
+    Click Element    //*[@id="root"]/main//main/div//div[2]/div/div/div/div[./div/div/div[text()="${sub_line}"]]
+    Sleep    1
+    Click Element    //*[@id="root"]/main//main//div[3]/div/div[1]/div[2]/div/div/div/div/div[./div[text()="เส้นทางการวิ่ง_1-13(126)Testtt"]]/div[3]/div/div
+    Wait Until Element Is Visible    ${confirm_delete_route_button}
+    Click Element    ${confirm_delete_route_button}
+    Run Keyword And Continue On Failure    Wait Until Element Is Visible    ${top_right_alert}
+    Run Keyword And Continue On Failure    Element Text Should Be    ${top_right_alert}    ลบเส้นทางของสายย่อยสำเร็จ  
+    Run Keyword And Continue On Failure    Wait Until Element Is Not Visible    //*[@id="root"]/main//main//div[3]/div/div[1]/div[2]/div/div/div/div/div/div[2][text()="${route_name}"]     
+
+
+
+#กรณีกดปุ่ม x, Cancel
+#- หน้ายืนยันการเพิ่ม Line, Sub Line, Route
+
+#กรณีกดปุ่ม x, Cancel
+#- หน้ายืนยันการแก้ไข Line, Sub Line
+
+#กรณีกดปุ่ม x, Cancel
+#- หน้ายืนยันการลบ Line, Sub Line, Route
