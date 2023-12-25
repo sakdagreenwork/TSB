@@ -1,3 +1,9 @@
+# Test Data ที่่ต้องเตรียมไว้ก่อนทำการ Automate Test
+# 1.line 99-99
+# 2.sub line 99-99(9)    (ต้องอยู่ใน line 99-99)
+# 3.Route เส้นทางการวิ่ง_Test1   (ต้องอยู่ใน sub line 99-99(9))
+
+
 *** Settings ***
 Library    SeleniumLibrary    screenshot_root_directory=/Users/sakda.l/Desktop/TSB Automate/Login/Failed Screenshot
 Library    Collections
@@ -334,11 +340,12 @@ add_route
     Run Keyword And Continue On Failure    Should Be Equal    ${line_min_trip_place}    เดินทางขั้นต่ำ  
     Run Keyword And Continue On Failure    Element Text Should Be    ${add_edit_line_button}    เพิ่ม
 
-กรณีกด x หน้า Add New Line
+กรณีกดปุ่ม x หน้า Add New Line
     open_add_line_menu
     Wait Until Element Is Visible    ${add_edit_line_button}    5
     Click Element    ${add_edit_line_close_button}
     Wait Until Element Is Not Visible    ${add_edit_line_close_button}    5
+    Wait Until Element Is Visible    ${title}
 
 กรณีเพิ่ม Line โดยไม่กรอกข้อมูล
     open_add_line_menu
@@ -461,6 +468,21 @@ add_route
     Run Keyword And Continue On Failure    Element Text Should Be    ${confirm_confirm_add_edit_line_button}    ยืนยัน
     Run Keyword And Continue On Failure    Element Text Should Be    ${confirm_add_edit_cancel_line_button}    ยกเลิก
 
+กรณีกดปุ่ม x หน้าต่างยืนยันการเพิ่ม Line
+    add_line
+    Wait Until Element Is Visible    ${close_confirm_add_edit_sub_line_button}
+    Click Element    ${close_confirm_add_edit_sub_line_button}
+    Wait Until Element Is Not Visible    ${close_confirm_add_edit_sub_line_button}
+    Wait Until Element Is Visible    ${title}
+
+กรณีกดปุ่ม Cancel หน้าต่างยืนยันการเพิ่ม Line
+    add_line
+    Wait Until Element Is Visible    ${confirm_add_edit_cancel_line_button}
+    Click Element    ${confirm_add_edit_cancel_line_button}
+    Wait Until Element Is Not Visible    ${confirm_add_edit_cancel_line_button}
+    Wait Until Element Is Visible    ${title}
+
+
 กรณีเพิ่ม Line ด้วยข้อมูลที่ครบถ้วนและถูกต้อง
     ${line_name}    Set Variable    888
     ${label}    Set Variable    888
@@ -507,6 +529,28 @@ add_route
     Run Keyword And Continue On Failure    Element Text Should Be    ${confirm_delete_line_button}    ยืนยัน
     Run Keyword And Continue On Failure    Element Text Should Be    ${cancel_delete_line_button}    ยกเลิก
 
+กรณีกดปุ่ม x หน้าต่างยืนยันการ Delete Line
+    ${line_name}    Set Variable    Test99    
+    open_line_subline_menu
+    select_line    ${line_name}
+    Click Element    ${delete_line_button}
+    Wait Until Element Is Visible    ${close_delete_line_button}
+    Click Element    ${close_delete_line_button}
+    Wait Until Element Is Not Visible    ${close_delete_line_button}
+    Wait Until Element Is Visible    ${title}
+
+กรณีกดปุ่ม Cancel หน้าต่างยืนยันการ Delete Line
+    ${line_name}    Set Variable    Test99    
+    open_line_subline_menu
+    select_line    ${line_name}
+    Click Element    ${delete_line_button}
+    Wait Until Element Is Visible   ${cancel_delete_line_button}
+    Click Element    ${cancel_delete_line_button}
+    Wait Until Element Is Not Visible    ${cancel_delete_line_button}
+    Wait Until Element Is Visible    ${title}
+
+
+
 กรณี Delete Line
     #ลบ Line จากที่สร้างใหม่จาก case สร้าง Line
     open_line_subline_menu
@@ -543,6 +587,15 @@ add_route
     select_line
     Click Element    ${edit_line_button}
     Wait Until Element Is Visible    ${add_edit_line_button}
+
+กรณีกดปุ่ม x หน้า Edit Line
+    open_line_subline_menu
+    select_line
+    Click Element    ${edit_line_button}
+    Wait Until Element Is Visible    ${add_edit_line_close_button}
+    Click Element    ${add_edit_line_close_button}
+    Wait Until Element Is Not Visible    ${add_edit_line_close_button}
+    Wait Until Element Is Visible    ${title}
 
 จำนวนตัวอักษรสูงสุดกรณี Edit Line
     open_line_subline_menu
@@ -1053,6 +1106,28 @@ add_route
     Run Keyword And Continue On Failure    Element Text Should Be    ${confirm_confirm_add_edit_line_button}    ยืนยัน
     Run Keyword And Continue On Failure    Element Text Should Be    ${confirm_add_edit_cancel_line_button}    ยกเลิก
 
+กรณีกดปุ่ม x หน้าต่างยืนยันการ Edit Line
+    open_line_subline_menu
+    select_line    99-99
+    Click Element    ${edit_line_button}
+    Wait Until Element Is Visible    ${add_edit_line_button}
+    Click Element    ${add_edit_line_button}    
+    Wait Until Element Is Visible    ${confirm_add_edit_line_close_button}
+    Click Element    ${confirm_add_edit_line_close_button}
+    Wait Until Element Is Not Visible    ${confirm_add_edit_line_close_button}
+    Wait Until Element Is Visible    ${title}
+
+
+กรณีกดปุ่ม Cancel หน้าต่งยืนยันการ Edit Line
+    open_line_subline_menu
+    select_line    99-99
+    Click Element    ${edit_line_button}
+    Wait Until Element Is Visible    ${add_edit_line_button}
+    Click Element    ${add_edit_line_button}    
+    Wait Until Element Is Visible    ${confirm_add_edit_cancel_line_button}
+    Click Element    ${confirm_add_edit_cancel_line_button}
+    Wait Until Element Is Not Visible    ${confirm_add_edit_cancel_line_button}
+    Wait Until Element Is Visible    ${title}
 
 ส่วนแสดงตรงกลาง
     open_line_subline_menu
@@ -1075,6 +1150,15 @@ add_route
     Run Keyword And Continue On Failure    Element Text Should Be    ${add_edit_sub_line_depot_stop_label}    อู่ปลายทาง
     Run Keyword And Continue On Failure    Element Text Should Be    ${add_edit_sub_line_depot_stop_placeholder}    Select...
     Run Keyword And Continue On Failure    Element Text Should Be    ${add_edit_sub_line_button_text}    เพิ่ม
+
+กรณีกดปุ่ม x หน้า Add New Sub Line
+    open_line_subline_menu
+    select_line    99-99
+    Click Element    ${add_new_sub_line_button}
+    Wait Until Element Is Visible   ${close_add_edit_sub_line_button}
+    Click Element    ${close_add_edit_sub_line_button}
+    Wait Until Element Is Not Visible    ${close_add_edit_sub_line_button}
+    Wait Until Element Is Visible    ${title}
 
 จำนวนตัวอักษรสูงสุดกรณี Add Sub Line
     open_line_subline_menu
@@ -1115,6 +1199,26 @@ add_route
     Run Keyword And Continue On Failure    Element Text Should Be    ${confirm_add_edit_sub_line_button}    ยืนยัน
     Run Keyword And Continue On Failure    Element Text Should Be    ${cancel_confirm_add_edit_sub_line_button}    ยกเลิก
 
+กรณีกดปุ่ม x หน้าต่างยืนยันการ Add Sub Line
+    open_line_subline_menu
+    select_line    99-99
+    Click Element    ${add_new_sub_line_button}
+    add_sub_line
+    Wait Until Element Is Visible    ${close_confirm_add_edit_sub_line_button}
+    Click Element    ${close_confirm_add_edit_sub_line_button}
+    Wait Until Element Is Not Visible    ${close_confirm_add_edit_sub_line_button}
+    Wait Until Element Is Visible    ${title}
+
+กรณีกดปุ่ม Cancel หน้าต่างยืนยันการ Add Sub Line
+    open_line_subline_menu
+    select_line    99-99
+    Click Element    ${add_new_sub_line_button}
+    add_sub_line
+    Wait Until Element Is Visible    ${cancel_confirm_add_edit_sub_line_button}
+    Click Element    ${cancel_confirm_add_edit_sub_line_button}
+    Wait Until Element Is Not Visible    ${cancel_confirm_add_edit_sub_line_button}
+    Wait Until Element Is Visible    ${title}
+
 กรณี Add Sub Line ด้วยข้อมูลที่ครบถ้วนและถูกต้อง
     ${sub_line}    Set Variable    99-99(99)
     ${depot_start}    Set Variable    อู่บางพลี
@@ -1145,6 +1249,28 @@ add_route
     Run Keyword And Continue On Failure    Element Text Should Be    ${confirm_delete_sub_line_button}    ยืนยัน
     Run Keyword And Continue On Failure    Element Text Should Be    ${cancel_delete_sub_line_button}    ยกเลิก
 
+กรณีกดปุ่ม x หน้าต่างยืนยันการ Delete Sub Line
+    ${sub_line_name}    Set Variable    99-99(9)
+    open_line_subline_menu
+    select_line    99-99
+    Wait Until Element Is Visible    //*[@id="root"]/main//main/div//div[2]/div/div/div/div/div[./div/div[text()="${sub_line_name}"]]/div[2]/div/div/div
+    Click Element    //*[@id="root"]/main//main/div//div[2]/div/div/div/div/div[./div/div[text()="${sub_line_name}"]]/div[2]/div/div/div
+    Wait Until Element Is Visible    ${close_delete_sub_line_button}
+    Click Element    ${close_delete_sub_line_button}   
+    Wait Until Element Is Not Visible    ${close_delete_sub_line_button}
+    Wait Until Element Is Visible    ${title}
+
+กรณีกดปุ่ม Cancel หน้าต่างยืนยันการ Delete Sub Line
+    ${sub_line_name}    Set Variable    99-99(9)
+    open_line_subline_menu
+    select_line    99-99
+    Wait Until Element Is Visible    //*[@id="root"]/main//main/div//div[2]/div/div/div/div/div[./div/div[text()="${sub_line_name}"]]/div[2]/div/div/div
+    Click Element    //*[@id="root"]/main//main/div//div[2]/div/div/div/div/div[./div/div[text()="${sub_line_name}"]]/div[2]/div/div/div
+    Wait Until Element Is Visible    ${cancel_delete_sub_line_button}
+    Click Element    ${cancel_delete_sub_line_button}
+    Wait Until Element Is Not Visible    ${cancel_delete_sub_line_button}
+    Wait Until Element Is Visible    ${title}
+
 กรณี Delete Sub Line
     ${sub_line_name}    Set Variable    99-99(99)
     open_line_subline_menu
@@ -1170,6 +1296,16 @@ add_route
     Run Keyword And Continue On Failure    Element Text Should Be    ${add_edit_sub_line_depot_start_label}    อู่ต้นทาง
     Run Keyword And Continue On Failure    Element Text Should Be    ${add_edit_sub_line_depot_stop_label}    อู่ปลายทาง
     Run Keyword And Continue On Failure    Element Text Should Be    ${add_edit_sub_line_button_text}    บันทึก
+
+กรณีกดปุ่ม x หน้า Edit Sub Line
+    open_line_subline_menu
+    select_line    99-99
+    Wait Until Element Is Visible    //*[@id="root"]/main//main/div//div[2]/div/div/div/div/div[./div/div[text()="99-99(5)"]]/div[2]/div/div[1]/button
+    Click Element    //*[@id="root"]/main//main/div//div[2]/div/div/div/div/div[./div/div[text()="99-99(5)"]]/div[2]/div/div[1]/button
+    Wait Until Element Is Visible    ${close_add_edit_sub_line_button}
+    Click Element    ${close_add_edit_sub_line_button}
+    Wait Until Element Is Not Visible    ${close_add_edit_sub_line_button}
+    Wait Until Element Is Visible    ${title}
 
 กรณี Edit Sub Line Name ซ้ำกับที่มีอยู่
     ${old_sub_line_name}    Set Variable    99-99(4)
@@ -1215,6 +1351,36 @@ add_route
     Run Keyword And Continue On Failure    Element Text Should Be    ${confirm_add_edit_sub_line_text}   คุณยืนยันที่จะแก้ไขสายย่อยใช่หรือไม่?
     Run Keyword And Continue On Failure    Element Text Should Be    ${confirm_add_edit_sub_line_button}    ยืนยัน
     Run Keyword And Continue On Failure    Element Text Should Be    ${cancel_confirm_add_edit_sub_line_button}    ยกเลิก
+
+กรณีกดปุ่ม x หน้าต่างยืนยันการ Edit Sub Line
+    ${sub_line_name}    Set Variable    99-99(9)
+    open_line_subline_menu
+    select_line    99-99
+    Wait Until Element Is Visible    //*[@id="root"]/main//main/div//div[2]/div/div/div/div/div[./div/div[text()="${sub_line_name}"]]/div[2]/div/div[1]/button
+    Click Element    //*[@id="root"]/main//main/div//div[2]/div/div/div/div/div[./div/div[text()="${sub_line_name}"]]/div[2]/div/div[1]/button
+    Wait Until Element Is Visible    ${add_edit_sub_line_button}
+    Input Text    ${add_edit_sub_line_name_field}    ${sub_line_name}
+    Click Element    ${add_edit_sub_line_button}
+    Click Element    ${add_edit_sub_line_button}
+    Wait Until Element Is Visible    ${close_confirm_add_edit_sub_line_button}
+    Click Element    ${close_confirm_add_edit_sub_line_button}
+    Wait Until Element Is Not Visible    ${close_confirm_add_edit_sub_line_button}
+    Wait Until Element Is Visible    ${title}
+
+กรณีกดปุ่ม Cancel หน้าต่างยืนยันการ Edit Sub Line
+    ${sub_line_name}    Set Variable    99-99(9)
+    open_line_subline_menu
+    select_line    99-99
+    Wait Until Element Is Visible    //*[@id="root"]/main//main/div//div[2]/div/div/div/div/div[./div/div[text()="${sub_line_name}"]]/div[2]/div/div[1]/button
+    Click Element    //*[@id="root"]/main//main/div//div[2]/div/div/div/div/div[./div/div[text()="${sub_line_name}"]]/div[2]/div/div[1]/button
+    Wait Until Element Is Visible    ${add_edit_sub_line_button}
+    Input Text    ${add_edit_sub_line_name_field}    ${sub_line_name}
+    Click Element    ${add_edit_sub_line_button}
+    Click Element    ${add_edit_sub_line_button}
+    Wait Until Element Is Visible    ${cancel_confirm_add_edit_sub_line_button}
+    Click Element    ${cancel_confirm_add_edit_sub_line_button}
+    Wait Until Element Is Not Visible    ${cancel_confirm_add_edit_sub_line_button}
+    Wait Until Element Is Visible    ${title}
 
 กรณี Edit Sub Line Name
     ${old_sub_line_name}    Set Variable    99-99(9)
@@ -1337,6 +1503,21 @@ add_route
     Run Keyword And Continue On Failure    Element Text Should Be    ${end_date_label}    วันที่สิ้นสุด
     Run Keyword And Continue On Failure    Element Text Should Be    ${add_route_button}    เพิ่ม
 
+กรณีกดปุ่ม x หน้า Add Route To Sub Line
+    ${sub_line}    Set Variable    99-99(9)
+    open_line_subline_menu
+    select_line    99-99
+    Wait Until Element Is Visible    //*[@id="root"]/main//main/div//div[2]/div/div/div/div[./div/div/div[text()="${sub_line}"]]
+    Click Element    //*[@id="root"]/main//main/div//div[2]/div/div/div/div[./div/div/div[text()="${sub_line}"]]
+    Wait Until Element Is Visible    ${right_sub_line_name}
+    Element Text Should Be    ${right_sub_line_name}    ${sub_line}
+    Element Should Be Visible    ${add_new_route_button}
+    Click Element    ${add_new_route_button}
+    Wait Until Element Is Visible    ${close_route_button}
+    Click Element    ${close_route_button}
+    Wait Until Element Is Not Visible    ${close_route_button}
+    Wait Until Element Is Visible    ${title}
+
 กรณี Add Route To Sub Line โดยไม่กรอกข้อมูล
     ${sub_line}    Set Variable    99-99(9)
     open_line_subline_menu
@@ -1377,6 +1558,26 @@ add_route
     Run Keyword And Continue On Failure    Element Text Should Be    ${confirm_confirm_add_route_button}    ยืนยัน
     Run Keyword And Continue On Failure    Element Text Should Be    ${cancel_confirm_route_button}    ยกเลิก
     
+กรณีกดปุ่ม x หน้าต่างยืนยันการ Add Route To Sub Line
+    open_line_subline_menu
+    select_line    99-99
+    add_route
+    Wait Until Element Is Visible    ${close_confirm_add_route_button}
+    Click Element    ${close_confirm_add_route_button}
+    Wait Until Element Is Not Visible    ${close_confirm_add_route_button}
+    Wait Until Element Is Visible    ${title}
+
+กรณีกดปุ่ม Cancel หน้าต่างยืนยันการ Add Route To Sub Line
+    open_line_subline_menu
+    select_line    99-99
+    add_route
+    Wait Until Element Is Visible    ${cancel_confirm_route_button}
+    Click Element    ${cancel_confirm_route_button}
+    Wait Until Element Is Not Visible    ${cancel_confirm_route_button}
+    Wait Until Element Is Visible    ${title}
+
+
+
 กรณี Add Route To Sub Line โดยเลือก Route ที่ซ้ำกับมีอยู่แต่เวลาไม่ทับกัน
     open_line_subline_menu
     select_line    99-99
@@ -1441,19 +1642,47 @@ add_route
     Sleep    1
 
 หน้าต่างยืนยันการลบ Route
-    ${route_name}    Set Variable    เส้นทางการวิ่ง_1-13(126)Testtt
+    ${route_name}    Set Variable    เส้นทางการวิ่ง_Test1
     ${sub_line}    Set Variable    99-99(9)
     open_line_subline_menu
     select_line    99-99
     Wait Until Element Is Visible    //*[@id="root"]/main//main/div//div[2]/div/div/div/div[./div/div/div[text()="${sub_line}"]]
     Click Element    //*[@id="root"]/main//main/div//div[2]/div/div/div/div[./div/div/div[text()="${sub_line}"]]
     Sleep    1
-    Click Element    //*[@id="root"]/main//main//div[3]/div/div[1]/div[2]/div/div/div/div/div[./div[text()="เส้นทางการวิ่ง_1-13(126)Testtt"]]/div[3]/div/div
+    Click Element    //*[@id="root"]/main//main//div[3]/div/div[1]/div[2]/div/div/div/div/div[./div[text()="${route_name}"]]/div[3]/div/div
     Wait Until Element Is Visible    ${confirm_delete_route_button}
     Run Keyword And Continue On Failure    Element Text Should Be    ${delete_route_title}    ลบเส้นทางของสายย่อย
     Run Keyword And Continue On Failure    Element Text Should Be    ${delete_route_text}    คุณยืนยันลบเส้นทาง : ${route_name} ใช่หรือไม่?
     Run Keyword And Continue On Failure    Element Text Should Be    ${confirm_delete_route_button}    ยืนยัน
     Run Keyword And Continue On Failure    Element Text Should Be    ${cancel_delete_route_button}    ยกเลิก
+
+กรณีกดปุ่ม x หน้าต่างยืนยันการ Delete Route
+    ${route_name}    Set Variable    เส้นทางการวิ่ง_Test1
+    ${sub_line}    Set Variable    99-99(9)
+    open_line_subline_menu
+    select_line    99-99
+    Wait Until Element Is Visible    //*[@id="root"]/main//main/div//div[2]/div/div/div/div[./div/div/div[text()="${sub_line}"]]
+    Click Element    //*[@id="root"]/main//main/div//div[2]/div/div/div/div[./div/div/div[text()="${sub_line}"]]
+    Sleep    1
+    Click Element    //*[@id="root"]/main//main//div[3]/div/div[1]/div[2]/div/div/div/div/div[./div[text()="${route_name}"]]/div[3]/div/div
+    Wait Until Element Is Visible    ${close_delete_route_button}
+    Click Element    ${close_delete_route_button}
+    Wait Until Element Is Not Visible    ${close_delete_route_button}
+    Wait Until Element Is Visible    ${title}
+
+กรณีกดปุ่ม Cancel หน้าต่างยืนยันการ Delete Route
+     ${route_name}    Set Variable    เส้นทางการวิ่ง_Test1
+    ${sub_line}    Set Variable    99-99(9)
+    open_line_subline_menu
+    select_line    99-99
+    Wait Until Element Is Visible    //*[@id="root"]/main//main/div//div[2]/div/div/div/div[./div/div/div[text()="${sub_line}"]]
+    Click Element    //*[@id="root"]/main//main/div//div[2]/div/div/div/div[./div/div/div[text()="${sub_line}"]]
+    Sleep    1
+    Click Element    //*[@id="root"]/main//main//div[3]/div/div[1]/div[2]/div/div/div/div/div[./div[text()="${route_name}"]]/div[3]/div/div
+    Wait Until Element Is Visible    ${cancel_delete_route_button}
+    Click Element    ${cancel_delete_route_button}
+    Wait Until Element Is Not Visible    ${cancel_delete_route_button}
+    Wait Until Element Is Visible    ${title}
 
 กรณีลบ Route
     ${route_name}    Set Variable    เส้นทางการวิ่ง_1-13(126)Testtt

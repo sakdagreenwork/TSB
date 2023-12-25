@@ -1,3 +1,15 @@
+# Test Data ที่่ต้องเตรียมไว้ก่อนทำการ Automate Test
+# 1.User (ไว้ทดสอบเปลี่ยนรหัส และ ล็อคอินด้วยรหัสเดิม)
+    - sakda@efinancethai.com
+    - EVEFT@cs (ทดสอบรหัสเก่า)
+# 2. User
+    - natanon001@gmail.com (ไว้ทดสอบ Email ที่ยังไม่ Veify)
+    - mKwJ^iT_
+# 3. User
+    - Nonverified@gmail.com (ไว้ทดสอบ Email ที่ถูก Disable)
+    - PQ6!l1Pa
+
+
 *** Settings ***
 Library   SeleniumLibrary    screenshot_root_directory=/Users/sakda.l/Desktop/TSB Automate/Login/Failed Screenshot 
 Resource      keyword.robot

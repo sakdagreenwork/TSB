@@ -1,3 +1,21 @@
+# Test Data ที่่ต้องเตรียมไว้ก่อนทำการ Automate Test
+# 1. Vehicle
+    - Veicle License : 4646544
+
+เช็ค Add ซ้ำ
+# 2.Vehicle Name : 35-11
+# 3.Motor : MCS20111214
+# 4.GPS : 868998030639021
+# 5.Chassis : MRSBCREM6MZM00008
+# 6.License : 16-5841
+
+ที่เหลือคือเช็ค Edit ซ้ำ
+# 8.Vehicle Name : 646564
+# 9.Motor : DPPC9U0018
+# 10.GPS : 100223167173
+# 11.Chassis : MRSBCREMXNZM00918
+
+
 *** Settings ***
 Library    SeleniumLibrary    screenshot_root_directory=/Users/sakda.l/Desktop/TSB Automate/Login/Failed Screenshot 
 Library    Collections
@@ -200,7 +218,7 @@ TC_VHC_005-หน้า Add New Vehicle
 TC_VHC_006-Drop down Factory data
     Open Add New Vehicle Page
     Run Keyword And Continue On Failure    Element Text Should Be    ${status_label}    สถานะ *
-    Run Keyword And Continue On Failure    Element Text Should Be    css:div:nth-child(1) > div > div > div > div > span > div > div > div > div > div    Select...
+    Run Keyword And Continue On Failure    Element Text Should Be    css:div:nth-child(1) > div > div > div > div > span > div > div > div > div > div    เลือก...
     Run Keyword And Continue On Failure    Element Text Should Be    ${veName_label}    ชื่อพาหนะ *
     ${place_ve_name}    Run Keyword And Continue On Failure    Get Element Attribute    ${field_veName}    placeholder
     Run Keyword And Continue On Failure    Should Be Equal    ${place_ve_name}    ชื่อพาหนะ
@@ -208,9 +226,9 @@ TC_VHC_006-Drop down Factory data
     ${place_motor}    Run Keyword And Continue On Failure    Get Element Attribute    ${field_motor}    placeholder
     Run Keyword And Continue On Failure    Should Be Equal    ${place_motor}    หมายเลขมอเตอร์
     Run Keyword And Continue On Failure    Element Text Should Be    ${model_label}    รุ่น *
-    Run Keyword And Continue On Failure    Element Text Should Be    css:span > div:nth-child(3) > div:nth-child(1) > div > div > div > div:nth-child(1)    Select...
+    Run Keyword And Continue On Failure    Element Text Should Be    css:span > div:nth-child(3) > div:nth-child(1) > div > div > div > div:nth-child(1)    เลือก...
     Run Keyword And Continue On Failure    Element Text Should Be    ${brand_label}    ยี่ห้อ *
-    Run Keyword And Continue On Failure    Element Text Should Be    css:span > div:nth-child(3) > div:nth-child(2) > div > div > div > div:nth-child(1)    Select...
+    Run Keyword And Continue On Failure    Element Text Should Be    css:span > div:nth-child(3) > div:nth-child(2) > div > div > div > div:nth-child(1)    เลือก...
     Run Keyword And Continue On Failure    Element Text Should Be    ${gps_label}    GPS IMEI *
     ${place_GPS}    Run Keyword And Continue On Failure    Get Element Attribute    ${field_gps}    placeholder
     Run Keyword And Continue On Failure    Should Be Equal    ${place_GPS}    GPS IMEI
@@ -233,9 +251,9 @@ TC_VHC_008-Drop down Equipment
 TC_VHC_009-Drop down Operation data
     Open Add New Vehicle Page
     Run Keyword And Continue On Failure    Element Text Should Be    ${depot_label}    อู่รถ *
-    Run Keyword And Continue On Failure    Element Text Should Be    css:div:nth-child(4) > div > div > div > div > span >div:nth-child(1) > div > div > div:nth-child(1) > div:nth-child(1)    Select...
+    Run Keyword And Continue On Failure    Element Text Should Be    css:div:nth-child(4) > div > div > div > div > span >div:nth-child(1) > div > div > div:nth-child(1) > div:nth-child(1)    เลือก...
     Run Keyword And Continue On Failure    Element Text Should Be    ${subline_label}    สายย่อย *
-    Run Keyword And Continue On Failure    Element Text Should Be    css:div:nth-child(4) > div > div > div > div > span > div:nth-child(2) > div:nth-child(1) > div > div > div > div:nth-child(1)    Select...
+    Run Keyword And Continue On Failure    Element Text Should Be    css:div:nth-child(4) > div > div > div > div > span > div:nth-child(2) > div:nth-child(1) > div > div > div > div:nth-child(1)    เลือก...
     Run Keyword And Continue On Failure    Element Text Should Be    ${company_label}    บริษัท *
 
 #TC_VHC_010-กรณีค้นหาข้อมูลใน Drop down สถานะ, รุ่น, ยี่ห้อ, อู่, สายย่อย ด้วยข้อมูลที่ไม่มีอยู่ในระบบ
@@ -413,12 +431,12 @@ TC_VHC_023-กรณี Edit โดยข้อมูลว่าง
 
 TC_VHC_024-กรณี Edit โดย Vehicle Name 2 ตัวอักษร
     ${license}    Set Variable    4646544
-    edit_vehicle_name    ${license}    84
+    edit_vehicle_name    ${license}    new_veName=84
     Element Text Should Be    ${alert_veName}    ต้องมีอักขระ 3 ถึง 20 ตัว
 
 TC_VHC_025-กรณี Edit โดย Vehicle Name ซ้ำกับที่มีอยู่
     ${license}    Set Variable    4646544
-    edit_vehicle_name    ${license}    646564
+    edit_vehicle_name    licnese=${license}    new_veName=646564
     
     Click Element    ${confirm_edit_button}
     Click Element    ${confirm_confirm_edit_button}
