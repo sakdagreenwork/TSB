@@ -1578,7 +1578,7 @@ add_route
 
 
 
-กรณี Add Route To Sub Line โดยเลือก Route ที่ซ้ำกับมีอยู่แต่เวลาไม่ทับกัน
+กรณี Add Route To Sub Line โดยเลือก Route ที่ซ้ำกับที่มีอยู่แต่เวลาไม่ทับกัน
     open_line_subline_menu
     select_line    99-99
     add_route    start_year=3000    end_year=3001

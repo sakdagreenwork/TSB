@@ -23,6 +23,28 @@ Test Teardown    Close Browser
 Resource    keyword.robot
 #robot --outputdir "\Users\sakda.l\Desktop\TSB Automate\Login\Report" Vehicle.robot
 *** Variables ***
+
+${hamburger_button}     //*[@id="root"]/main/header/div/div/div[1]/div[2]//*[name()='svg']
+${data_manage_button}    //*[@id="root"]/main/div[2]/div[3]/div[1]/div[2]/div/div/div/ul/li[6]/div[1]/div[1]/div
+${vehicle_menu}    //*[@id="root"]/main/div[2]/div[3]/div[1]/div[2]/div/div/div/ul/li[6]/div[2]/div/ul/li[4]/a/span/span[2]
+
+
+${total}    //*[@id="root"]/main//div[2]/div/div/div/div/div[1]/div[2]/span
+${active}    //*[@id="root"]/main//div[2]/div/div/div/div/div[2]/div[2]/span
+${inactive}    //*[@id="root"]/main//div[2]/div/div/div/div/div[3]/div[2]/span
+${maintaince}    //*[@id="root"]/main//div[2]/div/div/div/div/div[4]/div[2]/span
+${select_to_view_text}    //*[@id="root"]/main//div[3]/div/div[2]/div/div/div/main/div[3]/h4
+
+${add_new_ve_button}    //*[@id="root"]/main//div[3]/div/div[1]/div/main/div[1]/div[2]/div/button
+
+${title}    //*[@id="root"]/main/header/div/div/div[1]//h4
+${add_new_ve_title}    //*[@id="root"]/main//main/div[1]/div/div[1]/header/div/h4
+${edit_ve_title}    //form/div[1]/header/div[1]/h4
+
+
+
+${first_ve_result}    //*[@id="root"]/main//main/div[2]/div[1]/div[2]/div/div/div/div[2]/div/div[1]/div
+
 ${email_field}     //input[@name="email"]
 ${password_field}    //input[@name='password']
 ${login_button}    //button[@class="btn btn-sm btn-dark block w-full text-center"]
@@ -61,6 +83,12 @@ ${field_license}    //div[@class="mb-3"][2]//span/div/div/div[1]/input
 ${field_depot}    //div[@class="mb-3"][4]//span/div[1]/div/div[2]
 ${field_subline}    //div[@class="mb-3"][4]//span/div[2]/div[1]/div[1]/div[2]
 
+${dropdown_status_button}    //div[@class="mb-3"][1]/div/div/div/div/span/div[1]/div[1]/div/div[2]
+${drodown_model_button}    //div[@class="mb-3"][1]//span/div[3]/div[1]/div[1]/div/div[2]
+${dropdown_brand_button}    //div[@class="mb-3"][1]//span/div[3]/div[2]/div[1]/div/div[2]
+${drop_down_depot_button}    //div[@class="mb-3"][4]//span/div[1]/div/div/div[2]
+${drop_down_subline_button}    //div[@class="mb-3"][4]//span/div[2]/div[1]/div/div/div[2]
+
 ${confirm_add}    //div[@class="flex justify-center w-full gap-2"]/div[1]
 
 ${button_+add}    //Button[@type="submit"]
@@ -92,18 +120,19 @@ ${top_right_alert}    //main[@class='App${SPACE}${SPACE}relative']/div[1]/div/di
 
 Open Vehicle Menu
     Log In Valid
-    Wait Until Element Is Visible    //*[@id="root"]/main/header/div/div/div[1]/div[2]//*[name()='svg']    20
-    Click Element    //*[@id="root"]/main/header/div/div/div[1]/div[2]//*[name()='svg']
-    Wait Until Element Is Visible    //*[@id="root"]/main/div[2]/div[3]/div[1]/div[2]/div/div/div/ul/li[6]/div[1]/div[1]/div    20
-    Click Element    //*[@id="root"]/main/div[2]/div[3]/div[1]/div[2]/div/div/div/ul/li[6]/div[1]/div[1]/div
-    Wait Until Element Is Visible    //*[@id="root"]/main/div[2]/div[3]/div[1]/div[2]/div/div/div/ul/li[6]/div[2]/div/ul/li[4]/a/span/span[2]    20
-    Click Element    //*[@id="root"]/main/div[2]/div[3]/div[1]/div[2]/div/div/div/ul/li[6]/div[2]/div/ul/li[4]/a/span/span[2]
-    Wait Until Element Is Visible    //*[@id="root"]/main/header/div/div/div[1]/div[3]/h4    20
+    Wait Until Element Is Visible    ${hamburger_button}    20
+    
+    Click Element    ${hamburger_button}
+    Wait Until Element Is Visible    ${data_manage_button}    20
+    Click Element    ${data_manage_button}
+    Wait Until Element Is Visible    ${vehicle_menu}    20
+    Click Element    ${vehicle_menu}
+    Wait Until Element Is Visible    ${add_new_ve_button}    20
 
 Open Add New Vehicle Page
     Open Vehicle Menu
-    Wait Until Element Is Visible    //*[@id="root"]/main/div[3]/div/div/div/div[3]/div/div[1]/div/main/div[1]/div[2]/div/button    20
-    Click Element    //*[@id="root"]/main/div[3]/div/div/div/div[3]/div/div[1]/div/main/div[1]/div[2]/div/button
+    Wait Until Element Is Visible    ${add_new_ve_button}    20
+    Click Element    ${add_new_ve_button}
     Wait Until Element Is Visible    css:div:nth-child(1) > div > div > div > div > span > div > label    20
 
 add_new_vehicle
@@ -111,23 +140,23 @@ add_new_vehicle
     ...            ${data_gps}=999680       ${data_chassis}=999680   ${data_license}=999680  ${data_depot}=อู่แสมดำ    ${data_subline}=2-34R_อู่มีนบุรี-หนองจอก>อู่รามคำแหง 74   
     #Argument ขาด Model อยู่
     Open Add New Vehicle Page
-    Click Element    //div[@class="mb-3"][1]/div/div/div/div/span/div[1]/div[1]/div/div[2]
+    Click Element    ${dropdown_status_button}
     Wait Until Element Is Visible    ${field_status}//*[text()[contains(.,'${data_status}')]]    20
     Click Element     ${field_status}//*[text()[contains(.,'${data_status}')]]
     Input Text    ${field_veName}    ${data_vename}
     Input Text    ${field_motor}    ${data_motor}
-    Click Element    //div[@class="mb-3"][1]//span/div[3]/div[1]/div[1]/div/div[2]
+    Click Element    ${drodown_model_button}
     Wait Until Element Is Visible    ${field_model}    10
     Click Element    ${field_model}//*[text()[contains(.,'${data_model}')]]
-    Click Element    //div[@class="mb-3"][1]//span/div[3]/div[2]/div[1]/div/div[2]
+    Click Element    ${dropdown_brand_button}
     Click Element    ${field_brand}//*[text()[contains(.,'${data_brand}')]]
     Input Text    ${field_gps}    ${data_gps}
     Input Text    ${field_chassis}    ${data_chassis}
     Input Text    ${field_license}    ${data_license}
-    Click Element    //div[@class="mb-3"][4]//span/div[1]/div/div/div[2]
+    Click Element    ${drop_down_depot_button}
     Wait Until Element Is Visible    ${field_depot}//*[text()[contains(.,'${data_depot}')]]    10
     Click Element    ${field_depot}//*[text()[contains(.,'${data_depot}')]]
-    Click Element    //div[@class="mb-3"][4]//span/div[2]/div[1]/div/div/div[2]
+    Click Element    ${drop_down_subline_button}
     Click Element    ${field_subline}//*
     Sleep    5
     Click Element    ${button_+add}
@@ -142,9 +171,9 @@ select_vehicle
     Wait Until Element Is Visible    //span[text()[contains(.,"${correct_license}")]]    25
     Sleep    2
     #คำสั่งกดที่ผลลัพธ์ตัวแรกที่ค้นหาาเจอ
-    Wait Until Element Is Visible    //*[@id="root"]/main/div[3]/div/div/div/div[3]/div/div[1]/div/main/div[2]/div[1]/div[2]/div/div/div/div[2]/div/div[1]/div
-    Click Element    //*[@id="root"]/main/div[3]/div/div/div/div[3]/div/div[1]/div/main/div[2]/div[1]/div[2]/div/div/div/div[2]/div/div[1]/div
-    Element Text Should Be    //form/div[1]/header/div[1]/h4    พาหนะ
+    Wait Until Element Is Visible    ${first_ve_result}
+    Click Element    ${first_ve_result}
+    Wait Until Element Is Visible    ${edit_ve_title}    
     Wait Until Element Is Visible    ${field_veName}
     ${get_license}    Get Element Attribute    ${field_license}    value
     Should Be Equal    ${get_license}    ${correct_license}
@@ -164,41 +193,48 @@ delete_vehicle
     Wait Until Element Is Visible    ${search_box}    20
     Input Text    ${search_box}    ${data_license}
     Wait Until Element Is Visible    //span[text()[contains(.,'${data_license}')]]    15
-    Click Element    //*[@id="root"]/main/div[3]/div/div/div/div[3]/div/div[1]/div/main/div[2]/div[1]/div[2]/div/div/div/div[2]/div/div[1]/div
+    Click Element    ${first_ve_result}
     Click Element    ${delete_button}
     Click Element    ${confirm_delete_button}
     Input Text    ${search_box}    ${data_license}
     #ถ้าไม่ตั้งดีเลย์ไว้อย่างต่ำที่ 5 วิ ระบบจะแสดงแจ้งเตือนที่ข้อความไม่ทันกรณีกรอกข้อมูลผิดหรือไม่ถูกต้อง
-    Sleep    5s
-    Element Should Not Be Visible    //span[2][text()[contains(.,'${data_license}')]]
+    Sleep    5
+    Wait Until Element Is Not Visible    //span[2][text()[contains(.,'${data_license}')]]
 
 *** Test Cases ***
 
 TC_VHC_001-หน้า Vehicle
     Open Vehicle Menu
-    Wait Until Element Is Visible    //*[@id="root"]/main/header/div/div/div[1]/div[3]/h4
-    Run Keyword And Continue On Failure    Element Text Should Be    //*[@id="root"]/main/header/div/div/div[1]/div[3]/h4    พาหนะ
-    Run Keyword And Continue On Failure    Element Should Contain   //*[@id="root"]/main/div[3]/div/div/div/div[2]/div/div/div/div/div[1]/div[2]/span    ทั้งหมด
-    Run Keyword And Continue On Failure    Element Should Contain   //*[@id="root"]/main/div[3]/div/div/div/div[2]/div/div/div/div/div[1]/div[2]/span    รายการ
-    Run Keyword And Continue On Failure    Element Should Contain    //*[@id="root"]/main/div[3]/div/div/div/div[2]/div/div/div/div/div[2]/div[2]/span    ใช้งาน
-    Run Keyword And Continue On Failure    Element Should Contain    //*[@id="root"]/main/div[3]/div/div/div/div[2]/div/div/div/div/div[2]/div[2]/span    รายการ
-    Run Keyword And Continue On Failure    Element Should Contain    //*[@id="root"]/main/div[3]/div/div/div/div[2]/div/div/div/div/div[3]/div[2]/span    ไม่มีการใช้งาน
-    Run Keyword And Continue On Failure    Element Should Contain    //*[@id="root"]/main/div[3]/div/div/div/div[2]/div/div/div/div/div[3]/div[2]/span    รายการ
-    Run Keyword And Continue On Failure    Element Should Contain    //*[@id="root"]/main/div[3]/div/div/div/div[2]/div/div/div/div/div[4]/div[2]/span    ปิดซ่อมบำรุง
-    Run Keyword And Continue On Failure    Element Should Contain    //*[@id="root"]/main/div[3]/div/div/div/div[2]/div/div/div/div/div[4]/div[2]/span    รายการ
-    Run Keyword And Continue On Failure    Element Text Should Be    //*[@id="root"]/main/div[3]/div/div/div/div[3]/div/div[2]/div/div/div/main/div[3]/h4    เลือกยานพาหนะเพื่อดูข้อมูล
+    Wait Until Element Is Visible    ${title}
+    Sleep    1
+    Run Keyword And Continue On Failure    Element Text Should Be    ${title}    พาหนะ
+    Run Keyword And Continue On Failure    Element Should Contain   ${total}    ทั้งหมด
+    Run Keyword And Continue On Failure    Element Should Contain   ${total}    รายการ
+    Run Keyword And Continue On Failure    Element Should Contain    ${active}    ใช้งาน
+    Run Keyword And Continue On Failure    Element Should Contain    ${active}    รายการ
+    Run Keyword And Continue On Failure    Element Should Contain    ${inactive}    ไม่มีการใช้งาน
+    Run Keyword And Continue On Failure    Element Should Contain    ${inactive}    รายการ
+    Run Keyword And Continue On Failure    Element Should Contain    ${maintaince}    ปิดซ่อมบำรุง
+    Run Keyword And Continue On Failure    Element Should Contain    ${maintaince}    รายการ
+    Run Keyword And Continue On Failure    Element Text Should Be    ${select_to_view_text}    เลือกยานพาหนะเพื่อดูข้อมูล
 
 
 TC_VHC_002-กดปุ่ม Add New Vehicle
-    Open Vehicle Menu
-    Wait Until Element Is Visible    //*[@id="root"]/main/div[3]/div/div/div/div[3]/div/div[1]/div/main/div[1]/div[2]/div/button    20
-    Click Element    //*[@id="root"]/main/div[3]/div/div/div/div[3]/div/div[1]/div/main/div[1]/div[2]/div/button
+    Open Add New Vehicle Page
+    Wait Until Element Is Visible    ${button_+add}
 
 TC_VHC_003-กดเลือก Vehicle
     Open Vehicle Menu
     Wait Until Element Is Visible    //*[@id="root"]/main/div[3]/div/div/div/div[3]/div/div[1]/div/main/div[2]/div[1]/div[2]/div/div/div/div[2]/div/div[1]    20
     Click Element    //*[@id="root"]/main/div[3]/div/div/div/div[3]/div/div[1]/div/main/div[2]/div[1]/div[2]/div/div/div/div[2]/div/div[1]
     
+TC_VHC_004-กรณีค้นหาข้อมูลที่มี
+    ${license}    Set Variable    4646544
+    Open Vehicle Menu
+    Wait Until Element Is Visible    ${search_box}    20
+    Input Text    ${search_box}    ${license}
+    Wait Until Element Is Visible    //span[text()="${license}"]    25
+
 TC_VHC_004-กรณีค้นหาข้อมูลที่ไม่มี
     Open Vehicle Menu
     Wait Until Element Is Visible    //*[@id="root"]/main/div[3]/div/div/div/div[3]/div/div[1]/div/main/div[1]/div[1]/div/input    20
@@ -208,7 +244,7 @@ TC_VHC_004-กรณีค้นหาข้อมูลที่ไม่มี
         
 TC_VHC_005-หน้า Add New Vehicle
     Open Add New Vehicle Page
-    Run Keyword And Continue On Failure    Element Text Should Be    //*[@id="root"]/main/div[3]/div/div/div/div[3]/div/div[2]/div/div/div/main/div[1]/div/div[1]/header/div/h4    เพิ่มพาหนะ
+    Run Keyword And Continue On Failure    Element Text Should Be    ${add_new_ve_title}    เพิ่มพาหนะ
     Wait Until Element Is Visible    //div[3]//div[1]/button/span[1]
     Run Keyword And Continue On Failure    Element Text Should Be    //div[3]//div[1]/button/span[1]    ข้อมูลโรงงาน
     Run Keyword And Continue On Failure    Element Text Should Be    //div[3]//div[2]/button/span[1]    ทะเบียนรถ - รับประกัน
@@ -273,11 +309,6 @@ TC_VHC_011-กรณีเพิ่มโดยไม่กรอกข้อม
     Run Keyword And Continue On Failure    Element Text Should Be    ${alert_depot}   กรอกอู่รถ
     Run Keyword And Continue On Failure    Element Text Should Be    ${alert_subline}    กรอกสายย่อย
 
-TC_VHC_012-กรณีเพิ่มโดยกรอก Vehical Name 2 ตัวอักษร
-    add_new_vehicle    data_vename=QA
-    Element Text Should Be    ${alert_veName}    ต้องมีอักขระ 3 ถึง 20 ตัว
-
-
 TC_VHC_013-กรณีเพิ่มโดยกรอก Vehical Name ซ้ำกับที่มีอยู่
     add_new_vehicle    data_vename=35-11
     Element Should Be Visible    ${alert_veName}
@@ -302,6 +333,11 @@ TC_VHC_017-กรณีเพิ่มโดยกรอก License ซ้ำก
     
     Element Should Be Visible    ${alert_license}
     Element Text Should Be    ${alert_license}    หมายเลขทะเบียนนี้ถูกใช้งานแล้ว
+
+
+TC_VHC_012-กรณีเพิ่มโดยกรอก Vehical Name 2 ตัวอักษร
+    add_new_vehicle    data_vename=QA
+    Element Text Should Be    ${alert_veName}    ต้องมีอักขระ 3 ถึง 20 ตัว
 
 TC_VHC_18-ตรวจสอบจำนวนตัวอักษรสูงสุดกรณีเพิ่ม Vehical Name, Motot No, GPS IMEI, Chassis No, License plate
     Open Add New Vehicle Page
@@ -352,8 +388,8 @@ TC_VHC_020-กรณีเพิ่มโดยกรอกข้อมูลค
     Wait Until Element Is Visible    //span[text()[contains(.,${data_license})]]    20
     Sleep    2
     #คำสั่งกดที่ผลลัพธ์ตัวแรกที่ค้นหาาเจอ
-    Wait Until Element Is Visible    //*[@id="root"]/main/div[3]/div/div/div/div[3]/div/div[1]/div/main/div[2]/div[1]/div[2]/div/div/div/div[2]/div/div[1]/div
-    Click Element    //*[@id="root"]/main/div[3]/div/div/div/div[3]/div/div[1]/div/main/div[2]/div[1]/div[2]/div/div/div/div[2]/div/div[1]/div
+    Wait Until Element Is Visible    ${first_ve_result}
+    Click Element    ${first_ve_result}
     Wait Until Element Is Visible    ${field_veName}
     ${get_license}    Get Element Attribute    ${field_license}    value
     Should Be Equal    ${get_license}    ${data_license}
@@ -372,6 +408,7 @@ TC_VHC_020-กรณีเพิ่มโดยกรอกข้อมูลค
 
 TC_VHC_021-หน้ารายละเอียด Vehicle
     Run Keyword And Continue On Failure    select_vehicle    4646544
+    Run Keyword And Continue On Failure    Element Text Should Be    ${edit_ve_title}    พาหนะ
     Wait Until Element Is Visible    //div[3]//div[1]/button/span[1]    10
     Run Keyword And Continue On Failure    Element Text Should Be    //div[3]//div[1]/button/span[1]    ข้อมูลโรงงาน
     Run Keyword And Continue On Failure    Element Text Should Be    //div[3]//div[2]/button/span[1]    ทะเบียนรถ - รับประกัน
@@ -399,18 +436,40 @@ TC_VHC_021-หน้ารายละเอียด Vehicle
     ${place_License}     Run Keyword And Continue On Failure    Get Element Attribute    ${field_license}    placeholder
     Run Keyword And Continue On Failure    Should Be Equal    ${place_License}    ทะเบียนรถ
 
-TC_VHC_022-กรณีกดปุ่ม Edit
+TC_VHC_022-กรณีกดปุ่ม Edit ******** มีปัญหาอยู่ ********
     select_vehicle
     Click Element    ${factory_edit_button}
-    Run Keyword And Continue On Failure    Element Should Be Visible    ${factory_save_button}
-    Run Keyword And Continue On Failure    Element Should Be Visible    ${factory_cancel_button}
+    Run Keyword And Continue On Failure    Wait Until Element Is Not Visible    //*[@class="mb-3"][1]/div/div/div/div[2]/span/div/div[@class="m-0"]
+    Run Keyword And Continue On Failure    Wait Until Element Is Visible    //*[@class="mb-3"][1]/div/div/div/div[2]/span/div/div[@class="custom-tippy"][1]
+    Run Keyword And Continue On Failure    Wait Until Element Is Visible    //*[@class="mb-3"][1]/div/div/div/div[2]/span/div/div[@class="custom-tippy"][2]
     Click Element    ${license_edit_button}
-    Run Keyword And Continue On Failure    Element Should Be Visible    ${license_save_button}
-    Run Keyword And Continue On Failure    Element Should Be Visible    ${license_cancel_button}
+    Run Keyword And Continue On Failure    Wait Until Element Is Not Visible    //*[@class="mb-3"][2]/div/div/div/div[2]/span/div/div[@class="m-0"]
+    Run Keyword And Continue On Failure    Wait Until Element Is Visible    //*[@class="mb-3"][2]/div/div/div/div[2]/span/div/div[@class="custom-tippy"][1]
+    Run Keyword And Continue On Failure    Wait Until Element Is Visible    //*[@class="mb-3"][2]/div/div/div/div[2]/span/div/div[@class="custom-tippy"][2]
     Click Element    ${operation_edit_button}
-    Run Keyword And Continue On Failure    Element Should Be Visible    ${operation_save_button}
-    Run Keyword And Continue On Failure    Element Should Be Visible    ${operation_cancel_button}
+    Run Keyword And Continue On Failure    Wait Until Element Is Not Visible    //*[@class="mb-3"][4]/div/div/div/div[2]/span/div/div[@class="m-0"]
+    Run Keyword And Continue On Failure    Wait Until Element Is Visible    //*[@class="mb-3"][4]/div/div/div/div[2]/span/div/div[@class="custom-tippy"][1]
+    Run Keyword And Continue On Failure    Wait Until Element Is Visible    //*[@class="mb-3"][4]/div/div/div/div[2]/span/div/div[@class="custom-tippy"][2]
     
+TC_VHC_0-กรณีกดปุ่ม Cancel
+    select_vehicle
+    Click Element    ${factory_edit_button}
+    Click Element    ${license_edit_button}
+    Click Element    ${operation_edit_button}
+    ${check_vename}    Get Element Attribute    ${field_veName}    value
+    ${check_status}    Get Text    //div[@class="mb-3"][1]/div/div/div/div/span/div[1]/div[1]/div/div[1]/div[1]
+    ${check_model}    Get Text    //div[@class="mb-3"][1]//span/div[3]/div[1]/div[1]/div/div[1]/div[1]
+    ${check_brand}    Get Text    //div[@class="mb-3"][1]//span/div[3]/div[2]/div[1]/div/div[1]/div[1]
+    Log To Console    ${check_status}
+    Log To Console    ${check_vename}
+    Log To Console    ${check_model}
+    Log To Console    ${check_brand}
+
+
+    #จะดึงข้อมูลเดิมมาเก็บไว้ก่อนแล้วแก้ไขข้อมูล และ Cancel เรียงไป 3 case และดูช่องทั้งหมดว่าข้อมูลยังเป็นค่าเดิม หรือ หายไปไหม
+    Sleep    1000
+
+
 TC_VHC_023-กรณี Edit โดยข้อมูลว่าง
     select_vehicle
     Click Element    ${factory_edit_button}
@@ -545,7 +604,7 @@ TC_VHC_032-กรณี Edit status
     #${status}    Set Variable    InActive            
     select_vehicle    ${license}
     Click Element    ${factory_edit_button}
-    Click Element    //div[@class="mb-3"][1]/div/div/div/div/span/div[1]/div[1]/div/div[2]
+    Click Element    ${dropdown_status_button}
     Wait Until Element Is Visible    ${field_status}//*[text()[contains(.,'${new_status}')]]    10
     Click Element     ${field_status}//*[text()[contains(.,'${new_status}')]]    
     Click Element    ${factory_save_button}
@@ -562,7 +621,7 @@ TC_VHC_032-กรณี Edit status
     Click Element    ${factory_edit_button}
     #คำสั่งนี้จะเช็คว่าค่าที่เปลี่ยนยังแสดงถูกต้องอยู่ไหม
     Element Text Should Be    //div[@class="mb-3"][1]/div/div/div/div/span/div[1]/div[1]/div/div[1]/div[1]    ${new_status}
-    Click Element    //div[@class="mb-3"][1]/div/div/div/div/span/div[1]/div[1]/div/div[2]
+    Click Element    ${dropdown_status_button}
     Wait Until Element Is Visible    ${field_status}//*[text()[contains(.,'${old_status}')]]    10
     Click Element     ${field_status}//*[text()[contains(.,'${old_status}')]]    
     Click Element    ${factory_save_button}
@@ -616,7 +675,7 @@ TC_VHC_034-กรณี Edit model
     ${old_model}    Set Variable    Benz             
     select_vehicle    ${license}
     Click Element    ${factory_edit_button}
-    Click Element    //div[@class="mb-3"][1]//span/div[3]/div[1]/div[1]/div/div[2]
+    Click Element    ${drodown_model_button}    
     Wait Until Element Is Visible    ${field_model}    10
     Click Element    ${field_model}//*[text()[contains(.,'${new_model}')]]
     Click Element    ${factory_save_button}
@@ -633,7 +692,7 @@ TC_VHC_034-กรณี Edit model
     #คำสั่งนี้จะเช็คว่าค่าที่เปลี่ยนยังแสดงถูกต้องอยู่ไหม
     Element Text Should Be    //div[@class="mb-3"][1]//span/div[3]/div[1]/div[1]/div/div[1]/div[1]    ${new_model}
     Click Element    ${factory_edit_button}
-    Click Element    //div[@class="mb-3"][1]//span/div[3]/div[1]/div[1]/div/div[2]
+    Click Element    ${drodown_model_button}
     Wait Until Element Is Visible    ${field_model}    10
     Click Element    ${field_model}//*[text()[contains(.,'${old_model}')]]
     Click Element    ${factory_save_button}
@@ -653,7 +712,7 @@ TC_VHC_035-กรณี Edit brand
     ${old_brand}    Set Variable    ISUZU       
     select_vehicle    ${license}
     Click Element    ${factory_edit_button}
-    Click Element    //div[@class="mb-3"][1]//span/div[3]/div[2]/div[1]/div/div[2]
+    Click Element    ${dropdown_brand_button}
     Click Element    ${field_brand}//*[text()[contains(.,'${new_brand}')]]
     Click Element    ${factory_save_button}
     Click Element    ${confirm_edit_button}
@@ -669,7 +728,7 @@ TC_VHC_035-กรณี Edit brand
     #คำสั่งนี้จะเช็คว่าค่าที่เปลี่ยนยังแสดงถูกต้องอยู่ไหม
     Element Text Should Be    //div[@class="mb-3"][1]//span/div[3]/div[2]/div[1]/div/div[1]/div[1]    ${new_brand}
     Click Element    ${factory_edit_button}
-    Click Element    //div[@class="mb-3"][1]//span/div[3]/div[2]/div[1]/div/div[2]
+    Click Element    ${dropdown_brand_button}
     Click Element    ${field_brand}//*[text()[contains(.,'${old_brand}')]]
     Click Element    ${factory_save_button}
     Click Element    ${confirm_edit_button}
@@ -764,7 +823,7 @@ TC_VHC_038-กรณี Edit depot
     ${old_depot}    Set Variable    อู่เคหะบางพลี         
     select_vehicle    ${license}
     Click Element    ${operation_edit_button}
-    Click Element    //div[@class="mb-3"][4]//span/div[1]/div/div/div[2]
+    Click Element    ${drop_down_depot_button}
     Wait Until Element Is Visible    ${field_depot}//*[text()[contains(.,'${new_depot}')]]    10
     Click Element    ${field_depot}//*[text()[contains(.,'${new_depot}')]]
     Click Element    //div[@class="mb-3"][4]//span/div[2]/div[1]/div/div/div[2]
@@ -783,7 +842,7 @@ TC_VHC_038-กรณี Edit depot
     #คำสั่งนี้จะเช็คว่าค่าที่เปลี่ยนยังแสดงถูกต้องอยู่ไหม
     Element Text Should Be    //div[@class="mb-3"][4]//span/div[1]/div/div/div[1]/div[1]    ${new_depot}
     Click Element    ${operation_edit_button}
-    Click Element    //div[@class="mb-3"][4]//span/div[1]/div/div/div[2]
+    Click Element    ${drop_down_depot_button}
     Wait Until Element Is Visible    ${field_depot}//*[text()[contains(.,'${old_depot}')]]    10
     Click Element    ${field_depot}//*[text()[contains(.,'${old_depot}')]]
     Click Element    //div[@class="mb-3"][4]//span/div[2]/div[1]/div/div/div[2]
@@ -807,12 +866,12 @@ TC_VHC_039-กรณี Edit sub line
     Click Element    ${operation_edit_button}
     
     #ตอนนี้มี ISSUE ที่ถ้าไม่เลือก depot ใหม่จะไม่แสดง subline ให้เลือก จึงต้องใช้ 3 คำสั่งด้านล่างนี้เพื่อเลือก depot 
-    Click Element    //div[@class="mb-3"][4]//span/div[1]/div/div/div[2]
+    Click Element    ${drop_down_depot_button}
     Wait Until Element Is Visible    ${field_depot}//*[text()[contains(.,'${depot}')]]    10
     Click Element    ${field_depot}//*[text()[contains(.,'${depot}')]]
     ###
 
-    Click Element    //div[@class="mb-3"][4]//span/div[2]/div[1]/div/div/div[2]
+    Click Element    ${drop_down_subline_button}
     Element Text Should Not Be    ${field_subline}//*    No options
     Click Element    //div[@class="mb-3"][4]//span/div[2]/div[1]/div[1]/div//*[text()="${new_subline}"]
     Click Element    ${operation_save_button}
@@ -832,12 +891,12 @@ TC_VHC_039-กรณี Edit sub line
     Click Element    ${operation_edit_button}
     
     #ตอนนี้มี ISSUE ที่ถ้าไม่เลือก depot ใหม่จะไม่แสดง subline ให้เลือก จึงต้องใช้ 3 คำสั่งด้านล่างนี้เพื่อเลือก depot 
-    Click Element    //div[@class="mb-3"][4]//span/div[1]/div/div/div[2]
+    Click Element    ${drop_down_depot_button}
     Wait Until Element Is Visible    ${field_depot}//*[text()[contains(.,'${depot}')]]    10
     Click Element    ${field_depot}//*[text()[contains(.,'${depot}')]]
     ###
 
-    Click Element    //div[@class="mb-3"][4]//span/div[2]/div[1]/div/div/div[2]
+    Click Element    ${drop_down_subline_button}
     Element Text Should Not Be    ${field_subline}//*    No options
     Click Element    //div[@class="mb-3"][4]//span/div[2]/div[1]/div[1]/div//*[text()="${old_subline}"]
     Click Element    ${operation_save_button}
@@ -876,6 +935,12 @@ TC_VHC_042-กรณีลบ Vehicle ที่ถูกใช้งานอย
     Run Keyword And Continue On Failure    Element Text Should Be    ${top_right_alert}    ข้อผิดพลาด : พาหนะถูกใช้งานอยู่ ไม่สามารถลบได้
     Input Text    ${search_box}    ${delete_license}
     Wait Until Element Is Visible    //span[text()[contains(.,"${delete_license}")]]    10
+
+
+
+ทดลอง
+    select_vehicle
+    Sleep    1000
 
 
 
