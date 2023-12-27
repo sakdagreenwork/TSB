@@ -174,6 +174,12 @@ select_depot
     Run Keyword And Continue On Failure    Should Be Equal    ${latitude_placeholder}    ลองจิจูด
     Run Keyword And Continue On Failure    Element Text Should Be    ${add_edit_button}    เพิ่ม
 
+หน้า Add New Depot กรณีกดปุ่ม x
+    open_add_new_depot_menu
+    Click Element    ${add_edit_close_button}
+    Wait Until Element Is Not Visible    ${add_edit_close_button}
+    Wait Until Element Is Visible    ${title}
+
 กรณีเพิ่มโดยไม่กรอกข้อมูล
     open_add_new_depot_menu
     Wait Until Element Is Visible    ${add_edit_button}
@@ -240,7 +246,8 @@ select_depot
     Run Keyword And Continue On Failure    Element Text Should Be    ${confirm_button}    ยืนยัน
     Run Keyword And Continue On Failure    Element Text Should Be    ${cancel_confirm_button}    ยกเลิก
     
-
+#หน้าต่างยืนยันการ Add กรณีกดปุ่ม x
+#หน้าต่างยืนยันการ Add กรณีกดปุ่ม Cancel
 
 กรณีเพิ่ม Depot ด้วยข้อมูลที่ครบถ้วนและถูกต้อง
     ${depot_name}    Set Variable    อู่แสมรุ้ง    
@@ -309,6 +316,10 @@ select_depot
     ${longitude_placeholder}    Get Element Attribute    ${longitude_field}    placeholder   
     Run Keyword And Continue On Failure    Should Be Equal    ${latitude_placeholder}    ลองจิจูด
     Run Keyword And Continue On Failure    Element Text Should Be    ${add_edit_button}    บันทึก
+
+#หน้า Edit กรณีกดปุ่ม x
+#หน้า Edit กรณีกดปุ่ม Cancel
+
 
 กรณี Edit โดยข้อมูลว่าง
     open_edit_depot_menu    อู่แสมฟ้า
@@ -388,6 +399,9 @@ select_depot
     Run Keyword And Continue On Failure    Element Text Should Be    ${confirm_text}    คุณยืนยันที่จะแก้ไขอู่ใช่หรือไม่?
     Run Keyword And Continue On Failure    Element Text Should Be    ${confirm_button}    ยืนยัน
     Run Keyword And Continue On Failure    Element Text Should Be    ${cancel_confirm_button}    ยกเลิก
+
+#หน้าต่างยืนยันการ Edit กรณีกดปุ่ม x
+#หน้าต่างยืนยันการ Edit กรณีกดปุ่ม Cancel
 
 กรณี Edit Depot Name
     ${new_depot_name}    Set Variable    อู่แสมแดง
@@ -553,7 +567,8 @@ select_depot
     Run Keyword And Continue On Failure    Element Text Should Be    ${confirm_delete_button}    ยืนยัน
     Run Keyword And Continue On Failure    Element Text Should Be    ${cancel_confirm_delete_button}    ยกเลิก
 
-
+#หน้าต่างยืนยันการ Delete กรณีกดปุ่ม x
+#หน้าต่างยืนยันการ Delete กรณีกดปุ่ม Cancel
 
 กรณี Add โดยกรอก Latitude ด้วยตัวเลข = 0
     add_new_depot    latitude=0  

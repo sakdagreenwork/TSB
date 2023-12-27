@@ -1,20 +1,32 @@
 # Test Data ที่่ต้องเตรียมไว้ก่อนทำการ Automate Test
-# 1. Vehicle
+# 1. Vehicle ให้ข้อมูลทั้งหมดอยู่ในคันเดียวกัน
+    - Status : InActive
+    - Vehicle Name : 64656429
+    - Motor No. : 66546339
+    - Model : Benz
+    - Brand : ISUZU
+    - GPS : 465656659
+    - Chassis : 45654639
     - Veicle License : 4646544
+    - Depot : อู่เคหะธนบุรี
+    - Sub Line : 3-53_อู่รามคำแหง 74
+    - Company : บริษัท ไทย สมายล์ บัส จำกัด
 
-เช็ค Add ซ้ำ
+เช็ค Add ซ้ำ ข้อมูลอยู่กันคนละคันได้
 # 2.Vehicle Name : 35-11
 # 3.Motor : MCS20111214
 # 4.GPS : 868998030639021
 # 5.Chassis : MRSBCREM6MZM00008
 # 6.License : 16-5841
 
-ที่เหลือคือเช็ค Edit ซ้ำ
+ที่เหลือคือเช็ค Edit ซ้ำ ข้อมูลอยู่กันคนละคันได้
 # 8.Vehicle Name : 646564
 # 9.Motor : DPPC9U0018
 # 10.GPS : 100223167173
 # 11.Chassis : MRSBCREMXNZM00918
 
+เมนู Depot
+12. ต้องมีอู่บึงกุ่ม โดยมีสายย่อย 3-3(11)_อู่รามคำแหง
 
 *** Settings ***
 Library    SeleniumLibrary    screenshot_root_directory=/Users/sakda.l/Desktop/TSB Automate/Login/Failed Screenshot 
@@ -89,7 +101,11 @@ ${dropdown_brand_button}    //div[@class="mb-3"][1]//span/div[3]/div[2]/div[1]/d
 ${drop_down_depot_button}    //div[@class="mb-3"][4]//span/div[1]/div/div/div[2]
 ${drop_down_subline_button}    //div[@class="mb-3"][4]//span/div[2]/div[1]/div/div/div[2]
 
+${confirm_add_edit_title}    //div[@role="dialog"]/div[2]/div/div/div/h2
+${confirm_add_edit_text}    //div[@role="dialog"]/div[2]/div/div/div[2]/div
 ${confirm_add}    //div[@class="flex justify-center w-full gap-2"]/div[1]
+${cancel_confirm_add}    //div[@class="flex justify-center w-full gap-2"]/div[2]    
+${close_confirm_add}    //div[@role="dialog"]/div[2]/div/div/div/button    
 
 ${button_+add}    //Button[@type="submit"]
 ${factory_edit_button}    //div[@class="mb-3"][1]//div[@class="custom-tippy"]/button
@@ -101,6 +117,7 @@ ${license_cancel_button}    //div[@class="mb-3"][2]//div[@class="custom-tippy"][
 ${license_save_button}    //div[@class="mb-3"][2]//div[@class="custom-tippy"][1]/button
 ${operation_cancel_button}    //div[@class="mb-3"][4]//div[@class="custom-tippy"][2]/button
 ${operation_save_button}    //div[@class="mb-3"][4]//div[@class="custom-tippy"][1]/button
+
 ${confirm_edit_button}    //header/div[2]/div/button
 ${delete_button}    //header/div[3]/div/button
 ${confirm_delete_button}    //div[3]/div/div[@class="flex justify-center w-full gap-2"]/div[1]
@@ -112,6 +129,14 @@ ${confirm_edit_title}    //div[@role="dialog"]/div[2]/div/div/div/h2
 ${confirm_edit_detail}    //div[@role="dialog"]/div[2]/div/div/div[2]/div
 ${confirm_confirm_edit_button}    //div[@class="flex justify-center w-full gap-2"]/div[1]
 ${confirm_edit_cancel_button}    //div[@role="dialog"]/div[2]/div/div/div[3]/div/div/div[2]
+${close_confirm_edit_button}    //div[@role="dialog"]/div[2]/div/div/div/button
+
+${confirm_delete_title}    //div[@role="dialog"]/div[2]/div/div/div/h2
+${confirm_delete_text}    //div[@role="dialog"]/div[2]/div/div/div[2]/div
+${confirm_delete}    //div[@class="flex justify-center w-full gap-2"]/div[1]
+${cancel_confirm_delete}    //div[@class="flex justify-center w-full gap-2"]/div[2]    
+${close_confirm_delete}    //div[@role="dialog"]/div[2]/div/div/div/button
+
 
 ${top_right_alert}    //main[@class='App${SPACE}${SPACE}relative']/div[1]/div/div/div/div[2]
 
@@ -149,6 +174,7 @@ add_new_vehicle
     Wait Until Element Is Visible    ${field_model}    10
     Click Element    ${field_model}//*[text()[contains(.,'${data_model}')]]
     Click Element    ${dropdown_brand_button}
+    Wait Until Element Is Visible    ${field_brand}//*[text()[contains(.,'${data_brand}')]]
     Click Element    ${field_brand}//*[text()[contains(.,'${data_brand}')]]
     Input Text    ${field_gps}    ${data_gps}
     Input Text    ${field_chassis}    ${data_chassis}
@@ -354,11 +380,25 @@ TC_VHC_18-ตรวจสอบจำนวนตัวอักษรสูง�
 TC_VHC_019-หน้าต่างยืนยันการ Add
     add_new_vehicle    data_vename=999681
     Sleep    1
-    Run Keyword And Continue On Failure    Element Text Should Be    //div[@role="dialog"]/div[2]/div/div/div/h2    เพิ่มพาหนะ
-    Run Keyword And Continue On Failure    Element Text Should Be    //div[@role="dialog"]/div[2]/div/div/div[2]/div    คุณยืนยันที่จะเพิ่มพาหนะใช่หรือไม่?
-    Run Keyword And Continue On Failure    Element Text Should Be    //div[@role="dialog"]/div[2]/div/div/div[3]/div/div/div[1]    ยืนยัน
-    Run Keyword And Continue On Failure    Element Text Should Be    //div[@role="dialog"]/div[2]/div/div/div[3]/div/div/div[2]    ยกเลิก
+    Wait Until Element Is Visible    ${confirm_add}
+    Run Keyword And Continue On Failure    Element Text Should Be    ${confirm_add_edit_title}    เพิ่มพาหนะ
+    Run Keyword And Continue On Failure    Element Text Should Be    ${confirm_add_edit_text}    คุณยืนยันที่จะเพิ่มพาหนะใช่หรือไม่?
+    Run Keyword And Continue On Failure    Element Text Should Be    ${confirm_add}    ยืนยัน
+    Run Keyword And Continue On Failure    Element Text Should Be    ${cancel_confirm_add}    ยกเลิก
+    Wait Until Element Is Visible   ${close_confirm_add}
 
+TC_VHC_000-หน้าต่างยืนยันการ Add กรณีกดปุ่ม x
+    add_new_vehicle
+    Wait Until Element Is Visible    ${confirm_add}
+    Click Element    ${close_confirm_add}
+    Wait Until Element Is Not Visible    ${close_confirm_add}
+    Wait Until Element Is Visible    ${title}
+TC_VHC_000-หน้าต่างยืนยันการ Add กรณีกดปุ่ม Cancel
+    add_new_vehicle
+    Wait Until Element Is Visible    ${confirm_add}
+    Click Element    ${cancel_confirm_add}
+    Wait Until Element Is Not Visible    ${cancel_confirm_add}
+    Wait Until Element Is Visible    ${title}
 TC_VHC_020-กรณีเพิ่มโดยกรอกข้อมูลครบถ้วนและถูกต้อง
     #ใส่ข้อมูลทั้งหมดทีต้องการเพิ่มถ้าไม่ใส่จะ Dafault ให้ใน Function add_new_vehicle
     
@@ -436,22 +476,150 @@ TC_VHC_021-หน้ารายละเอียด Vehicle
     ${place_License}     Run Keyword And Continue On Failure    Get Element Attribute    ${field_license}    placeholder
     Run Keyword And Continue On Failure    Should Be Equal    ${place_License}    ทะเบียนรถ
 
-TC_VHC_022-กรณีกดปุ่ม Edit ******** มีปัญหาอยู่ ********
+TC_VHC_022-กรณีกดปุ่ม Edit
     select_vehicle
+    Element Should Be Disabled    //div[@class="mb-3"][1]/div/div/div/div/span/div[1]/div[1]/div[1]/div/div/input
+    Element Should Be Disabled    ${field_veName}
+    Element Should Be Disabled     ${field_motor}
+    Element Should Be Disabled     //div[@class="mb-3"][1]//span/div[3]/div[1]/div[1]/div/div/div/Input
+    Element Should Be Disabled     //div[@class="mb-3"][1]//span/div[3]/div[2]/div[1]/div/div/div/Input
+    Element Should Be Disabled     ${field_gps}
+    Element Should Be Disabled     ${field_chassis}
+    Element Should Be Disabled     ${field_license}
+    Element Should Be Disabled    //div[@class="mb-3"][4]/div/div/div/div[1]/span/div[1]/div//input
     Click Element    ${factory_edit_button}
     Run Keyword And Continue On Failure    Wait Until Element Is Not Visible    //*[@class="mb-3"][1]/div/div/div/div[2]/span/div/div[@class="m-0"]
     Run Keyword And Continue On Failure    Wait Until Element Is Visible    //*[@class="mb-3"][1]/div/div/div/div[2]/span/div/div[@class="custom-tippy"][1]
     Run Keyword And Continue On Failure    Wait Until Element Is Visible    //*[@class="mb-3"][1]/div/div/div/div[2]/span/div/div[@class="custom-tippy"][2]
+    Run Keyword And Continue On Failure    Element Should Be Disabled    //*[@class="mb-3"][1]/div/div/div/div[2]/span/div/div[@class="custom-tippy"][1]/button
     Click Element    ${license_edit_button}
     Run Keyword And Continue On Failure    Wait Until Element Is Not Visible    //*[@class="mb-3"][2]/div/div/div/div[2]/span/div/div[@class="m-0"]
     Run Keyword And Continue On Failure    Wait Until Element Is Visible    //*[@class="mb-3"][2]/div/div/div/div[2]/span/div/div[@class="custom-tippy"][1]
     Run Keyword And Continue On Failure    Wait Until Element Is Visible    //*[@class="mb-3"][2]/div/div/div/div[2]/span/div/div[@class="custom-tippy"][2]
+    Run Keyword And Continue On Failure    Element Should Be Disabled    //*[@class="mb-3"][2]/div/div/div/div[2]/span/div/div[@class="custom-tippy"][1]/button
     Click Element    ${operation_edit_button}
     Run Keyword And Continue On Failure    Wait Until Element Is Not Visible    //*[@class="mb-3"][4]/div/div/div/div[2]/span/div/div[@class="m-0"]
     Run Keyword And Continue On Failure    Wait Until Element Is Visible    //*[@class="mb-3"][4]/div/div/div/div[2]/span/div/div[@class="custom-tippy"][1]
     Run Keyword And Continue On Failure    Wait Until Element Is Visible    //*[@class="mb-3"][4]/div/div/div/div[2]/span/div/div[@class="custom-tippy"][2]
+    Run Keyword And Continue On Failure    Element Should Be Disabled    //*[@class="mb-3"][4]/div/div/div/div[2]/span/div/div[@class="custom-tippy"][1]/button
+    Element Should Be Enabled    //div[@class="mb-3"][1]/div/div/div/div/span/div[1]/div[1]/div[1]/div/div/input
+    Element Should Be Enabled    ${field_veName}
+    Element Should Be Enabled     ${field_motor}
+    Element Should Be Enabled     //div[@class="mb-3"][1]//span/div[3]/div[1]/div[1]/div/div/div/Input
+    Element Should Be Enabled    //div[@class="mb-3"][1]//span/div[3]/div[2]/div[1]/div/div/div/Input
+    Element Should Be Enabled     ${field_gps}
+    Element Should Be Enabled     ${field_chassis}
+    Element Should Be Enabled     ${field_license}
+    Element Should Be Enabled    //div[@class="mb-3"][4]/div/div/div/div[1]/span/div[1]/div//input
+
+TC_VHC_000-ปุ่ม Save กรณีมีการแก้ไขข้อมูล
+    select_vehicle
+    Click Element    ${factory_edit_button}
+    Run Keyword And Continue On Failure    Wait Until Element Is Visible    //*[@class="mb-3"][1]/div/div/div/div[2]/span/div/div[@class="custom-tippy"][1]
+    Run Keyword And Continue On Failure    Element Should Be Disabled    ${factory_save_button}
+    Click Element    ${license_edit_button}
+    Run Keyword And Continue On Failure    Wait Until Element Is Visible    //*[@class="mb-3"][2]/div/div/div/div[2]/span/div/div[@class="custom-tippy"][1]
+    Run Keyword And Continue On Failure    Element Should Be Disabled    ${license_save_button}
+    Click Element    ${operation_edit_button}
+    Run Keyword And Continue On Failure    Wait Until Element Is Visible    //*[@class="mb-3"][4]/div/div/div/div[2]/span/div/div[@class="custom-tippy"][1]
+    Run Keyword And Continue On Failure    Element Should Be Disabled    ${operation_save_button}
+    Input Text    ${field_veName}    TestVehicleName
+    Input Text    ${field_license}    TestLicense
+    Click Element    ${drop_down_depot_button}
+    Wait Until Element Is Visible    ${field_depot}//*[text()[contains(.,'อู่เคหะธนบุรี')]]    10
+    Click Element    ${field_depot}//*[text()[contains(.,'อู่เคหะธนบุรี')]]
+    Click Element    ${drop_down_subline_button}
+    Element Text Should Not Be    ${field_subline}//*    No options
+    Click Element    //div[@class="mb-3"][4]//span/div[2]/div[1]/div[1]/div//*[text()="3-53_อู่รามคำแหง 74"]
+
+    Run Keyword And Continue On Failure    Element Should Be Enabled    ${operation_save_button}
+    Run Keyword And Continue On Failure    Element Should Be Enabled    ${license_save_button}
+    Run Keyword And Continue On Failure    Element Should Be Enabled    ${factory_save_button}
+
+TC_VHC_0-กรณีกดปุ่ม Cancel ส่วน Factory Data
+    #จะดึงข้อมูลเดิมมาเก็บไว้ก่อนแล้วแก้ไขข้อมูล และ Cancel เรียงไป 3 case และดูช่องทั้งหมดว่าข้อมูลยังเป็นค่าเดิม หรือ หายไปไหม
+    #เช็ค Motor Number ไม่ได้
+    #ยังไม่เขียน Case License
+    select_vehicle
+
+    Click Element    ${factory_edit_button}
+    Click Element    ${license_edit_button}
+    Click Element    ${operation_edit_button}
     
-TC_VHC_0-กรณีกดปุ่ม Cancel
+    ${check_vename}    Get Element Attribute    ${field_veName}    value
+    ${check_status}    Get Text    //div[@class="mb-3"][1]/div/div/div/div/span/div[1]/div[1]/div/div[1]/div[1]
+    ${check_model}    Get Text    //div[@class="mb-3"][1]//span/div[3]/div[1]/div[1]/div/div[1]/div[1]
+    ${check_brand}    Get Text    //div[@class="mb-3"][1]//span/div[3]/div[2]/div[1]/div/div[1]/div[1]
+    ${check_GPS}    Get Element Attribute    ${field_gps}    value 
+    ${check_chassis}    Get Element Attribute    ${field_chassis}    value 
+    ${check_license}    Get Element Attribute    ${field_license}    value
+    ${check_depot}    Get Text    //div[@class="mb-3"][4]//span/div[1]/div/div/div[1]/div[1]
+    ${check_subline}    Get Text    //div[@class="mb-3"][4]//span/div[2]/div[1]/div[1]/div/div[1]/div[1]
+    ${check_company}    Get Element Attribute    //div[@class="mb-3"][4]//span/div[2]/div[2]/div/div/input    value
+
+    #ส่วนนี้จะเปลี่ยนข้อมูลเดิมก่อนที่จะทำการกด Cancel โดยจะเปลี่ยนข้อมูลโดยใช้ข้อมูลเดิมและเติม 1 ด้าน
+    # Click Element    ${dropdown_status_button}
+    # Wait Until Element Is Visible    ${field_status}//*[text()[contains(.,'Active')]]    10
+    # Click Element     ${field_status}//*[text()[contains(.,'Active')]] 
+    # Input Text    ${field_veName}    ${check_vename}1
+    # Input Text    ${field_gps}    ${check_GPS}1
+    # Input Text    ${field_chassis}    ${check_chassis}1
+    # Click Element    ${drodown_model_button}    
+    # Wait Until Element Is Visible    ${field_model}    10
+    # Click Element    ${field_model}//*[text()[contains(.,'scania')]]
+    # Click Element    ${dropdown_brand_button}
+    # Click Element    ${field_brand}//*[text()[contains(.,'BENZ')]]
+    # Input Text    ${field_license}    ${check_license}
+    # Click Element    ${drop_down_depot_button}
+    # Wait Until Element Is Visible    ${field_depot}//*[text()[contains(.,'อู่บึงกุ่ม')]]    10
+    # Click Element    ${field_depot}//*[text()[contains(.,'อู่บึงกุ่ม')]]
+    # Click Element    ${drop_down_subline_button}
+    # Element Text Should Not Be    ${field_subline}//*    No options
+    # Click Element    //div[@class="mb-3"][4]//span/div[2]/div[1]/div[1]/div//*[text()="3-3(11)_อู่รามคำแหง 2"]
+   
+    Click Element    ${factory_cancel_button}
+    Element Should Be Disabled    //div[@class="mb-3"][1]/div/div/div/div/span/div[1]/div[1]/div[1]/div/div/input
+    Element Should Be Disabled    ${field_veName}
+    Element Should Be Disabled     ${field_motor}
+    Element Should Be Disabled     //div[@class="mb-3"][1]//span/div[3]/div[1]/div[1]/div/div/div/Input
+    Element Should Be Disabled     //div[@class="mb-3"][1]//span/div[3]/div[2]/div[1]/div/div/div/Input
+    Element Should Be Disabled     ${field_gps}
+    Element Should Be Disabled     ${field_chassis}
+    #Element Should Be Disabled     ${field_license}
+    #Element Should Be Disabled    //div[@class="mb-3"][4]/div/div/div/div[1]/span/div[1]/div//input
+
+
+    Wait Until Element Is Not Visible    //*[@class="mb-3"][1]/div/div/div/div[2]/span/div/div[@class="custom-tippy"][1]
+    Wait Until Element Is Not Visible    //*[@class="mb-3"][1]/div/div/div/div[2]/span/div/div[@class="custom-tippy"][2]
+    Wait Until Element Is Visible    //*[@class="mb-3"][1]/div/div/div/div[2]/span/div/div[@class="m-0"]
+    ${vename_after_cancel}    Get Element Attribute    ${field_veName}    value
+    ${status_after_cancel}    Get Text    //div[@class="mb-3"][1]/div/div/div/div/span/div[1]/div[1]/div/div[1]/div[1]
+    ${model_after_cancel}    Get Text    //div[@class="mb-3"][1]//span/div[3]/div[1]/div[1]/div/div[1]/div[1]
+    ${brand_after_cancel}    Get Text    //div[@class="mb-3"][1]//span/div[3]/div[2]/div[1]/div/div[1]/div[1]
+    ${GPS_after_cancel}    Get Element Attribute    ${field_gps}    value
+    ${chassisS_after_cancel}    Get Element Attribute    ${field_chassis}    value 
+    ${license_after_cancel}    Get Element Attribute    ${field_license}    value
+    ${depot_after_cancel}    Get Text    //div[@class="mb-3"][4]//span/div[1]/div/div/div[1]/div[1]
+    ${subline_after_cancel}    Get Text    //div[@class="mb-3"][4]//span/div[2]/div[1]/div[1]/div/div[1]/div[1]
+    ${company_after_cancel}    Get Element Attribute    //div[@class="mb-3"][4]//span/div[2]/div[2]/div/div/input    value
+    Run Keyword And Continue On Failure    Should Be Equal    ${check_vename}    ${vename_after_cancel}
+    Run Keyword And Continue On Failure    Should Be Equal    ${check_status}    ${status_after_cancel}
+    Run Keyword And Continue On Failure    Should Be Equal    ${check_model}    ${model_after_cancel}
+    Run Keyword And Continue On Failure    Should Be Equal    ${check_brand}    ${brand_after_cancel}
+    Run Keyword And Continue On Failure    Should Be Equal    ${check_GPS}    ${GPS_after_cancel}
+    Run Keyword And Continue On Failure    Should Be Equal    ${check_chassis}    ${chassisS_after_cancel}
+    Run Keyword And Continue On Failure    Should Be Equal    ${check_license}    ${license_after_cancel}
+    Run Keyword And Continue On Failure    Should Be Equal    ${check_depot}    ${depot_after_cancel}
+    Run Keyword And Continue On Failure    Should Be Equal    ${check_subline}    ${subline_after_cancel}
+    Run Keyword And Continue On Failure    Should Be Equal    ${check_company}    ${company_after_cancel}
+    
+#กด Cancel เวลาไม่แก้ข้อมูลบางช่องจะข้อมูลหาย
+#กด Cancel เวลามีการแก้ข้อมูลส่วนอื่นที่ไม่เกี่ยวบางช่องโดนเปลี่ยนค่ากลับ
+
+TC_VHC_0-กรณีกดปุ่ม Cancel ส่วน License
+    #จะดึงข้อมูลเดิมมาเก็บไว้ก่อนแล้วแก้ไขข้อมูล และ Cancel เรียงไป 3 case และดูช่องทั้งหมดว่าข้อมูลยังเป็นค่าเดิม หรือ หายไปไหม
+    #เช็ค Motor Number ไม่ได้
+    #ยังไม่เขียน Case License
     select_vehicle
     Click Element    ${factory_edit_button}
     Click Element    ${license_edit_button}
@@ -460,15 +628,148 @@ TC_VHC_0-กรณีกดปุ่ม Cancel
     ${check_status}    Get Text    //div[@class="mb-3"][1]/div/div/div/div/span/div[1]/div[1]/div/div[1]/div[1]
     ${check_model}    Get Text    //div[@class="mb-3"][1]//span/div[3]/div[1]/div[1]/div/div[1]/div[1]
     ${check_brand}    Get Text    //div[@class="mb-3"][1]//span/div[3]/div[2]/div[1]/div/div[1]/div[1]
-    Log To Console    ${check_status}
-    Log To Console    ${check_vename}
-    Log To Console    ${check_model}
-    Log To Console    ${check_brand}
+    ${check_GPS}    Get Element Attribute    ${field_gps}    value 
+    ${check_chassis}    Get Element Attribute    ${field_chassis}    value 
+    ${check_license}    Get Element Attribute    ${field_license}    value
+    ${check_depot}    Get Text    //div[@class="mb-3"][4]//span/div[1]/div/div/div[1]/div[1]
+    ${check_subline}    Get Text    //div[@class="mb-3"][4]//span/div[2]/div[1]/div[1]/div/div[1]/div[1]
+    ${check_company}    Get Element Attribute    //div[@class="mb-3"][4]//span/div[2]/div[2]/div/div/input    value
 
+    #ส่วนนี้จะเปลี่ยนข้อมูลเดิมก่อนที่จะทำการกด Cancel โดยจะเปลี่ยนข้อมูลโดยใช้ข้อมูลเดิมและเติม 1 ด้าน
+    # Click Element    ${dropdown_status_button}
+    # Wait Until Element Is Visible    ${field_status}//*[text()[contains(.,'Active')]]    10
+    # Click Element     ${field_status}//*[text()[contains(.,'Active')]] 
+    # Input Text    ${field_veName}    ${check_vename}1
+    # Input Text    ${field_gps}    ${check_GPS}1
+    # Input Text    ${field_chassis}    ${check_chassis}1
+    # Click Element    ${drodown_model_button}    
+    # Wait Until Element Is Visible    ${field_model}    10
+    # Click Element    ${field_model}//*[text()[contains(.,'scania')]]
+    # Click Element    ${dropdown_brand_button}
+    # Click Element    ${field_brand}//*[text()[contains(.,'BENZ')]]
+    # Input Text    ${field_license}    ${check_license}
+    # Click Element    ${drop_down_depot_button}
+    # Wait Until Element Is Visible    ${field_depot}//*[text()[contains(.,'อู่บึงกุ่ม')]]    10
+    # Click Element    ${field_depot}//*[text()[contains(.,'อู่บึงกุ่ม')]]
+    # Click Element    ${drop_down_subline_button}
+    # Element Text Should Not Be    ${field_subline}//*    No options
+    # Click Element    //div[@class="mb-3"][4]//span/div[2]/div[1]/div[1]/div//*[text()="3-3(11)_อู่รามคำแหง 2"]
+    # Click Element    ${license_cancel_button}
 
+    Click Element    ${license_cancel_button}
+    # Element Should Be Disabled    //div[@class="mb-3"][1]/div/div/div/div/span/div[1]/div[1]/div[1]/div/div/input
+    # Element Should Be Disabled    ${field_veName}
+    # Element Should Be Disabled     ${field_motor}
+    # Element Should Be Disabled     //div[@class="mb-3"][1]//span/div[3]/div[1]/div[1]/div/div/div/Input
+    # Element Should Be Disabled     //div[@class="mb-3"][1]//span/div[3]/div[2]/div[1]/div/div/div/Input
+    # Element Should Be Disabled     ${field_gps}
+    # Element Should Be Disabled     ${field_chassis}
+    Element Should Be Disabled     ${field_license}
+    #Element Should Be Disabled    //div[@class="mb-3"][4]/div/div/div/div[1]/span/div[1]/div//input
+    Wait Until Element Is Not Visible    //*[@class="mb-3"][2]/div/div/div/div[2]/span/div/div[@class="custom-tippy"][1]
+    Wait Until Element Is Not Visible    //*[@class="mb-3"][2]/div/div/div/div[2]/span/div/div[@class="custom-tippy"][2]
+    Wait Until Element Is Visible    //*[@class="mb-3"][2]/div/div/div/div[2]/span/div/div[@class="m-0"]
+    ${vename_after_cancel}    Get Element Attribute    ${field_veName}    value
+    ${status_after_cancel}    Get Text    //div[@class="mb-3"][1]/div/div/div/div/span/div[1]/div[1]/div/div[1]/div[1]
+    ${model_after_cancel}    Get Text    //div[@class="mb-3"][1]//span/div[3]/div[1]/div[1]/div/div[1]/div[1]
+    ${brand_after_cancel}    Get Text    //div[@class="mb-3"][1]//span/div[3]/div[2]/div[1]/div/div[1]/div[1]
+    ${GPS_after_cancel}    Get Element Attribute    ${field_gps}    value
+    ${chassisS_after_cancel}    Get Element Attribute    ${field_chassis}    value 
+    ${license_after_cancel}    Get Element Attribute    ${field_license}    value
+    ${depot_after_cancel}    Get Text    //div[@class="mb-3"][4]//span/div[1]/div/div/div[1]/div[1]
+    ${subline_after_cancel}    Get Text    //div[@class="mb-3"][4]//span/div[2]/div[1]/div[1]/div/div[1]/div[1]
+    ${company_after_cancel}    Get Element Attribute    //div[@class="mb-3"][4]//span/div[2]/div[2]/div/div/input    value
+    Run Keyword And Continue On Failure    Should Be Equal    ${check_vename}    ${vename_after_cancel}
+    Run Keyword And Continue On Failure    Should Be Equal    ${check_status}    ${status_after_cancel}
+    Run Keyword And Continue On Failure    Should Be Equal    ${check_model}    ${model_after_cancel}
+    Run Keyword And Continue On Failure    Should Be Equal    ${check_brand}    ${brand_after_cancel}
+    Run Keyword And Continue On Failure    Should Be Equal    ${check_GPS}    ${GPS_after_cancel}
+    Run Keyword And Continue On Failure    Should Be Equal    ${check_chassis}    ${chassisS_after_cancel}
+    Run Keyword And Continue On Failure    Should Be Equal    ${check_license}    ${license_after_cancel}
+    Run Keyword And Continue On Failure    Should Be Equal    ${check_depot}    ${depot_after_cancel}
+    Run Keyword And Continue On Failure    Should Be Equal    ${check_subline}    ${subline_after_cancel}
+    Run Keyword And Continue On Failure    Should Be Equal    ${check_company}    ${company_after_cancel}
+
+#กด Cancel เวลาไม่แก้ข้อมูลบางช่องจะข้อมูลหาย
+#กด Cancel เวลามีการแก้ข้อมูลส่วนอื่นที่ไม่เกี่ยวบางช่องโดนเปลี่ยนค่ากลับ
+
+TC_VHC_0-กรณีกดปุ่ม Cancel ส่วน Operation Data
     #จะดึงข้อมูลเดิมมาเก็บไว้ก่อนแล้วแก้ไขข้อมูล และ Cancel เรียงไป 3 case และดูช่องทั้งหมดว่าข้อมูลยังเป็นค่าเดิม หรือ หายไปไหม
-    Sleep    1000
+    #เช็ค Motor Number ไม่ได้
+    #ยังไม่เขียน Case License
+    select_vehicle
+    Click Element    ${factory_edit_button}
+    Click Element    ${license_edit_button}
+    Click Element    ${operation_edit_button}
+    ${check_vename}    Get Element Attribute    ${field_veName}    value
+    ${check_status}    Get Text    //div[@class="mb-3"][1]/div/div/div/div/span/div[1]/div[1]/div/div[1]/div[1]
+    ${check_model}    Get Text    //div[@class="mb-3"][1]//span/div[3]/div[1]/div[1]/div/div[1]/div[1]
+    ${check_brand}    Get Text    //div[@class="mb-3"][1]//span/div[3]/div[2]/div[1]/div/div[1]/div[1]
+    ${check_GPS}    Get Element Attribute    ${field_gps}    value 
+    ${check_chassis}    Get Element Attribute    ${field_chassis}    value 
+    ${check_license}    Get Element Attribute    ${field_license}    value
+    ${check_depot}    Get Text    //div[@class="mb-3"][4]//span/div[1]/div/div/div[1]/div[1]
+    ${check_subline}    Get Text    //div[@class="mb-3"][4]//span/div[2]/div[1]/div[1]/div/div[1]/div[1]
+    ${check_company}    Get Element Attribute    //div[@class="mb-3"][4]//span/div[2]/div[2]/div/div/input    value
 
+    #ส่วนนี้จะเปลี่ยนข้อมูลเดิมก่อนที่จะทำการกด Cancel โดยจะเปลี่ยนข้อมูลโดยใช้ข้อมูลเดิมและเติม 1 ด้าน
+    # Click Element    ${dropdown_status_button}
+    # Wait Until Element Is Visible    ${field_status}//*[text()[contains(.,'Active')]]    10
+    # Click Element     ${field_status}//*[text()[contains(.,'Active')]] 
+    # Input Text    ${field_veName}    ${check_vename}1
+    # Input Text    ${field_gps}    ${check_GPS}1
+    # Input Text    ${field_chassis}    ${check_chassis}1
+    # Click Element    ${drodown_model_button}    
+    # Wait Until Element Is Visible    ${field_model}    10
+    # Click Element    ${field_model}//*[text()[contains(.,'scania')]]
+    # Click Element    ${dropdown_brand_button}
+    # Click Element    ${field_brand}//*[text()[contains(.,'BENZ')]]
+    # Input Text    ${field_license}    ${check_license}
+    # Click Element    ${drop_down_depot_button}
+    # Wait Until Element Is Visible    ${field_depot}//*[text()[contains(.,'อู่บึงกุ่ม')]]    10
+    # Click Element    ${field_depot}//*[text()[contains(.,'อู่บึงกุ่ม')]]
+    # Click Element    ${drop_down_subline_button}
+    # Element Text Should Not Be    ${field_subline}//*    No options
+    # Click Element    //div[@class="mb-3"][4]//span/div[2]/div[1]/div[1]/div//*[text()="3-3(11)_อู่รามคำแหง 2"]
+
+
+    Click Element    ${operation_cancel_button}
+    # Element Should Be Disabled    //div[@class="mb-3"][1]/div/div/div/div/span/div[1]/div[1]/div[1]/div/div/input
+    # Element Should Be Disabled    ${field_veName}
+    # Element Should Be Disabled     ${field_motor}
+    # Element Should Be Disabled     //div[@class="mb-3"][1]//span/div[3]/div[1]/div[1]/div/div/div/Input
+    # Element Should Be Disabled     //div[@class="mb-3"][1]//span/div[3]/div[2]/div[1]/div/div/div/Input
+    # Element Should Be Disabled     ${field_gps}
+    # Element Should Be Disabled     ${field_chassis}
+    #Element Should Be Disabled     ${field_license}
+    Element Should Be Disabled    //div[@class="mb-3"][4]/div/div/div/div[1]/span/div[1]/div//input
+
+    Wait Until Element Is Not Visible    //*[@class="mb-3"][4]/div/div/div/div[2]/span/div/div[@class="custom-tippy"][1]
+    Wait Until Element Is Not Visible    //*[@class="mb-3"][4]/div/div/div/div[2]/span/div/div[@class="custom-tippy"][2]
+    Wait Until Element Is Visible    //*[@class="mb-3"][4]/div/div/div/div[2]/span/div/div[@class="m-0"]
+    ${vename_after_cancel}    Get Element Attribute    ${field_veName}    value
+    ${status_after_cancel}    Get Text    //div[@class="mb-3"][1]/div/div/div/div/span/div[1]/div[1]/div/div[1]/div[1]
+    ${model_after_cancel}    Get Text    //div[@class="mb-3"][1]//span/div[3]/div[1]/div[1]/div/div[1]/div[1]
+    ${brand_after_cancel}    Get Text    //div[@class="mb-3"][1]//span/div[3]/div[2]/div[1]/div/div[1]/div[1]
+    ${GPS_after_cancel}    Get Element Attribute    ${field_gps}    value
+    ${chassisS_after_cancel}    Get Element Attribute    ${field_chassis}    value 
+    ${license_after_cancel}    Get Element Attribute    ${field_license}    value
+    ${depot_after_cancel}    Get Text    //div[@class="mb-3"][4]//span/div[1]/div/div/div[1]/div[1]
+    ${subline_after_cancel}    Get Text    //div[@class="mb-3"][4]//span/div[2]/div[1]/div[1]/div/div[1]/div[1]
+    ${company_after_cancel}    Get Element Attribute    //div[@class="mb-3"][4]//span/div[2]/div[2]/div/div/input    value
+    Run Keyword And Continue On Failure    Should Be Equal    ${check_vename}    ${vename_after_cancel}
+    Run Keyword And Continue On Failure    Should Be Equal    ${check_status}    ${status_after_cancel}
+    Run Keyword And Continue On Failure    Should Be Equal    ${check_model}    ${model_after_cancel}
+    Run Keyword And Continue On Failure    Should Be Equal    ${check_brand}    ${brand_after_cancel}
+    Run Keyword And Continue On Failure    Should Be Equal    ${check_GPS}    ${GPS_after_cancel}
+    Run Keyword And Continue On Failure    Should Be Equal    ${check_chassis}    ${chassisS_after_cancel}
+    Run Keyword And Continue On Failure    Should Be Equal    ${check_license}    ${license_after_cancel}
+    Run Keyword And Continue On Failure    Should Be Equal    ${check_depot}    ${depot_after_cancel}
+    Run Keyword And Continue On Failure    Should Be Equal    ${check_subline}    ${subline_after_cancel}
+    Run Keyword And Continue On Failure    Should Be Equal    ${check_company}    ${company_after_cancel}
+
+#กด Cancel เวลาไม่แก้ข้อมูลบางช่องจะข้อมูลหาย
+#กด Cancel เวลามีการแก้ข้อมูลส่วนอื่นที่ไม่เกี่ยวบางช่องโดนเปลี่ยนค่ากลับ
 
 TC_VHC_023-กรณี Edit โดยข้อมูลว่าง
     select_vehicle
@@ -561,6 +862,24 @@ TC_VHC_030-หน้าต่างยืนยันการแก้ไข
     Run Keyword And Continue On Failure    Element Text Should Be    ${confirm_edit_detail}    คุณยืนยันที่จะแก้ไขพาหนะใช่หรือไม่?
     Run Keyword And Continue On Failure    Element Text Should Be    ${confirm_confirm_edit_button}    ยืนยัน 
     Run Keyword And Continue On Failure    Element Text Should Be    ${confirm_edit_cancel_button}    ยกเลิก
+    Run Keyword And Continue On Failure    Wait Until Element Is Visible    ${close_confirm_edit_button}
+
+หน้าต่างยืนยันการแก้ไขกรณีกดปุ่ม x
+    edit_vehicle_name
+    Click Element    ${confirm_edit_button}
+    Wait Until Element Is Visible    ${close_confirm_edit_button}
+    Click Element    ${close_confirm_edit_button}
+    Wait Until Element Is Not Visible    ${close_confirm_edit_button}
+    Wait Until Element Is Visible    ${title}
+
+
+หน้าต่างยืนยันการแก้ไขกรณีกดปุ่ม Cancel
+    edit_vehicle_name
+    Click Element    ${confirm_edit_button}
+    Wait Until Element Is Visible    ${confirm_edit_cancel_button}
+    Click Element    ${confirm_edit_cancel_button}
+    Wait Until Element Is Not Visible    ${confirm_edit_cancel_button}
+    Wait Until Element Is Visible    ${title}
 
 
 TC_VHC_031-กรณี Edit vehicle name
@@ -720,7 +1039,6 @@ TC_VHC_035-กรณี Edit brand
     Run Keyword And Continue On Failure    Wait Until Element Is Visible    ${top_right_alert}
     Run Keyword And Continue On Failure    Element Text Should Be    ${top_right_alert}    อัปเดตพาหนะสำเร็จ   
     Element Text Should Be    //div[@class="mb-3"][1]//span/div[3]/div[2]/div[1]/div/div[1]/div[1]    ${new_brand}
-    Sleep    3
     Close Browser
 
     #ส่วนนี้จะแก้ไขข้อมูลกลับมาเป็นค่าเดิม
@@ -736,7 +1054,6 @@ TC_VHC_035-กรณี Edit brand
     Run Keyword And Continue On Failure    Wait Until Element Is Visible    ${top_right_alert}
     Run Keyword And Continue On Failure    Element Text Should Be    ${top_right_alert}    อัปเดตพาหนะสำเร็จ   
     Element Text Should Be    //div[@class="mb-3"][1]//span/div[3]/div[2]/div[1]/div/div[1]/div[1]    ${old_brand}
-    Sleep    3
     Close Browser
 
 
@@ -756,7 +1073,6 @@ TC_VHC_036-กรณี Edit GPS IMEI
     Run Keyword And Continue On Failure    Element Text Should Be    ${top_right_alert}    อัปเดตพาหนะสำเร็จ    
     ${check_GPS}    Get Element Attribute    ${field_gps}    value 
     Should Be Equal    ${check_GPS}    ${new_GPS}
-    Sleep    3
     Close Browser
 
     #ส่วนนี้จะแก้ไขข้อมูลกลับมาเป็นค่าเดิม
@@ -774,7 +1090,6 @@ TC_VHC_036-กรณี Edit GPS IMEI
     Run Keyword And Continue On Failure    Element Text Should Be    ${top_right_alert}    อัปเดตพาหนะสำเร็จ    
     ${check_GPS}    Get Element Attribute    ${field_gps}    value 
     Should Be Equal    ${check_GPS}    ${old_GPS}
-    Sleep    3
     Close Browser
 
 TC_VHC_037-กรณี Edit chassis number
@@ -880,7 +1195,6 @@ TC_VHC_039-กรณี Edit sub line
     Run Keyword And Continue On Failure    Wait Until Element Is Visible    ${top_right_alert}
     Run Keyword And Continue On Failure    Element Text Should Be    ${top_right_alert}    อัปเดตพาหนะสำเร็จ  
     Element Text Should Be    //div[@class="mb-3"][4]//span/div[2]/div[1]/div[1]/div/div[1]/div[1]    ${new_subline}
-    Sleep    3
     Close Browser
 
 
@@ -910,11 +1224,28 @@ TC_VHC_039-กรณี Edit sub line
 TC_VHC_040-หน้าต่างยืนยันการ Delete Vehicle
     select_vehicle
     Click Element    ${delete_button}
-    Sleep    1
-    Run Keyword And Continue On Failure    Element Text Should Be    ${confirm_edit_title}    ลบพาหนะ
-    Run Keyword And Continue On Failure    Element Text Should Be    ${confirm_edit_detail}     คุณยืนยันที่จะลบพาหนะ: 46446544 ใช่หรือไม่?
-    Run Keyword And Continue On Failure    Element Text Should Be    ${confirm_confirm_edit_button}    ยืนยัน
-    Run Keyword And Continue On Failure    Element Text Should Be    ${confirm_edit_cancel_button}    ยกเลิก
+    Wait Until Element Is Visible    ${confirm_delete}
+    Run Keyword And Continue On Failure    Element Text Should Be    ${confirm_delete_title}    ลบพาหนะ
+    Run Keyword And Continue On Failure    Element Text Should Be    ${confirm_delete_text}     คุณยืนยันที่จะลบพาหนะ: 46446544 ใช่หรือไม่?
+    Run Keyword And Continue On Failure    Element Text Should Be    ${confirm_delete}    ยืนยัน
+    Run Keyword And Continue On Failure    Element Text Should Be    ${cancel_confirm_delete}    ยกเลิก
+    Run Keyword And Continue On Failure    Wait Until Element Is Visible    ${close_confirm_delete}
+
+หน้าต่างยืนยันการ Delete กรณีกดปุ่ม x
+    select_vehicle
+    Click Element    ${delete_button}
+    Wait Until Element Is Visible    ${close_confirm_delete}
+    Click Element    ${close_confirm_delete}
+    Wait Until Element Is Not Visible    ${close_confirm_delete}
+    Wait Until Element Is Visible    ${title}
+
+หน้าต่างยืนยันการ Delete กรณีกดปุ่ม Cancel
+    select_vehicle
+    Click Element    ${delete_button}
+    Wait Until Element Is Visible    ${cancel_confirm_delete}
+    Click Element    ${cancel_confirm_delete}
+    Wait Until Element Is Not Visible    ${cancel_confirm_delete}
+    Wait Until Element Is Visible    ${title}
 
 TC_VHC_041-กรณีลบ Vehicle
     #ใส่ License Plate ที่ต้องการลบ
@@ -937,10 +1268,6 @@ TC_VHC_042-กรณีลบ Vehicle ที่ถูกใช้งานอย
     Wait Until Element Is Visible    //span[text()[contains(.,"${delete_license}")]]    10
 
 
-
-ทดลอง
-    select_vehicle
-    Sleep    1000
 
 
 
