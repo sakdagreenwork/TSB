@@ -13,7 +13,7 @@ Test Teardown    Close Browser
 
 *** Variables ***
 ${hamburger_button}     //*[@id="root"]/main/header/div/div/div[1]/div[2]//*[name()='svg']
-${datamanage_button}    //*[@id="root"]/main/div[2]/div[3]/div[1]/div[2]/div/div/div/ul/li[6]/div[1]/div[1]/div
+${datamanage_button}    //*[@id="root"]/main/div[2]//div[1]/div[2]/div/div/div/ul/li[6]/div[1]/div[1]/div
 ${line_subline_button}    //*[@id="root"]/main/div[2]//div[1]/div[2]/div/div/div/ul/li[6]/div[2]/div/ul/li[8]/a/span/span[2]
 
 ${title}    //*[@id="root"]/main/header/div/div/div[1]//h4
@@ -182,7 +182,8 @@ ${cancel_delete_route_button}    //*[@id="headlessui-portal-root"]/div/div/div/d
 
 &{month_convert}    1=January    2=February    3=March    4=April    5=May    6=June
 ...         7=July    8=August    9=September    10=October    11=November    12=December
-
+...         01=January    02=February    03=March    04=April    05=May    06=June
+...         07=July    08=August    09=September
 
 *** Keywords ***
 open_line_subline_menu
@@ -267,6 +268,13 @@ add_route
 
     ${start_month_text}    Set Variable    ${month_convert}[${start_month}] 
     ${end_month_text}    Set Variable    ${month_convert}[${end_month}]
+
+    IF    '${start_day[0:1]}' == '0'
+        ${start_day}    Set Variable    ${start_day[1:2]}
+    ELSE
+        Log To Console    ปกติ
+    END
+
 
     Wait Until Element Is Visible    //*[@id="root"]/main//main/div//div[2]/div/div/div/div[./div/div/div[text()="${sub_line}"]]
     Click Element    //*[@id="root"]/main//main/div//div[2]/div/div/div/div[./div/div/div[text()="${sub_line}"]]
@@ -1599,7 +1607,6 @@ add_route
     add_route    start_day=25    start_month=3    start_year=2080    end_year=3000
     Run Keyword And Continue On Failure    Element Text Should Be    ${start_date_alert}    วันเริ่มต้นนี้ถูกใช้งานแล้ว        
     Run Keyword And Continue On Failure    Wait Until Element Is Not Visible    ${confirm_confirm_add_route_button}
-
 กรณี Add Route To Sub Line เลือก End Time ที่ทับกับ Start Time ที่มีอยู่
     #จะเทียบกับข้อมูล Route เดิมที่ถูกสร้างไว้ที่มี Start Time เหมือนกัน
     open_line_subline_menu
@@ -1701,6 +1708,11 @@ add_route
 
 
 
+Test
+    ${test}    Get Current Date
+    Log To Console    ${test}
+    ${split}    Set Variable    ${test[5:7]}${test[8:10]}${test[11:13]}${test[14:16]}${test[17:19]}
+    Log To Console    ${split}
 #กรณีกดปุ่ม x, Cancel
 #- หน้ายืนยันการเพิ่ม Line, Sub Line, Route
 
