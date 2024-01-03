@@ -1,3 +1,20 @@
+# Test Data ที่่ต้องเตรียมไว้ก่อนทำการ Automate Test
+# 1. User
+    - email=sakda.greenwork@gmail.com
+    - name=Sakda
+    - lastname=Lertladasak
+# 2. Company 
+    - name=บริษัท ต.มานิตย์ การเดินรถ จำกัด
+    - branch=บริษัท ต.มานิตย์ การเดินรถ จำกัด_อู่เอกชัย
+# 3. Company
+    - name=บริษัท หลีกภัยขนส่ง จำกัด
+    - branch=บริษัท หลีกภัยขนส่ง จำกัด_อู่บางพูน
+# 4. Employee
+    - name=nong mai
+# 5. Employee
+    - name=test test
+
+
 *** Settings ***
 Library             SeleniumLibrary    screenshot_root_directory=/Users/sakda.l/Desktop/TSB Automate/Login/Failed Screenshot
 Library             Collections
@@ -105,6 +122,10 @@ ${edit_employee_data}    //*[@id="root"]/main//main/div[2]/div/div/div[1]/div[2]
 ${edit_status_button}                       //*[@id="root"]/main//main/div[2]/div/div/div[1]/div[2]//form/div[6]/div/label/input
 ${edit_status_text}                         //*[@id="root"]/main//main/div[2]/div/div/div[1]/div[2]//form/div[6]/div/label/span
 
+${edit_check_disable_female}    //*[@id="root"]/main//main/div[2]/div/div/div[1]/div[2]//form/div[3]/div/div/label/input
+${edit_check_disable_male}    //*[@id="root"]/main//main/div[2]/div/div/div[1]/div[2]//form/div[3]/div/div[2]/label/input
+${edit_check_disable_other}    //*[@id="root"]/main//main/div[2]/div/div/div[1]/div[2]//form/div[3]/div/div[3]/label/input
+
 ${edit_company_dropdown}    //*[@id="root"]/main//main/div[2]/div/div/div[1]/div[2]//form/div[4]/div[1]/div/div[2]    
 ${edit_branch_dropdown}    //*[@id="root"]/main//main/div[2]/div/div/div[1]/div[2]//form/div[4]/div[2]/div/div[2]
 ${edit_employee_dropdown}    //*[@id="root"]/main//main/div[2]/div/div/div[1]/div[2]//form/div[5]/div/div[2]        
@@ -155,12 +176,15 @@ open_add_new_user_menu
 add_new_user
     [Arguments]    ${email}=sakda@efinancethai.automatetest    ${name}=ชื่อ    ${surname}=นามสกุล
     ...            ${gender}=ชาย    ${company}=บริษัท ต.มานิตย์ การเดินรถ จำกัด    ${branch}=บริษัท ต.มานิตย์ การเดินรถ จำกัด_อู่เอกชัย
-    ...            ${employee}=nong mai    ${option}=อีเมล       
+    ...            ${employee}=null    ${option}=อีเมล       
+
+    #${email}    get_unique_data
+    #${email}    Set Variable    ${email}@efinancethai.com
 
     Input Text    ${add_email_field}    ${email}
     Input Text    ${add_name_field}    ${name}
     Input Text    ${add_surname_field}    ${surname}
-    
+
     IF    "${gender}" == "ชาย"
         Click Element    ${add_select_male_gender_box}
     ELSE IF    "${gender}" == "หญิง"
@@ -175,9 +199,16 @@ add_new_user
     Input Text    ${add_branch_field}    ${branch}
     Wait Until Element Is Visible    ${add_branch_dropdown}//*[text()="${branch}"]
     Click Element   ${add_branch_dropdown}//*[text()="${branch}"]
-    Input Text    ${add_employee_field}    ${employee}
-    Wait Until Element Is Visible    ${add_employee_dropdown}//*[text()="${employee}"]    15
-    Click Element    ${add_employee_dropdown}//*[text()="${employee}"]
+
+
+    IF    '${employee}' != 'null'
+        Input Text    ${add_employee_field}    ${employee}
+        Wait Until Element Is Visible    ${add_employee_dropdown}//*[text()="${employee}"]    15
+        Click Element    ${add_employee_dropdown}//*[text()="${employee}"] 
+    END
+    
+
+
     Wait Until Element Is Enabled    ${add_select_email_box}
     IF    "${option}" == "อีเมล"
         Click Element   ${add_select_email_box}
@@ -254,7 +285,7 @@ select_user
     ${max_surname}    Get Element Attribute    ${add_surname_field}    maxlength
     Run Keyword And Continue On Failure    Should Be Equal    ${max_surname}    20
 
-กรณี Add โดยไม่กรอกข้อมูล
+กรณี Add โดยไม่กรอกข้อมูลทุกค่า
     open_add_new_user_menu
     Click Element    ${add_button}
     Run Keyword And Continue On Failure    Element Text Should Be    ${add_email_alert}    โปรดระบุอีเมล
@@ -263,6 +294,13 @@ select_user
     Run Keyword And Continue On Failure    Element Text Should Be    ${add_company_alert}    โปรดระบุบริษัท
     Run Keyword And Continue On Failure    Element Text Should Be    ${add_branch_alert}    โปรดระบุสาขา
     Wait Until Element Is Not Visible    ${confirm_add_edit_delete_button}
+
+กรณี Add โดยกรอกข้อมูลที่ครบถ้วน ยกเว้น Employee
+    ${email}    get_unique_data
+    ${email}    Set Variable    ${email}@efinancethai.com
+    open_add_new_user_menu
+    add_new_user    email=${email}
+    Wait Until Element Is Visible    ${confirm_add_edit_delete_button}
 
 กรณีกรอก Email ซ้ำกับที่มีอยู่
     open_add_new_user_menu
@@ -289,8 +327,10 @@ select_user
     Wait Until Element Is Not Visible    ${confirm_add_edit_delete_button}
 
 หน้าต่างยืนยันการ Add
+     ${email}    get_unique_data
+    ${email}    Set Variable    ${email}@efinancethai.com
     open_add_new_user_menu
-    add_new_user
+    add_new_user    email=${email}
     Wait Until Element Is Visible    ${confirm_add_edit_delete_button}
     Run Keyword And Continue On Failure    Element Text Should Be    ${confirm_add_edit_delete_title}    เพิ่มผู้ใช้
     Run Keyword And Continue On Failure    Element Text Should Be    ${confirm_add_edit_delete_text}   คุณยืนยันที่จะเพิ่มผู้ใช้ใช่หรือไม่?
@@ -298,15 +338,19 @@ select_user
     Run Keyword And Continue On Failure    Element Text Should Be    ${cancel_confirm_add_edit_delete_button}    ยกเลิก
 
 หน้าต่างยืนยันการ Add กรณีกดปุ่ม x
+    ${email}    get_unique_data
+    ${email}    Set Variable    ${email}@efinancethai.com
     open_add_new_user_menu
-    add_new_user
+    add_new_user    email=${email}
     Wait Until Element Is Visible    ${close_confirm_add_edit_delete}
     Click Element    ${close_confirm_add_edit_delete}
     Wait Until Element Is Not Visible    ${close_confirm_add_edit_delete}
 
 หน้าต่างยืนยันการ Add กรณีกดปุ่ม Cancel
+    ${email}    get_unique_data
+    ${email}    Set Variable    ${email}@efinancethai.com
     open_add_new_user_menu
-    add_new_user
+    add_new_user    email=${email}
     Wait Until Element Is Visible    ${cancel_confirm_add_edit_delete_button}
     Click Element    ${cancel_confirm_add_edit_delete_button}
     Wait Until Element Is Not Visible    ${cancel_confirm_add_edit_delete_button}
@@ -327,7 +371,6 @@ select_user
     Click Element    ${confirm_add_edit_delete_button}
     Wait Until Element Is Visible    ${top_right_alert}
     Run Keyword And Continue On Failure    Element Text Should Be    ${top_right_alert}    เพิ่มผู้ใช้งานสำเร็จ
-    ${search}    get_unique_data
     select_user    email=${email}
     Run Keyword And Continue On Failure    Element Should Contain    ${first_name_lastname_result}    ${name}
     Run Keyword And Continue On Failure    Element Should Contain    ${first_name_lastname_result}    ${lastname}
@@ -360,7 +403,7 @@ select_user
     Run Keyword And Continue On Failure    Element Text Should Be    ${top_right_alert}    เพิ่มผู้ใช้งานสำเร็จ
     Wait Until Element Is Visible    ${view_password_close_button}
     Click Element    ${view_password_close_button}
-    ${search}    get_unique_data
+    #${search}    get_unique_data
     select_user    email=${email}
     Run Keyword And Continue On Failure    Element Should Contain    ${first_name_lastname_result}    ${name}
     Run Keyword And Continue On Failure    Element Should Contain    ${first_name_lastname_result}    ${lastname}
@@ -411,6 +454,11 @@ select_user
     Wait Until Element Is Not Visible    ${view_password_close_button}
     Wait Until Element Is Visible    ${title}
 
+กรณีกดเลือก User
+    ${email}    Set Variable    sakda.greenwork@gmail.com
+    open_user_management_menu
+    select_user    ${email}
+
 หน้า User
     ${email}    Set Variable    sakda.greenwork@gmail.com
     open_user_management_menu
@@ -436,8 +484,18 @@ select_user
     Run Keyword And Continue On Failure    Element Text Should Be    ${edit_select_other_text}    อื่นๆ
     Run Keyword And Continue On Failure    Element Text Should Be    ${edit_status_text}    เปิดใช้งาน
     Mouse Over    ${edit_button}
-    Wait Until Element Is Visible    //html/body/div[2]//*[text()="แก้ไข"]
-
+    Run Keyword And Continue On Failure    Wait Until Element Is Visible    //html/body/div[2]//*[text()="แก้ไข"]
+    Run Keyword And Continue On Failure    Element Should Be Disabled    ${edit_email_field}
+    Run Keyword And Continue On Failure    Element Should Be Disabled    ${edit_name_field}
+    Run Keyword And Continue On Failure    Element Should Be Disabled    ${edit_surname_field}
+    Run Keyword And Continue On Failure    Element Should Be Disabled    ${edit_check_disable_female}
+    Run Keyword And Continue On Failure    Element Should Be Disabled    ${edit_check_disable_male}
+    Run Keyword And Continue On Failure    Element Should Be Disabled    ${edit_check_disable_other}
+    Run Keyword And Continue On Failure    Element Should Be Disabled    ${edit_company_field}
+    Run Keyword And Continue On Failure    Element Should Be Disabled    ${edit_branch_field}
+    Run Keyword And Continue On Failure    Element Should Be Disabled    ${edit_employee_field}
+    Run Keyword And Continue On Failure    Element Should Be Disabled    ${edit_status_button}
+    
 ตัวอักษรสูงสุดหน้า User
     ${email}    Set Variable    sakda.greenwork@gmail.com
     open_user_management_menu
@@ -458,7 +516,17 @@ select_user
     Run Keyword And Continue On Failure    Element Should Be Disabled    ${save_button}
     Mouse Over    ${cancel_button}
     Run Keyword And Continue On Failure    Wait Until Element Is Visible    //html/body/div[2]//*[text()="ยกเลิกการแก้ไข"]
-
+    Run Keyword And Continue On Failure    Element Should Be Disabled    ${edit_email_field}
+    Run Keyword And Continue On Failure    Element Should Be Enabled    ${edit_name_field}
+    Run Keyword And Continue On Failure    Element Should Be Enabled    ${edit_surname_field}
+    Run Keyword And Continue On Failure    Element Should Be Enabled    ${edit_check_disable_female}
+    Run Keyword And Continue On Failure    Element Should Be Enabled    ${edit_check_disable_male}
+    Run Keyword And Continue On Failure    Element Should Be Enabled    ${edit_check_disable_other}
+    Run Keyword And Continue On Failure    Element Should Be Enabled    ${edit_company_field}
+    Run Keyword And Continue On Failure    Element Should Be Enabled    ${edit_branch_field}
+    Run Keyword And Continue On Failure    Element Should Be Enabled    ${edit_employee_field}
+    Run Keyword And Continue On Failure    Element Should Be Enabled    ${edit_status_button}
+    
 หน้า User ปุ่ม Save กรณีมีการเปลี่ยนเปลงข้อมูล
     ${email}    Set Variable    sakda.greenwork@gmail.com
     open_user_management_menu
@@ -469,6 +537,8 @@ select_user
     Wait Until Element Is Visible    ${check_save_edit_button}
     Input Text    ${edit_name_field}    123
     Run Keyword And Continue On Failure    Element Should Be Enabled    ${save_button}
+    Mouse Over    ${save_button}
+    Run Keyword And Continue On Failure    Wait Until element Is Visible    //html/body/div[2]//*[text()="บันทึก"]
 
 กรณี Edit User โดยลบค่า Name, Lastname ให้ว่าง
     ${email}    Set Variable    sakda.greenwork@gmail.com
@@ -624,6 +694,9 @@ select_user
     Click Element    ${confirm_button}
     Click Element    ${confirm_add_edit_delete_button}
 
+
+#กรณี Edit สาขา
+
 กรณี Edit บริษัท และ สาขา
     ${old_company}    Set Variable    บริษัท ต.มานิตย์ การเดินรถ จำกัด
     ${new_company}    Set Variable    บริษัท หลีกภัยขนส่ง จำกัด
@@ -667,9 +740,59 @@ select_user
     Click Element    ${confirm_button}
     Click Element    ${confirm_add_edit_delete_button}
 
+กรณีกดปุ่ม Delete
+    ${email}    Set Variable    sakda.greenwork@gmail.com    
+    open_user_management_menu
+    select_user    ${email}
+    Click Element    ${delete_button}
+    Wait Until Element Is Visible    ${confirm_add_edit_delete_button}
 
+หน้าต่างยืนยันการ Delete
+    ${email}    Set Variable    sakda.greenwork@gmail.com    
+    open_user_management_menu
+    select_user    ${email}
+    Click Element    ${delete_button}
+    Wait Until Element Is Visible    ${confirm_add_edit_delete_button}
+    Run Keyword And Continue On Failure    Element Text Should Be    ${confirm_add_edit_delete_title}    ลบผู้ใช้งาน
+    Run Keyword And Continue On Failure    Element Text Should Be    ${confirm_add_edit_delete_text}     คุณยืนยันที่จะลบผู้ใช้งาน : ${email} ใช่หรือไม่?
+    Run Keyword And Continue On Failure    Element Text Should Be    ${confirm_add_edit_delete_button}    ยืนยัน
+    Run Keyword And Continue On Failure    Element Text Should Be    ${cancel_confirm_add_edit_delete_button}    ยกเลิก
+    Run Keyword And Continue On Failure    Wait Until Element Is Visible    ${close_confirm_add_edit_delete}
+
+กรณีกดปุ่ม x หน้าต่างยืนยันการ Delete
+    ${email}    Set Variable    sakda.greenwork@gmail.com    
+    open_user_management_menu
+    select_user    ${email}
+    Click Element    ${delete_button}
+    Wait Until Element Is Visible    ${close_confirm_add_edit_delete}
+    Click Element    ${close_confirm_add_edit_delete}
+    Wait Until Element Is Not Visible    ${close_confirm_add_edit_delete}
+    Wait Until Element Is Visible    ${title}
+
+กรณีกดปุ่ม Cancel หน้าต่างยืนยันการ Delete   
+    ${email}    Set Variable    sakda.greenwork@gmail.com    
+    open_user_management_menu
+    select_user    ${email}
+    Click Element    ${delete_button}
+    Wait Until Element Is Visible   ${cancel_confirm_add_edit_delete_button}
+    Click Element    ${cancel_confirm_add_edit_delete_button}
+    Wait Until Element Is Not Visible    ${cancel_confirm_add_edit_delete_button}
+    Wait Until Element Is Visible    ${title}
+
+กรณี Delete ข้อมูล
+    ${email}    Set Variable    sakda.greenwork@gmail.com    
+    open_user_management_menu
+    select_user    ${email}
+    Click Element    ${delete_button}
+    Wait Until Element Is Visible   ${confirm_add_edit_delete_button}
+    Click Element    ${confirm_add_edit_delete_button}
+    Run Keyword And Continue On Failure    Wait Until Element Is Visible    ${top_right_alert}
+    Run Keyword And Continue On Failure    Element Text Should Be    ${top_right_alert}    ลบผู้ใช้งานสำเร็จ
+    Input Text    ${search_box}    ${email}
+    Click Element    ${first_search_result}
+
+
+# เพศ สาขา สถานะ ยังหาวิธีเช็คข้อมูลไม่ได้
 # กรณี Edit เพศ
-# กรณี Edit พนักงาน
 # กรณี Edit สาขา
-# กรณี Edit พนักงาน
 # กรณี Edit สถานะ

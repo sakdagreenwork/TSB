@@ -8,7 +8,8 @@
 # 3. User
     - Nonverified@gmail.com (ไว้ทดสอบ Email ที่ถูก Disable)
     - PQ6!l1Pa
-
+# 4. User **(User นี้ต้องไม่ถูกสร้างในระบบ)**
+    - Nonregisted@gmail.com
 
 *** Settings ***
 Library   SeleniumLibrary    screenshot_root_directory=/Users/sakda.l/Desktop/TSB Automate/Login/Failed Screenshot 

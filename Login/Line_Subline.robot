@@ -1,7 +1,39 @@
 # Test Data ที่่ต้องเตรียมไว้ก่อนทำการ Automate Test
-# 1.line 99-99
-# 2.sub line 99-99(9)    (ต้องอยู่ใน line 99-99)
-# 3.Route เส้นทางการวิ่ง_Test1   (ต้องอยู่ใน sub line 99-99(9))
+# 1.line 
+    - line name=99-99
+        - sub line=99-99(9)
+            - route=เส้นทางการวิ่ง_Test1
+        - sub line=99-99(5) (ไว้ใช้สำหรับ Sub Line ที่ซ้ำ, หน้าต่าง Edit)
+        - sub line=99-99(99) (ไว้ใช้สำหรับ Test ยืนยัน Delete Sub Line)
+        - sub line=99-99(4) (เป็น default ไว้เปลี่ยนเป็น 99-99(3) สำหรับ Test ชื่่อซ้ำ, Test ชื่อว่าง)
+        - sub line=99-99(3) (ไว้ใช้สำหรับ Edit Sub Line ที่ซ้ำ)
+# 2.line
+    - line name=ชื่55 (ไว้ใช้สำหรับ Add Line Name ที่ซ้ำ)
+
+# 3.company (เมนู company)
+    - company name=บริษัท ศักดา ออนไลน์ 2จำกัด (ไว้ใช้เป็น default add line)
+
+# 4.line
+    - line name=Test99 (ไว้ใช้สำหรับ Test หน้าต่าง Delete Line)
+
+# 5.line
+    - line name=PkTest Line1 (ไว้ใช้สำหรับ Edit Line Name ที่ซ้ำ)
+
+# 6.company (เมนู company)
+    - company name=บริษัท พู ออนไลน์ จำกัด 11 (ไว้ใช้ Edit line)
+
+# 7.company (เมนู company)
+    - company name=บริษัท ไทย สมายล์ โบ้ท จำกัด (ไว้ใช้ Edit line)
+
+# 8.route (เมนู Route)
+    - route name=เส้นทางการวิ่ง_Test1 (ไว้ใช้สำหรับ Default add route, หน้ายืนยันการ Delete)
+
+# 9.route (เมนู Route)
+    - route name=เส้นทางการวิ่ง_1-13(126)Testtt (ไว้ใช้สำหรับ add route ที่ถูกต้อง)
+
+# 10.depot (เมนู Depot)
+    - depot name=อู่บางพลี
+    - depot name=อู่ศาลายา
 
 
 *** Settings ***
@@ -1246,7 +1278,7 @@ add_route
     Element Text Should Be    ${right_sub_line_name}    ${sub_line}
 
 หน้าต่างยืนยันการ Delete Sub Line
-    ${sub_line_name}    Set Variable    99-99(99)
+    ${sub_line_name}    Set Variable    99-99(9)
     open_line_subline_menu
     select_line    99-99
     Wait Until Element Is Visible    //*[@id="root"]/main//main/div//div[2]/div/div/div/div/div[./div/div[text()="${sub_line_name}"]]/div[2]/div/div/div
@@ -1707,12 +1739,6 @@ add_route
     Run Keyword And Continue On Failure    Wait Until Element Is Not Visible    //*[@id="root"]/main//main//div[3]/div/div[1]/div[2]/div/div/div/div/div/div[2][text()="${route_name}"]     
 
 
-
-Test
-    ${test}    Get Current Date
-    Log To Console    ${test}
-    ${split}    Set Variable    ${test[5:7]}${test[8:10]}${test[11:13]}${test[14:16]}${test[17:19]}
-    Log To Console    ${split}
 #กรณีกดปุ่ม x, Cancel
 #- หน้ายืนยันการเพิ่ม Line, Sub Line, Route
 

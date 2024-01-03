@@ -1,6 +1,6 @@
 # Test Data ที่่ต้องเตรียมไว้ก่อนทำการ Automate Test
-# 1.User (ไว้ทดสอบ Email ที่ถูกต้อง)
-    - phonarun@efinancethai.com
+# 1.User 
+    - phonarun@efinancethai.com (ไว้ทดสอบ Email ที่ถูกต้อง)
     - EVEFT@cs
 # 2. User
     - natanon001@gmail.com (ไว้ทดสอบ Email ที่ยังไม่ Veify)
@@ -8,6 +8,9 @@
 # 3. User
     - Nonverified@gmail.com (ไว้ทดสอบ Email ที่ถูก Disable)
     - PQ6!l1Pa
+# 4. User ***(User นี้ต้องไม่ถูกสร้างไว้ในระบบ)***
+    - sakdanonregisted@gmail.com
+
     
 *** Settings ***
 Library   SeleniumLibrary    screenshot_root_directory=/Users/sakda.l/Desktop/TSB Automate/Login/Failed Screenshot

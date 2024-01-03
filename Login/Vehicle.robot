@@ -1,5 +1,6 @@
 # Test Data ที่่ต้องเตรียมไว้ก่อนทำการ Automate Test
-# 1. Vehicle ให้ข้อมูลทั้งหมดอยู่ในคันเดียวกัน
+
+# 1. Vehicle
     - Status : InActive
     - Vehicle Name : 64656429
     - Motor No. : 66546339
@@ -8,8 +9,8 @@
     - GPS : 465656659
     - Chassis : 45654639
     - Veicle License : 4646544
-    - Depot : อู่เคหะธนบุรี
-    - Sub Line : 3-53_อู่รามคำแหง 74
+    - Depot : อู่เคหะบางพลี
+    - Sub Line : 99-99(4)
     - Company : บริษัท ไทย สมายล์ บัส จำกัด
 
 เช็ค Add ซ้ำ ข้อมูลอยู่กันคนละคันได้
@@ -25,8 +26,21 @@
 # 10.GPS : 100223167173
 # 11.Chassis : MRSBCREMXNZM00918
 
-เมนู Depot
-12. ต้องมีอู่บึงกุ่ม โดยมีสายย่อย 3-3(11)_อู่รามคำแหง
+# 12.Depot (เมนู Depot) (เมนู Sub Line)
+    - อู่บึงกุ่ม
+        - Sub Line (เมนู Sub Line)
+            - 3-3(11)_อู่รามคำแหง
+    - อู่แสมดำ (สำหรับเพิ่ม Vehicle)
+        - Sub Line (เมนู Sub Line)
+            - 2-34R_อู่มีนบุรี-หนองจอก>อู่รามคำแหง 74
+    - อู่เคหะธนบุรี (สำหรับ Test การกด Save)
+        - Sub Line (เมนู Sub Line)
+            - 3-53_อู่รามคำแหง 74
+
+# 13.License : 998-Test (สำหรับ Test การลบ Vehicle ที่ถูกใช้อยู่)
+
+#*** InActive เมนูนี้ A เป็นตัวใหญ่ ***
+
 
 *** Settings ***
 Library    SeleniumLibrary    screenshot_root_directory=/Users/sakda.l/Desktop/TSB Automate/Login/Failed Screenshot 
@@ -37,7 +51,7 @@ Resource    keyword.robot
 *** Variables ***
 
 ${hamburger_button}     //*[@id="root"]/main/header/div/div/div[1]/div[2]//*[name()='svg']
-${data_manage_button}    //*[@id="root"]/main/div[2]/div[3]/div[1]/div[2]/div/div/div/ul/li[6]/div[1]/div[1]/div
+${data_manage_button}    //*[@id="root"]/main/div[2]//div[1]/div[2]/div/div/div/ul/li[6]/div[1]/div[1]/div
 ${vehicle_menu}    //*[@id="root"]/main/div[2]/div[3]/div[1]/div[2]/div/div/div/ul/li[6]/div[2]/div/ul/li[4]/a/span/span[2]
 
 
@@ -796,7 +810,7 @@ TC_VHC_024-กรณี Edit โดย Vehicle Name 2 ตัวอักษร
 
 TC_VHC_025-กรณี Edit โดย Vehicle Name ซ้ำกับที่มีอยู่
     ${license}    Set Variable    4646544
-    edit_vehicle_name    licnese=${license}    new_veName=646564
+    edit_vehicle_name    license=${license}    new_veName=646564
     
     Click Element    ${confirm_edit_button}
     Click Element    ${confirm_confirm_edit_button}
@@ -1134,8 +1148,8 @@ TC_VHC_037-กรณี Edit chassis number
 
 TC_VHC_038-กรณี Edit depot
     ${license}    Set Variable    4646544
-    ${new_depot}    Set Variable    อู่เคหะธนบุรี
-    ${old_depot}    Set Variable    อู่เคหะบางพลี         
+    ${new_depot}    Set Variable    อู่เคหะบางพลี
+    ${old_depot}    Set Variable    อู่เคหะธนบุรี         
     select_vehicle    ${license}
     Click Element    ${operation_edit_button}
     Click Element    ${drop_down_depot_button}

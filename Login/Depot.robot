@@ -1,8 +1,9 @@
 # Test Data ที่่ต้องเตรียมไว้ก่อนทำการ Automate Test
-# 1.Depot อู่แสมฟ้า
-# 2.Depot Pk Test Depot7    (ไว้ใช้ทดสอบชื่อซ้ำ)
-# 3.Depot อู่แสมม่วง    (ไว้ใช้ทดสอบชื่อซ้ำ)
+# 1.Depot อู่แสมฟ้า (ไว้สำหรับ default เลือก Depot)
+# 2.Depot Pk Test Depot7    (ไว้ใช้ทดสอบ Add ชื่อซ้ำ)
+# 3.Depot อู่แสมม่วง    (ไว้ใช้ทดสอบ Edit ชื่อซ้ำ)
 
+# status เมนูนี้ active inactive ตัวหน้าเป็นตัวเล็กไม่เหมื่อนอันอื่น
 
 *** Settings ***
 Library    SeleniumLibrary    screenshot_root_directory=/Users/sakda.l/Desktop/TSB Automate/Login/Failed Screenshot
@@ -21,6 +22,8 @@ ${edit_button}    //*[@id="root"]/main//main/div/div[1]/div[2]/div/div/div/div[1
 ${delete_button}    //*[@id="root"]/main//main/div/div[1]/div[2]/div/div/div/div[1]/div/div[2]/div/div/button
 
 ${add_edit_close_button}    //*[@id="headlessui-portal-root"]/div/div/div/div[2]/div/div/div/button
+
+
 ${select_to_view_text}    //*[@id="root"]/main//div/div/div/div[3]/div[1]/div[2]/div/div/div/main/div/h4
 ${add_edit_title}    //*[@id="headlessui-portal-root"]/div/div/div/div[2]//h2
 ${depot_name_label}    //*[@id="headlessui-portal-root"]//form/div[1]/div[1]/span/label    
@@ -55,12 +58,13 @@ ${confirm_title}    //*[@id="headlessui-portal-root"]/div[2]//div[2]//h2
 ${confirm_text}    //*[@id="headlessui-portal-root"]/div[2]//div[2]//div[2]/div
 ${confirm_button}    //*[@id="headlessui-portal-root"]/div[2]//div[2]//div[3]/div/div/div[1]
 ${cancel_confirm_button}    //*[@id="headlessui-portal-root"]/div[2]//div[2]//div[3]/div/div/div[2]  
+${close_confirm_button}    //*[@id="headlessui-portal-root"]/div[2]//div[2]/div/div/div/button    
 
 ${confirm_delete_title}    //*[@id="headlessui-portal-root"]/div//div[2]//h2
 ${confirm_delete_text}    //*[@id="headlessui-portal-root"]/div//div[2]//div[2]/div
 ${confirm_delete_button}    //*[@id="headlessui-portal-root"]/div//div[2]//div[3]/div/div/div[1]
 ${cancel_confirm_delete_button}    //*[@id="headlessui-portal-root"]/div//div[2]//div[3]/div/div/div[2]
-
+${close_confirm_delete_button}    //*[@id="headlessui-portal-root"]/div//div[2]/div/div/div/button
 
 ${first_search_result}    //*[@id="root"]/main//main/div[2]/div[1]/div[2]/div/div/div/div[1]
 ${depot_name_search_result}    //*[@id="root"]/main//main/div[2]/div[1]/div[2]/div/div/div/div[1]/div/div[2]/div/span
@@ -246,8 +250,19 @@ select_depot
     Run Keyword And Continue On Failure    Element Text Should Be    ${confirm_button}    ยืนยัน
     Run Keyword And Continue On Failure    Element Text Should Be    ${cancel_confirm_button}    ยกเลิก
     
-#หน้าต่างยืนยันการ Add กรณีกดปุ่ม x
-#หน้าต่างยืนยันการ Add กรณีกดปุ่ม Cancel
+หน้าต่างยืนยันการ Add กรณีกดปุ่ม x
+    add_new_depot
+    Wait Until Element Is Visible    ${close_confirm_button}
+    Click Element    ${close_confirm_button}
+    Wait Until Element Is Not Visible    ${close_confirm_button}
+    Wait Until Element Is Visible    ${title}
+
+หน้าต่างยืนยันการ Add กรณีกดปุ่ม Cancel
+    add_new_depot
+    Wait Until Element Is Visible    ${cancel_confirm_button}
+    Click Element    ${cancel_confirm_button}
+    Wait Until Element Is Not Visible    ${cancel_confirm_button}
+    Wait Until Element Is Visible    ${title}
 
 กรณีเพิ่ม Depot ด้วยข้อมูลที่ครบถ้วนและถูกต้อง
     ${depot_name}    Set Variable    อู่แสมรุ้ง    
@@ -317,9 +332,12 @@ select_depot
     Run Keyword And Continue On Failure    Should Be Equal    ${latitude_placeholder}    ลองจิจูด
     Run Keyword And Continue On Failure    Element Text Should Be    ${add_edit_button}    บันทึก
 
-#หน้า Edit กรณีกดปุ่ม x
-#หน้า Edit กรณีกดปุ่ม Cancel
-
+หน้า Edit กรณีกดปุ่ม x
+    open_edit_depot_menu
+    Wait Until Element Is Visible    ${add_edit_close_button}
+    Click Element    ${add_edit_close_button}
+    Wait Until Element Is Not Visible    ${add_edit_close_button}
+    Wait Until Element Is Visible    ${title}
 
 กรณี Edit โดยข้อมูลว่าง
     open_edit_depot_menu    อู่แสมฟ้า
@@ -400,8 +418,21 @@ select_depot
     Run Keyword And Continue On Failure    Element Text Should Be    ${confirm_button}    ยืนยัน
     Run Keyword And Continue On Failure    Element Text Should Be    ${cancel_confirm_button}    ยกเลิก
 
-#หน้าต่างยืนยันการ Edit กรณีกดปุ่ม x
-#หน้าต่างยืนยันการ Edit กรณีกดปุ่ม Cancel
+หน้าต่างยืนยันการ Edit กรณีกดปุ่ม x
+    open_edit_depot_menu
+    Click Element    ${add_edit_button}
+    Wait Until Element Is Visible    ${close_confirm_button}
+    Click Element    ${close_confirm_button}
+    Wait Until Element Is Not Visible    ${close_confirm_button}
+    Wait Until Element Is Visible    ${title}
+
+หน้าต่างยืนยันการ Edit กรณีกดปุ่ม Cancel
+    open_edit_depot_menu
+    Click Element    ${add_edit_button}
+    Wait Until Element Is Visible    ${cancel_confirm_button}
+    Click Element    ${cancel_confirm_button}
+    Wait Until Element Is Not Visible    ${cancel_confirm_button}
+    Wait Until Element Is Visible    ${title}
 
 กรณี Edit Depot Name
     ${new_depot_name}    Set Variable    อู่แสมแดง
@@ -557,7 +588,7 @@ select_depot
     Run Keyword And Continue On Failure    Element Text Should Be    ${top_right_alert}    อัปเดตอู่สำเร็จ
 
 หน้าต่างยืนยันการ Delete
-    ${depot}    Set Variable    Pk Test Depot3
+    ${depot}    Set Variable    อู่แสมฟ้า
     open_depot_menu
     select_depot    ${depot}
     Click Element    ${delete_button}
@@ -567,8 +598,25 @@ select_depot
     Run Keyword And Continue On Failure    Element Text Should Be    ${confirm_delete_button}    ยืนยัน
     Run Keyword And Continue On Failure    Element Text Should Be    ${cancel_confirm_delete_button}    ยกเลิก
 
-#หน้าต่างยืนยันการ Delete กรณีกดปุ่ม x
-#หน้าต่างยืนยันการ Delete กรณีกดปุ่ม Cancel
+หน้าต่างยืนยันการ Delete กรณีกดปุ่ม x
+    ${depot}    Set Variable    อู่แสมฟ้า
+    open_depot_menu
+    select_depot    ${depot}
+    Click Element    ${delete_button}
+    Wait Until Element Is Visible    ${close_confirm_delete_button}
+    Click Element    ${close_confirm_delete_button}
+    Wait Until Element Is Not Visible    ${close_confirm_delete_button}
+    Wait Until Element Is Visible    ${title}
+
+หน้าต่างยืนยันการ Delete กรณีกดปุ่ม Cancel
+    ${depot}    Set Variable    อู่แสมฟ้า
+    open_depot_menu
+    select_depot    ${depot}
+    Click Element    ${delete_button}
+    Wait Until Element Is Visible    ${cancel_confirm_delete_button}
+    Click Element    ${cancel_confirm_delete_button}
+    Wait Until Element Is Not Visible    ${cancel_confirm_delete_button}
+    Wait Until Element Is Visible    ${title}
 
 กรณี Add โดยกรอก Latitude ด้วยตัวเลข = 0
     add_new_depot    latitude=0  
