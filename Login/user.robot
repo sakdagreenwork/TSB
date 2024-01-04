@@ -27,6 +27,8 @@ Test Teardown       Close Browser
 *** Variables ***
 ${hamburger_button}                         //*[@id="root"]/main/header/div/div/div[1]/div[2]//*[name()='svg']
 ${setting_button}                           //*[@id="root"]/main/div[2]//div[1]/div[2]/div/div/div/ul/li[9]
+${data_manage_button}    //*[@id="root"]/main/div[2]//div[1]/div[2]/div/div/div/ul/li[6]/div[1]/div[1]/div
+${vehicle_menu}    //*[@id="root"]/main/div[2]/div[3]/div[1]/div[2]/div/div/div/ul/li[6]/div[2]/div/ul/li[4]/a/span/span[2]
 ${user_manage_button}                       //*[@id="root"]/main/div[2]//div[1]/div[2]/div/div/div/ul/li[9]/div[2]/div/ul/li[2]
 ${title}                                    //*[@id="root"]/main/header/div/div/div[1]//h4
 
@@ -143,6 +145,7 @@ ${top_right_alert}                          //main/div/div/div/div[@role="alert"
 
 ${no_data_text}                             //*[@id="root"]/main//main/div[2]/div[1]/div[2]//text/tspan
 
+${all_search_result}    //*[@id="root"]/main//main/div[2]/div[1]/div[2]/div/div/div/div[2]/div/div/div
 ${first_search_result}    //*[@id="root"]/main//main/div[2]/div[1]/div[2]/div/div/div/div[2]/div/div/div[1]    
 ${first_name_lastname_result}    //*[@id="root"]/main//main/div[2]/div[1]/div[2]/div/div/div/div[2]/div/div/div[1]/div/div/div/div/div/span[1]
 ${first_email_result}    //*[@id="root"]/main//main/div[2]/div[1]/div[2]/div/div/div/div[2]/div/div/div[1]/div/div/div/div/div/span[2]        
@@ -248,6 +251,25 @@ select_user
     open_user_management_menu
     Input Text    ${search_box}    ข้อมูลที่ไม่มี
     Element Text Should Be    ${no_data_text}    ไม่พบข้อมูล
+
+กรณีค้นหาข้อมูลที่ไม่มีอยู่ในตาราง > กดไปเมนูอื่น > กดมาเมนู User Management
+    open_user_management_menu
+    Wait Until Element Is Visible    ${first_search_result}    10
+    Input Text    ${search_box}    sakda.greenwork@nonexist.data
+    Click Element    ${hamburger_button}
+    Wait Until Element Is Visible    ${data_manage_button}
+    Click Element    ${data_manage_button}
+    Wait Until Element Is Visible    ${vehicle_menu}
+    Click Element    ${vehicle_menu}
+    Wait Until Element Is Visible    ${add_new_user_button}
+    Click Element    ${hamburger_button}
+    Wait Until Element Is Visible    ${setting_button}
+    Click Element    ${setting_button}
+    Wait Until Element Is Visible    ${user_manage_button}
+    Click Element    ${user_manage_button}
+    Wait Until Element Is Visible    ${first_search_result}    10
+
+
 
 หน้า Add New User
     open_add_new_user_menu

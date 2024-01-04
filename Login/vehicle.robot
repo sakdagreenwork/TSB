@@ -53,7 +53,7 @@ Resource    keyword.robot
 ${hamburger_button}     //*[@id="root"]/main/header/div/div/div[1]/div[2]//*[name()='svg']
 ${data_manage_button}    //*[@id="root"]/main/div[2]//div[1]/div[2]/div/div/div/ul/li[6]/div[1]/div[1]/div
 ${vehicle_menu}    //*[@id="root"]/main/div[2]/div[3]/div[1]/div[2]/div/div/div/ul/li[6]/div[2]/div/ul/li[4]/a/span/span[2]
-
+${depot_menu_button}    //*[@id="root"]/main/div[2]//div[1]/div[2]/div/div/div/ul/li[6]/div[2]/div/ul/li[7]/a/span/span[2]
 
 ${total}    //*[@id="root"]/main//div[2]/div/div/div/div/div[1]/div[2]/span
 ${active}    //*[@id="root"]/main//div[2]/div/div/div/div/div[2]/div[2]/span
@@ -282,6 +282,20 @@ TC_VHC_004-กรณีค้นหาข้อมูลที่ไม่มี
     Wait Until Element Is Visible    //*[@id="root"]/main/div[3]/div/div/div/div[3]/div/div[1]/div/main/div[2]/div[1]/div[2]/div/div/div/div[1]/text/tspan    10
     Element Text Should Be    //*[@id="root"]/main/div[3]/div/div/div/div[3]/div/div[1]/div/main/div[2]/div[1]/div[2]/div/div/div/div[1]/text/tspan    ไม่พบข้อมูล
         
+กรณีค้นหาข้อมูลที่ไม่มีอยู่ในตาราง > กดไปเมนูอื่น > กดมาเมนู Vehicle
+    Open Vehicle Menu
+    Wait Until Element Is Visible    ${first_ve_result}    10
+    Input Text    ${search_box}    พาหนะไม่มี
+    Click Element    ${hamburger_button}
+    Wait Until Element Is Visible    ${depot_menu_button}
+    Click Element    ${depot_menu_button}
+    Wait Until Element Is Visible    ${add_new_ve_button}
+    Sleep    0.5
+    Click Element    ${hamburger_button}
+    Wait Until Element Is Visible    ${vehicle_menu}
+    Click Element    ${vehicle_menu}
+    Wait Until Element Is Visible   ${first_ve_result}    10
+
 TC_VHC_005-หน้า Add New Vehicle
     Open Add New Vehicle Page
     Run Keyword And Continue On Failure    Element Text Should Be    ${add_new_ve_title}    เพิ่มพาหนะ

@@ -9,7 +9,15 @@
 Library    SeleniumLibrary    screenshot_root_directory=/Users/sakda.l/Desktop/TSB Automate/Login/Failed Screenshot
 Resource    keyword.robot
 Test Teardown    Close Browser 
+
+
 *** Variables ***
+
+${hamburger_button}    //*[@id="root"]/main/header/div/div/div[1]/div[2]//*[name()='svg']
+${data_manage_button}    //*[@id="root"]/main/div[2]//div[1]/div[2]/div/div/div/ul/li[6]/div[1]/div[1]/div
+${depot_menu_button}    //*[@id="root"]/main/div[2]//div[1]/div[2]/div/div/div/ul/li[6]/div[2]/div/ul/li[7]/a/span/span[2]
+${vehicle_menu_button}    //*[@id="root"]/main/div[2]/div[3]/div[1]/div[2]/div/div/div/ul/li[6]/div[2]/div/ul/li[4]/a/span/span[2]    
+
 ${title}    //*[@id="root"]/main/header/div/div/div[1]//h4
 
 ${total}    //*[@id="root"]/main//div/div/div/div[2]/div/div/div/div[1]/div[2]/span
@@ -93,14 +101,15 @@ ${top_right_alert}    //main/div/div/div/div[@role="alert"]/div[2]
 *** Keywords ***
 open_depot_menu
     Log In Valid
-    Wait Until Element Is Visible    //*[@id="root"]/main/header/div/div/div[1]/div[2]//*[name()='svg']    20
-    Click Element    //*[@id="root"]/main/header/div/div/div[1]/div[2]//*[name()='svg']
-    Wait Until Element Is Visible    //*[@id="root"]/main/div[2]/div[3]/div[1]/div[2]/div/div/div/ul/li[6]/div[1]/div[1]/div    20
-    Click Element    //*[@id="root"]/main/div[2]/div[3]/div[1]/div[2]/div/div/div/ul/li[6]/div[1]/div[1]/div
-    Wait Until Element Is Visible    //*[@id="root"]/main/div[2]/div[3]/div[1]/div[2]/div/div/div/ul/li[6]/div[2]/div/ul/li[4]/a/span/span[2]    20
-    Wait Until Element Is Enabled    //*[@id="root"]/main/div[2]//div[1]/div[2]/div/div/div/ul/li[6]/div[2]/div/ul/li[7]/a/span/span[2]
+    
+    Wait Until Element Is Visible    ${hamburger_button}    20
+    Click Element    ${hamburger_button}
+    Wait Until Element Is Visible    ${data_manage_button}    20
+    Click Element    ${data_manage_button}
+    Wait Until Element Is Visible    ${depot_menu_button}    20
+    Wait Until Element Is Enabled    ${depot_menu_button}
     Sleep    1
-    Click Element    //*[@id="root"]/main/div[2]//div[1]/div[2]/div/div/div/ul/li[6]/div[2]/div/ul/li[7]/a/span/span[2]
+    Click Element    ${depot_menu_button}
     Wait Until Element Is Visible    ${total}    15
 
 open_add_new_depot_menu
@@ -159,6 +168,21 @@ select_depot
     ${search_text}    Get Element Attribute    ${search_box}    placeholder
     Run Keyword And Continue On Failure    Should Be Equal    ${search_text}    ค้นหา...
     Run Keyword And Continue On Failure    Element Text Should Be    ${select_to_view_text}    เลือกอู่รถเพื่อดูข้อมูล
+
+กรณีค้นหาข้อมูลที่ไม่มีอยู่ในตาราง > กดไปเมนูอื่น > กดมาเมนู Depot
+    open_depot_menu
+    Wait Until Element Is Visible    ${first_search_result}    10
+    Input Text    ${search_box}    อู่ไม่มี
+    Click Element    ${hamburger_button}
+    Wait Until Element Is Visible    ${vehicle_menu_button}
+    Click Element    ${vehicle_menu_button}
+    Wait Until Element Is Visible    ${add_button}
+    Sleep    0.5
+    Click Element    ${hamburger_button}
+    Wait Until Element Is Visible    ${depot_menu_button}
+    Click Element    ${depot_menu_button}
+    Wait Until Element Is Visible    ${first_search_result}    10
+
 
 หน้า Add New Depot
     open_add_new_depot_menu
@@ -660,7 +684,6 @@ select_depot
     Input Text    ${longitude_field}    1+-2
     Click Element    ${add_edit_button}
     Wait Until Element Is Visible    ${longitude_alert}
-
 
 
 #กรณีค้นหาข้อมูลที่ไม่มีอยู่ในระบบ

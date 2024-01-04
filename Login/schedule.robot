@@ -425,8 +425,8 @@ Deploy ตารางการเดินทาง
     ${day}    get_day
     Open Schedule Preset Menu
     #Deploy Schedule 59 ตัวแรก
-    FOR    ${i}    IN RANGE    102    108
-    #FOR    ${i}    IN RANGE    1    108
+    #FOR    ${i}    IN RANGE    102    108
+    FOR    ${i}    IN RANGE    2    109
         Log To Console    ${i}
         
         Click Element    //*[@id="root"]//main/div[2]/div[1]/div[2]/div/div/div/div[${i}]

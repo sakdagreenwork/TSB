@@ -47,6 +47,8 @@ Test Teardown    Close Browser
 ${hamburger_button}     //*[@id="root"]/main/header/div/div/div[1]/div[2]//*[name()='svg']
 ${datamanage_button}    //*[@id="root"]/main/div[2]//div[1]/div[2]/div/div/div/ul/li[6]/div[1]/div[1]/div
 ${line_subline_button}    //*[@id="root"]/main/div[2]//div[1]/div[2]/div/div/div/ul/li[6]/div[2]/div/ul/li[8]/a/span/span[2]
+${vehicle_menu_button}    //*[@id="root"]/main/div[2]/div[3]/div[1]/div[2]/div/div/div/ul/li[6]/div[2]/div/ul/li[4]/a/span/span[2]    
+${add_new_ve_button}    //*[@id="root"]/main//div[3]/div/div[1]/div/main/div[1]/div[2]/div/button
 
 ${title}    //*[@id="root"]/main/header/div/div/div[1]//h4
 
@@ -350,6 +352,20 @@ add_route
     Run Keyword And Continue On Failure    Should Be Equal    ${search_place}    ค้นหา...
     Run Keyword And Continue On Failure    Element Text Should Be    ${add_new_line_button}    เพิ่มสาย
     Run Keyword And Continue On Failure    Element Text Should Be    ${select_to_view_text}    Select line to view sub lines    
+
+กรณีค้นหาข้อมูลที่ไม่มีอยู่ในตาราง > กดไปเมนูอื่น > กดมาเมนู Line
+    open_line_subline_menu
+    Wait Until Element Is Visible    ${first_result}    10
+    Input Text    ${search_box}    อู่ไม่มี
+    Click Element    ${hamburger_button}
+    Wait Until Element Is Visible    ${vehicle_menu_button}
+    Click Element    ${vehicle_menu_button}
+    Wait Until Element Is Visible    ${add_new_ve_button}
+    Sleep    0.5
+    Click Element    ${hamburger_button}
+    Wait Until Element Is Visible    ${line_subline_button}
+    Click Element    ${line_subline_button}
+    Wait Until Element Is Visible    ${first_result}    10
 
 กรณีกดปุ่ม + Add New Line
     open_add_line_menu
