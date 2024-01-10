@@ -31,6 +31,7 @@ ${delete_button}    //*[@id="root"]/main//main/div/div[1]/div[2]/div/div/div/div
 
 ${add_edit_close_button}    //*[@id="headlessui-portal-root"]/div/div/div/div[2]/div/div/div/button
 
+${no_data_text}                             //*[@id="root"]/main//main/div[2]/div[1]/div[2]//text/tspan
 
 ${select_to_view_text}    //*[@id="root"]/main//div/div/div/div[3]/div[1]/div[2]/div/div/div/main/div/h4
 ${add_edit_title}    //*[@id="headlessui-portal-root"]/div/div/div/div[2]//h2
@@ -156,7 +157,7 @@ select_depot
 
     
 *** Test Cases ***
-หน้า Depot
+TC_DP_001_หน้า Depot
     open_depot_menu
     Run Keyword And Continue On Failure    Element Text Should Be    ${title}    อู่รถ
     Run Keyword And Continue On Failure    Element Should Contain    ${total}    ทั้งหมด
@@ -168,8 +169,24 @@ select_depot
     ${search_text}    Get Element Attribute    ${search_box}    placeholder
     Run Keyword And Continue On Failure    Should Be Equal    ${search_text}    ค้นหา...
     Run Keyword And Continue On Failure    Element Text Should Be    ${select_to_view_text}    เลือกอู่รถเพื่อดูข้อมูล
+    Mouse Over    ${add_button}
+    Wait Until Element Is Enabled    //*[@id="tippy-1"]//*[text()="เพิ่มอู่"]
 
-กรณีค้นหาข้อมูลที่ไม่มีอยู่ในตาราง > กดไปเมนูอื่น > กดมาเมนู Depot
+TC_DP_002_กรณีค้นหาข้อมูลที่มีอยู่ในระบบ
+    open_depot_menu
+    Wait Until Element Is Visible    ${first_search_result}    10
+    Input Text    ${search_box}    อู่แสมฟ้า
+    Wait Until Element Is Visible    ${first_search_result}
+    Element Text Should Be    ${depot_name_search_result}    อู่แสมฟ้า
+
+TC_DP_003_กรณีค้นหาข้อมูลที่ไม่มีอยู่ในระบบ
+    open_depot_menu
+    Wait Until Element Is Visible    ${first_search_result}    10
+    Input Text    ${search_box}    อู่ไม่มี
+    Wait Until Element Is Not Visible    ${first_search_result}
+    Element Text Should Be    ${no_data_text}    ไม่พบข้อมูล
+
+TC_DP_004_กรณีค้นหาข้อมูลที่ไม่มีอยู่ในตาราง > กดไปเมนูอื่น > กดมาเมนู Depot
     open_depot_menu
     Wait Until Element Is Visible    ${first_search_result}    10
     Input Text    ${search_box}    อู่ไม่มี
@@ -183,8 +200,18 @@ select_depot
     Click Element    ${depot_menu_button}
     Wait Until Element Is Visible    ${first_search_result}    10
 
+TC_DP_005_กรณีเลือก Depot
+    open_depot_menu
+    select_depot    อู่แสมฟ้า
+    Wait Until Element Is Visible    ${middle_depot_name}
+    Wait Until Element Is Visible    ${right_depot_name}
 
-หน้า Add New Depot
+TC_DP_006_กรณีกดปุ่ม Add New Depot
+    open_depot_menu
+    Click Element    ${add_button}
+    Wait Until Element Is Visible    ${add_edit_button}
+
+TC_DP_007_หน้า Add New Depot
     open_add_new_depot_menu
     Run Keyword And Continue On Failure    Element Text Should Be    ${add_edit_title}    เพิ่มอู่รถ
     Run Keyword And Continue On Failure    Element Text Should Be    ${depot_name_label}    ชื่ออู่รถ *
@@ -202,71 +229,17 @@ select_depot
     Run Keyword And Continue On Failure    Should Be Equal    ${latitude_placeholder}    ลองจิจูด
     Run Keyword And Continue On Failure    Element Text Should Be    ${add_edit_button}    เพิ่ม
 
-หน้า Add New Depot กรณีกดปุ่ม x
+TC_DP_008_หน้า Add New Depot กรณีกดปุ่ม Add
+    add_new_depot
+   Wait Until Element Is Visible    ${confirm_button}
+
+TC_DP_009_หน้า Add New Depot กรณีกดปุ่ม x
     open_add_new_depot_menu
     Click Element    ${add_edit_close_button}
     Wait Until Element Is Not Visible    ${add_edit_close_button}
     Wait Until Element Is Visible    ${title}
 
-กรณีเพิ่มโดยไม่กรอกข้อมูล
-    open_add_new_depot_menu
-    Wait Until Element Is Visible    ${add_edit_button}
-    Clear Element Text    ${latitude_field}
-    Clear Element Text    ${longitude_field}
-    Click Element    ${add_edit_button}
-    Run Keyword And Continue On Failure    Wait Until Element Is Visible    ${depot_name_alert}
-    Run Keyword And Continue On Failure    Element Text Should Be    ${depot_name_alert}    โปรดระบุชื่ออู่ 
-    Run Keyword And Continue On Failure    Wait Until Element Is Visible    ${type_alert}
-    Run Keyword And Continue On Failure    Element Text Should Be    ${type_alert}    โปรดระบุประเภท
-    Run Keyword And Continue On Failure    Wait Until Element Is Visible    ${status_alert}
-    Run Keyword And Continue On Failure    Element Text Should Be    ${status_alert}    โปรดระบุสถานะ
-    Run Keyword And Continue On Failure    Wait Until Element Is Visible    ${latitude_alert}
-    Run Keyword And Continue On Failure    Element Text Should Be    ${latitude_alert}    โปรดระบุละติจูด
-    Run Keyword And Continue On Failure    Wait Until Element Is Visible    ${longitude_alert}
-    Run Keyword And Continue On Failure    Element Text Should Be    ${longitude_alert}    โปรดระบุลองจิจูด
-
-กรณีเพิ่มโดยกรอก Depot Name ซ้ำกับที่มีอยู่ในระบบ
-    add_new_depot    depot_name=Pk Test Depot7
-    Run Keyword And Continue On Failure    Wait Until Element Is Visible    ${depot_name_alert}
-    Run Keyword And Continue On Failure    Element Text Should Be    ${depot_name_alert}    ชื่ออู่นี้ถูกใช้งานแล้ว
-
-กรณีเพิ่ม Latitude ที่มีค่า < -999.999999
-    add_new_depot    latitude=-999.9999999
-    Run Keyword And Continue On Failure    Wait Until Element Is Visible    ${latitude_alert}
-    Run Keyword And Continue On Failure    Element Text Should Be    ${latitude_alert}     ละติจูดต้องมีค่ามากกว่าหรือเท่ากับ -999.999999
-
-กรณีเพิ่ม Latitude ที่มีค่า -999.999999
-    add_new_depot    latitude=-999.999999
-    Wait Until Element Is Visible    ${confirm_button}
-
-กรณีเพิ่ม Latitude ที่มีค่า > 999.999999
-    add_new_depot    latitude=999.9999999
-    Run Keyword And Continue On Failure    Wait Until Element Is Visible    ${latitude_alert}
-    Run Keyword And Continue On Failure    Element Text Should Be    ${latitude_alert}     ละติจูดต้องมีค่าน้อยหรือเท่ากับ 999.999999
-
-กรณีเพิ่ม Latitude ที่มีค่า 999.999999
-    add_new_depot    latitude=999.999999
-    Wait Until Element Is Visible    ${confirm_button}
-
-กรณีเพิ่ม Longitude ที่มีค่า < -999.999999
-    add_new_depot    longitude=-999.9999999
-    Run Keyword And Continue On Failure    Wait Until Element Is Visible    ${longitude_alert}
-    Run Keyword And Continue On Failure    Element Text Should Be    ${longitude_alert}     ลองจิจูดต้องมีค่ามากกว่าหรือเท่ากับ -999.999999
-
-กรณีเพิ่ม Longitude ที่มีค่า < -999.999999
-    add_new_depot    longitude=-999.999999
-    Wait Until Element Is Visible    ${confirm_button}
-
-กรณีเพิ่ม Longitude ที่มีค่า > 999.999999
-    add_new_depot    longitude=999.9999999
-    Run Keyword And Continue On Failure    Wait Until Element Is Visible    ${longitude_alert}
-    Run Keyword And Continue On Failure    Element Text Should Be    ${longitude_alert}     ลองจิจูดต้องมีค่าน้อยกว่าหรือเท่ากับ 999.999999
-
-กรณีเพิ่ม Longitude ที่มีค่า 999.999999
-    add_new_depot    longitude=999.999999
-    Wait Until Element Is Visible    ${confirm_button}
-
-หน้าต่างยืนยันการ Add
+TC_DP_010_หน้าต่างยืนยันการ Add
     add_new_depot
     Wait Until Element Is Visible    ${confirm_title}
     Run Keyword And Continue On Failure    Element Text Should Be    ${confirm_title}    เพิ่มอู่
@@ -274,21 +247,7 @@ select_depot
     Run Keyword And Continue On Failure    Element Text Should Be    ${confirm_button}    ยืนยัน
     Run Keyword And Continue On Failure    Element Text Should Be    ${cancel_confirm_button}    ยกเลิก
     
-หน้าต่างยืนยันการ Add กรณีกดปุ่ม x
-    add_new_depot
-    Wait Until Element Is Visible    ${close_confirm_button}
-    Click Element    ${close_confirm_button}
-    Wait Until Element Is Not Visible    ${close_confirm_button}
-    Wait Until Element Is Visible    ${title}
-
-หน้าต่างยืนยันการ Add กรณีกดปุ่ม Cancel
-    add_new_depot
-    Wait Until Element Is Visible    ${cancel_confirm_button}
-    Click Element    ${cancel_confirm_button}
-    Wait Until Element Is Not Visible    ${cancel_confirm_button}
-    Wait Until Element Is Visible    ${title}
-
-กรณีเพิ่ม Depot ด้วยข้อมูลที่ครบถ้วนและถูกต้อง
+TC_DP_011_050_กรณีเพิ่ม Depot ด้วยข้อมูลที่ครบถ้วนและถูกต้อง
     ${depot_name}    Set Variable    อู่แสมรุ้ง    
     ${type}    Set Variable    Bus    
     ${status}    Set Variable    active    
@@ -324,14 +283,113 @@ select_depot
     #depot latitude longitude เช็คข้อมูลไม่ได้
     #depot ที่เพิ่มจะไปลบตอน case delete
 
-ส่วน Subline ตรงกลาง
+TC_DP_013_หน้าต่างยืนยันการ Add กรณีกดปุ่ม x
+    add_new_depot
+    Wait Until Element Is Visible    ${close_confirm_button}
+    Click Element    ${close_confirm_button}
+    Wait Until Element Is Not Visible    ${close_confirm_button}
+    Wait Until Element Is Visible    ${title}
+
+TC_DP_014_หน้าต่างยืนยันการ Add กรณีกดปุ่ม Cancel
+    add_new_depot
+    Wait Until Element Is Visible    ${cancel_confirm_button}
+    Click Element    ${cancel_confirm_button}
+    Wait Until Element Is Not Visible    ${cancel_confirm_button}
+    Wait Until Element Is Visible    ${title}
+
+TC_DP_015_016_017_018_019_กรณีเพิ่มโดยไม่กรอกข้อมูล
+    open_add_new_depot_menu
+    Wait Until Element Is Visible    ${add_edit_button}
+    Clear Element Text    ${latitude_field}
+    Clear Element Text    ${longitude_field}
+    Click Element    ${add_edit_button}
+    Run Keyword And Continue On Failure    Wait Until Element Is Visible    ${depot_name_alert}
+    Run Keyword And Continue On Failure    Element Text Should Be    ${depot_name_alert}    โปรดระบุชื่ออู่ 
+    Run Keyword And Continue On Failure    Wait Until Element Is Visible    ${type_alert}
+    Run Keyword And Continue On Failure    Element Text Should Be    ${type_alert}    โปรดระบุประเภท
+    Run Keyword And Continue On Failure    Wait Until Element Is Visible    ${status_alert}
+    Run Keyword And Continue On Failure    Element Text Should Be    ${status_alert}    โปรดระบุสถานะ
+    Run Keyword And Continue On Failure    Wait Until Element Is Visible    ${latitude_alert}
+    Run Keyword And Continue On Failure    Element Text Should Be    ${latitude_alert}    โปรดระบุละติจูด
+    Run Keyword And Continue On Failure    Wait Until Element Is Visible    ${longitude_alert}
+    Run Keyword And Continue On Failure    Element Text Should Be    ${longitude_alert}    โปรดระบุลองจิจูด
+
+TC_DP_022_กรณี Add โดยกรอก Latitude ด้วยตัวเลข = 0
+    add_new_depot    latitude=0  
+    Wait Until Element Is Visible    ${confirm_button}
+
+TC_DP_024_กรณีเพิ่ม Latitude ที่มีค่า < -999.999999
+    add_new_depot    latitude=-999.9999999
+    Run Keyword And Continue On Failure    Wait Until Element Is Visible    ${latitude_alert}
+    Run Keyword And Continue On Failure    Element Text Should Be    ${latitude_alert}     ละติจูดต้องมีค่ามากกว่าหรือเท่ากับ -999.999999
+
+TC_DP_025_กรณีเพิ่ม Latitude ที่มีค่า -999.999999
+    add_new_depot    latitude=-999.999999
+    Wait Until Element Is Visible    ${confirm_button}
+
+TC_DP_026_กรณีเพิ่ม Latitude ที่มีค่า > 999.999999
+    add_new_depot    latitude=999.9999999
+    Run Keyword And Continue On Failure    Wait Until Element Is Visible    ${latitude_alert}
+    Run Keyword And Continue On Failure    Element Text Should Be    ${latitude_alert}     ละติจูดต้องมีค่าน้อยหรือเท่ากับ 999.999999
+
+TC_DP_027_กรณีเพิ่ม Latitude ที่มีค่า 999.999999
+    add_new_depot    latitude=999.999999
+    Wait Until Element Is Visible    ${confirm_button}
+
+TC_DP_029_030_040_041_046_047_ตรวจสอบจำนวนตัวอักษรสูงสุด หน้า Add New Depot
+    open_add_new_depot_menu
+    ${max_depot_name}    Get Element Attribute    ${depot_name_field}    maxlength
+    Run Keyword And Continue On Failure    Should Be Equal    ${max_depot_name}    30
+    ${max_latitude}    Get Element Attribute    ${latitude_field}    maxlength
+    Run Keyword And Continue On Failure    Should Be Equal    ${max_latitude}    30
+    ${max_longitude}    Get Element Attribute    ${longitude_field}    maxlength
+    Run Keyword And Continue On Failure    Should Be Equal    ${max_longitude}    30
+
+TC_DP_031_กรณี Add โดยกรอก Latitude ด้วยเครื่องหมาย - หรือ + ที่ตำแหน่งที่ไม่ใช่ตัวแรก
+    add_new_depot    latitude=1+-2 
+    Wait Until Element Is Visible    ${latitude_alert}
+    Run Keyword And Continue On Failure    Element Text Should Be    ${latitude_alert}    ละติจูดไม่ถูกต้อง
+
+TC_DP_033_กรณี Add โดยกรอก longitude ด้วยตัวเลข = 0
+    add_new_depot    longitude=0
+    Wait Until Element Is Visible    ${confirm_button}
+
+TC_DP_035_กรณีเพิ่ม Longitude ที่มีค่า < -999.999999
+    add_new_depot    longitude=-999.9999999
+    Run Keyword And Continue On Failure    Wait Until Element Is Visible    ${longitude_alert}
+    Run Keyword And Continue On Failure    Element Text Should Be    ${longitude_alert}     ลองจิจูดต้องมีค่ามากกว่าหรือเท่ากับ -999.999999
+
+TC_DP_036_กรณีเพิ่ม Longitude ที่มีค่า -999.999999
+    add_new_depot    longitude=-999.999999
+    Wait Until Element Is Visible    ${confirm_button}
+
+TC_DP_037_กรณีเพิ่ม Longitude ที่มีค่า > 999.999999
+    add_new_depot    longitude=999.9999999
+    Run Keyword And Continue On Failure    Wait Until Element Is Visible    ${longitude_alert}
+    Run Keyword And Continue On Failure    Element Text Should Be    ${longitude_alert}     ลองจิจูดต้องมีค่าน้อยกว่าหรือเท่ากับ 999.999999
+
+TC_DP_038_กรณีเพิ่ม Longitude ที่มีค่า 999.999999
+    add_new_depot    longitude=999.999999
+    Wait Until Element Is Visible    ${confirm_button}
+
+TC_DP_042_กรณี Add โดยกรอก longitude ด้วยเครื่องหมาย - หรือ + ที่ตำแหน่งที่ไม่ใช่ตัวแรก
+    add_new_depot    longitude=1+-2
+    Wait Until Element Is Visible    ${longitude_alert}
+    Run Keyword And Continue On Failure    Element Text Should Be    ${longitude_alert}    ลองจิจูดไม่ถูกต้อง
+ 
+TC_DP_045_กรณีเพิ่มโดยกรอก Depot Name ซ้ำกับที่มีอยู่ในระบบ
+    add_new_depot    depot_name=Pk Test Depot7
+    Run Keyword And Continue On Failure    Wait Until Element Is Visible    ${depot_name_alert}
+    Run Keyword And Continue On Failure    Element Text Should Be    ${depot_name_alert}    ชื่ออู่นี้ถูกใช้งานแล้ว
+
+TC_DP_051_ส่วน Subline ตรงกลาง
     ${depot}    Set Variable    อู่แสมฟ้า
     open_depot_menu
     select_depot    ${depot}
     Element Text Should Be    ${start_sub_line}    เริ่มต้นสายย่อย
     Element Text Should Be    ${stop_sub_line}    สิ้นสุดสายย่อย
 
-ส่วน Depot ทางขวา
+TC_DP_054_ส่วน Depot ทางขวา
     ${depot}    Set Variable    อู่แสมฟ้า
     open_depot_menu
     select_depot    ${depot}
@@ -339,8 +397,50 @@ select_depot
     Run Keyword And Continue On Failure    Element Text Should Be    ${right_longitude_label}    ลองจิจูด
     Run Keyword And Continue On Failure    Element Text Should Be    ${right_type_label}    ประเภท
     Run Keyword And Continue On Failure    Element Text Should Be    ${right_status_label}    สถานะ
+    Wait Until Element Is Visible    ${edit_button}
+    Wait Until Element Is Visible    ${delete_button}
 
-หน้า Edit Depot
+TC_DP_055_กรณีกดปุ่ม Edit
+    open_edit_depot_menu
+
+TC_DP_056_กรณีกดปุ่ม Delete
+    open_depot_menu
+    select_depot
+    Click Element    ${delete_button}
+    Wait Until Element Is Visible    ${confirm_delete_button}
+
+TC_DP_057_หน้าต่างยืนยันการ Delete
+    ${depot}    Set Variable    อู่แสมฟ้า
+    open_depot_menu
+    select_depot    ${depot}
+    Click Element    ${delete_button}
+    Wait Until Element Is Visible    ${confirm_delete_button}
+    Run Keyword And Continue On Failure    Element Text Should Be    ${confirm_delete_title}    ลบอู่
+    Run Keyword And Continue On Failure    Element Text Should Be    ${confirm_delete_text}    คุณยืนยันที่จะแก้ไขอู่ ${depot} ใช่หรือไม่?
+    Run Keyword And Continue On Failure    Element Text Should Be    ${confirm_delete_button}    ยืนยัน
+    Run Keyword And Continue On Failure    Element Text Should Be    ${cancel_confirm_delete_button}    ยกเลิก
+
+TC_DP_060_หน้าต่างยืนยันการ Delete กรณีกดปุ่ม x
+    ${depot}    Set Variable    อู่แสมฟ้า
+    open_depot_menu
+    select_depot    ${depot}
+    Click Element    ${delete_button}
+    Wait Until Element Is Visible    ${close_confirm_delete_button}
+    Click Element    ${close_confirm_delete_button}
+    Wait Until Element Is Not Visible    ${close_confirm_delete_button}
+    Wait Until Element Is Visible    ${title}
+
+TC_DP_061_หน้าต่างยืนยันการ Delete กรณีกดปุ่ม Cancel
+    ${depot}    Set Variable    อู่แสมฟ้า
+    open_depot_menu
+    select_depot    ${depot}
+    Click Element    ${delete_button}
+    Wait Until Element Is Visible    ${cancel_confirm_delete_button}
+    Click Element    ${cancel_confirm_delete_button}
+    Wait Until Element Is Not Visible    ${cancel_confirm_delete_button}
+    Wait Until Element Is Visible    ${title}
+
+TC_DP_064_หน้า Edit Depot
     open_edit_depot_menu
     Run Keyword And Continue On Failure    Element Text Should Be    ${add_edit_title}    แก้ไขอู่รถ
     Run Keyword And Continue On Failure    Element Text Should Be    ${depot_name_label}    ชื่ออู่รถ *
@@ -356,84 +456,20 @@ select_depot
     Run Keyword And Continue On Failure    Should Be Equal    ${latitude_placeholder}    ลองจิจูด
     Run Keyword And Continue On Failure    Element Text Should Be    ${add_edit_button}    บันทึก
 
-หน้า Edit กรณีกดปุ่ม x
+TC_DP_065_หน้า Edit กรณีกดปุ่ม x
     open_edit_depot_menu
     Wait Until Element Is Visible    ${add_edit_close_button}
     Click Element    ${add_edit_close_button}
     Wait Until Element Is Not Visible    ${add_edit_close_button}
     Wait Until Element Is Visible    ${title}
 
-กรณี Edit โดยข้อมูลว่าง
-    open_edit_depot_menu    อู่แสมฟ้า
-    Clear Element Text    ${depot_name_field}
-    Clear Element Text    ${latitude_field}
-    Clear Element Text    ${longitude_field}
-    Click Element    ${add_edit_button}
-    Run Keyword And Continue On Failure    Wait Until Element Is Visible    ${depot_name_alert}
-    Run Keyword And Continue On Failure    Element Text Should Be    ${depot_name_alert}    โปรดระบุชื่ออู่
-    Run Keyword And Continue On Failure    Element Text Should Be    ${latitude_alert}    โปรดระบุละติจูด
-    Run Keyword And Continue On Failure    Element Text Should Be    ${longitude_alert}    โปรดระบุลองจิจูด
-
-กรณี Edit Depot Name ที่ซ้ำ
-    open_edit_depot_menu    อู่แสมฟ้า
-    Input Text    ${depot_name_field}    อู่แสมม่วง
-    Click Element    ${add_edit_button}
-    Wait Until Element Is Visible    ${depot_name_alert}
-    Element Text Should Be    ${depot_name_alert}    ชื่ออู่นี้ถูกใช้งานแล้ว 
-
-กรณ๊ Edit Latitude ที่มีค่า < -999.999999
-    open_edit_depot_menu    อู่แสมฟ้า
-    Input Text    ${latitude_field}    -999.9999999
-    Click Element    ${add_edit_button}
-    Wait Until Element Is Visible    ${latitude_alert}
-    Element Text Should Be    ${latitude_alert}    ละติจูดต้องมีค่ามากกว่าหรือเท่ากับ -999.999999
-
-กรณ๊ Edit Latitude ที่มีค่า -999.999999
-    open_edit_depot_menu    อู่แสมฟ้า
-    Input Text    ${latitude_field}    -999.999999
+TC_DP_067_หน้า Edit กรณีกดปุ่ม Save
+    open_edit_depot_menu
+    Wait Until Element Is Visible    ${add_edit_button}
     Click Element    ${add_edit_button}
     Wait Until Element Is Visible    ${confirm_button}
 
-กรณ๊ Edit Latitude ที่มีค่า > 999.999999
-    open_edit_depot_menu    อู่แสมฟ้า
-    Input Text    ${latitude_field}    999.9999999
-    Click Element    ${add_edit_button}
-    Wait Until Element Is Visible    ${latitude_alert}
-    Element Text Should Be    ${latitude_alert}    ละติจูดต้องมีค่าน้อยกว่าหรือเท่ากับ 999.999999
-
-กรณ๊ Edit Latitude ที่มีค่า 999.999999
-    open_edit_depot_menu    อู่แสมฟ้า
-    Input Text    ${latitude_field}    999.999999
-    Click Element    ${add_edit_button}
-    Wait Until Element Is Visible    ${confirm_button}
-
-กรณ๊ Edit Longitude ที่มีค่า < -999.999999
-    open_edit_depot_menu    อู่แสมฟ้า
-    Input Text    ${longitude_field}    -999.9999999
-    Click Element    ${add_edit_button}
-    Wait Until Element Is Visible    ${longitude_alert}
-    Element Text Should Be    ${longitude_alert}        ลองจิจูดต้องมีค่ามากกว่าหรือเท่ากับ -999.999999
-
-กรณ๊ Edit Longitude ที่มีค่า -999.999999
-    open_edit_depot_menu    อู่แสมฟ้า
-    Input Text    ${longitude_field}    -999.999999
-    Click Element    ${add_edit_button}
-    Wait Until Element Is Visible    ${confirm_button}
-
-กรณ๊ Edit Longitude ที่มีค่า > 999.999999
-    open_edit_depot_menu    อู่แสมฟ้า
-    Input Text    ${longitude_field}    999.9999999
-    Click Element    ${add_edit_button}
-    Wait Until Element Is Visible    ${longitude_alert}
-    Element Text Should Be    ${longitude_alert}        ลองจิจูดต้องมีค่าน้อยกว่าหรือเท่ากับ 999.999999
-
-กรณ๊ Edit Longitude ที่มีค่า 999.999999
-    open_edit_depot_menu    อู่แสมฟ้า
-    Input Text    ${longitude_field}    999.999999
-    Click Element    ${add_edit_button}
-    Wait Until Element Is Visible    ${confirm_button}
-
-หน้าต่างยืนยันการ Edit
+TC_DP_068_หน้าต่างยืนยันการ Edit
     open_edit_depot_menu    อู่แสมฟ้า
     Click Element    ${add_edit_button}
     Wait Until Element Is Visible    ${confirm_title}
@@ -441,24 +477,7 @@ select_depot
     Run Keyword And Continue On Failure    Element Text Should Be    ${confirm_text}    คุณยืนยันที่จะแก้ไขอู่ใช่หรือไม่?
     Run Keyword And Continue On Failure    Element Text Should Be    ${confirm_button}    ยืนยัน
     Run Keyword And Continue On Failure    Element Text Should Be    ${cancel_confirm_button}    ยกเลิก
-
-หน้าต่างยืนยันการ Edit กรณีกดปุ่ม x
-    open_edit_depot_menu
-    Click Element    ${add_edit_button}
-    Wait Until Element Is Visible    ${close_confirm_button}
-    Click Element    ${close_confirm_button}
-    Wait Until Element Is Not Visible    ${close_confirm_button}
-    Wait Until Element Is Visible    ${title}
-
-หน้าต่างยืนยันการ Edit กรณีกดปุ่ม Cancel
-    open_edit_depot_menu
-    Click Element    ${add_edit_button}
-    Wait Until Element Is Visible    ${cancel_confirm_button}
-    Click Element    ${cancel_confirm_button}
-    Wait Until Element Is Not Visible    ${cancel_confirm_button}
-    Wait Until Element Is Visible    ${title}
-
-กรณี Edit Depot Name
+TC_DP_69.1_กรณี Edit Depot Name
     ${new_depot_name}    Set Variable    อู่แสมแดง
     ${old_depot_name}    Set Variable    อู่แสมฟ้า
 
@@ -483,7 +502,7 @@ select_depot
     Run Keyword And Continue On Failure    Element Text Should Be    ${top_right_alert}    อัปเดตอู่สำเร็จ
     Sleep    2
 
-กรณี Edit Latitude
+TC_DP_69.2_กรณี Edit Latitude
     ${depot_name}    Set Variable    อู่แสมฟ้า
     ${new_latitude}    Set Variable    888.888
     ${old_latitude}    Set Variable    777.777
@@ -512,7 +531,7 @@ select_depot
     Wait Until Element Is Visible    ${top_right_alert}
     Run Keyword And Continue On Failure    Element Text Should Be    ${top_right_alert}    อัปเดตอู่สำเร็จ
 
-กรณี Edit Longitude
+TC_DP_69.3_กรณี Edit Longitude
     ${depot_name}    Set Variable    อู่แสมฟ้า
     ${new_longitude}    Set Variable    888.888
     ${old_longitude}    Set Variable    777.777
@@ -543,7 +562,7 @@ select_depot
 
 
 
-กรณี Edit Type
+TC_DP_69.4_กรณี Edit Type
     ${depot_name}    Set Variable    อู่แสมฟ้า
     ${new_type}    Set Variable    Boat
     ${old_type}    Set Variable    Bus
@@ -578,7 +597,7 @@ select_depot
     Run Keyword And Continue On Failure    Element Text Should Be    ${top_right_alert}    อัปเดตอู่สำเร็จ
 
 
-กรณี Edit Status
+TC_DP_69.5_กรณี Edit Status
     ${depot_name}    Set Variable    อู่แสมฟ้า
     ${new_status}    Set Variable    inactive
     ${old_status}    Set Variable    active
@@ -611,79 +630,135 @@ select_depot
     Wait Until Element Is Visible    ${top_right_alert}
     Run Keyword And Continue On Failure    Element Text Should Be    ${top_right_alert}    อัปเดตอู่สำเร็จ
 
-หน้าต่างยืนยันการ Delete
-    ${depot}    Set Variable    อู่แสมฟ้า
-    open_depot_menu
-    select_depot    ${depot}
-    Click Element    ${delete_button}
-    Wait Until Element Is Visible    ${confirm_delete_button}
-    Run Keyword And Continue On Failure    Element Text Should Be    ${confirm_delete_title}    ลบอู่
-    Run Keyword And Continue On Failure    Element Text Should Be    ${confirm_delete_text}    คุณยืนยันที่จะแก้ไขอู่ ${depot} ใช่หรือไม่?
-    Run Keyword And Continue On Failure    Element Text Should Be    ${confirm_delete_button}    ยืนยัน
-    Run Keyword And Continue On Failure    Element Text Should Be    ${cancel_confirm_delete_button}    ยกเลิก
-
-หน้าต่างยืนยันการ Delete กรณีกดปุ่ม x
-    ${depot}    Set Variable    อู่แสมฟ้า
-    open_depot_menu
-    select_depot    ${depot}
-    Click Element    ${delete_button}
-    Wait Until Element Is Visible    ${close_confirm_delete_button}
-    Click Element    ${close_confirm_delete_button}
-    Wait Until Element Is Not Visible    ${close_confirm_delete_button}
+TC_DP_071_หน้าต่างยืนยันการ Edit กรณีกดปุ่ม x
+    open_edit_depot_menu
+    Click Element    ${add_edit_button}
+    Wait Until Element Is Visible    ${close_confirm_button}
+    Click Element    ${close_confirm_button}
+    Wait Until Element Is Not Visible    ${close_confirm_button}
     Wait Until Element Is Visible    ${title}
 
-หน้าต่างยืนยันการ Delete กรณีกดปุ่ม Cancel
-    ${depot}    Set Variable    อู่แสมฟ้า
-    open_depot_menu
-    select_depot    ${depot}
-    Click Element    ${delete_button}
-    Wait Until Element Is Visible    ${cancel_confirm_delete_button}
-    Click Element    ${cancel_confirm_delete_button}
-    Wait Until Element Is Not Visible    ${cancel_confirm_delete_button}
+TC_DP_072_หน้าต่างยืนยันการ Edit กรณีกดปุ่ม Cancel
+    open_edit_depot_menu
+    Click Element    ${add_edit_button}
+    Wait Until Element Is Visible    ${cancel_confirm_button}
+    Click Element    ${cancel_confirm_button}
+    Wait Until Element Is Not Visible    ${cancel_confirm_button}
     Wait Until Element Is Visible    ${title}
 
-กรณี Add โดยกรอก Latitude ด้วยตัวเลข = 0
-    add_new_depot    latitude=0  
-    Wait Until Element Is Visible    ${confirm_button}
+TC_DP_073_กรณี Edit Depot Name ที่ซ้ำ
+    open_edit_depot_menu    อู่แสมฟ้า
+    Input Text    ${depot_name_field}    อู่แสมม่วง
+    Click Element    ${add_edit_button}
+    Wait Until Element Is Visible    ${depot_name_alert}
+    Element Text Should Be    ${depot_name_alert}    ชื่ออู่นี้ถูกใช้งานแล้ว 
 
-กรณี Add โดยกรอก Latitude ด้วยเครื่องหมาย - หรือ + ที่ตำแหน่งที่ไม่ใช่ตัวแรก
-    add_new_depot    latitude=1+-2 
-    Wait Until Element Is Visible    ${latitude_alert}
+TC_DP_075_076_ตรวจสอบจำนวนตัวอักษรสูงสุด หน้า Edit
+    open_edit_depot_menu    อู่แสมฟ้า
+    ${max_depot_name}    Get Element Attribute    ${depot_name_field}    maxlength
+    Run Keyword And Continue On Failure    Should Be Equal    ${max_depot_name}    30
+    ${max_latitude}    Get Element Attribute    ${latitude_field}    maxlength
+    Run Keyword And Continue On Failure    Should Be Equal    ${max_latitude}    30
+    ${max_longitude}    Get Element Attribute    ${longitude_field}    maxlength
+    Run Keyword And Continue On Failure    Should Be Equal    ${max_longitude}    30
 
-กรณี Add โดยกรอก longitude ด้วยตัวเลข = 0
-    add_new_depot    longitude=0
-    Wait Until Element Is Visible    ${confirm_button}
+TC_DP_079_085_086_กรณี Edit โดยข้อมูลว่าง
+    open_edit_depot_menu    อู่แสมฟ้า
+    Clear Element Text    ${depot_name_field}
+    Clear Element Text    ${latitude_field}
+    Clear Element Text    ${longitude_field}
+    Click Element    ${add_edit_button}
+    Run Keyword And Continue On Failure    Wait Until Element Is Visible    ${depot_name_alert}
+    Run Keyword And Continue On Failure    Element Text Should Be    ${depot_name_alert}    โปรดระบุชื่ออู่
+    Run Keyword And Continue On Failure    Element Text Should Be    ${latitude_alert}    โปรดระบุละติจูด
+    Run Keyword And Continue On Failure    Element Text Should Be    ${longitude_alert}    โปรดระบุลองจิจูด
 
-กรณี Add โดยกรอก longitude ด้วยเครื่องหมาย - หรือ + ที่ตำแหน่งที่ไม่ใช่ตัวแรก
-    add_new_depot    longitude=1+-2
-    Wait Until Element Is Visible    ${longitude_alert}
-
-
-##
-
-กรณี Edit โดยกรอก Latitude ด้วยตัวเลข = 0
+TC_DP_089_กรณี Edit โดยกรอก Latitude ด้วยตัวเลข = 0
     open_edit_depot_menu     อู่แสมฟ้า
     Input Text    ${latitude_field}    0
     Click Element    ${add_edit_button}
     Wait Until Element Is Visible    ${confirm_button}
 
-กรณี Edit โดยกรอก Latitude ด้วยเครื่องหมาย - หรือ + ที่ตำแหน่งที่ไม่ใช่ตัวแรก
+TC_DP_091_กรณี Edit Latitude ที่มีค่า < -999.999999
+    open_edit_depot_menu    อู่แสมฟ้า
+    Input Text    ${latitude_field}    -999.9999999
+    Click Element    ${add_edit_button}
+    Wait Until Element Is Visible    ${latitude_alert}
+    Element Text Should Be    ${latitude_alert}    ละติจูดต้องมีค่ามากกว่าหรือเท่ากับ -999.999999
+
+TC_DP_092_กรณี Edit Latitude ที่มีค่า -999.999999
+    open_edit_depot_menu    อู่แสมฟ้า
+    Input Text    ${latitude_field}    -999.999999
+    Click Element    ${add_edit_button}
+    Wait Until Element Is Visible    ${confirm_button}
+
+TC_DP_093_กรณี Edit Latitude ที่มีค่า > 999.999999
+    open_edit_depot_menu    อู่แสมฟ้า
+    Input Text    ${latitude_field}    999.9999999
+    Click Element    ${add_edit_button}
+    Wait Until Element Is Visible    ${latitude_alert}
+    Element Text Should Be    ${latitude_alert}    ละติจูดต้องมีค่าน้อยกว่าหรือเท่ากับ 999.999999
+
+TC_DP_094_กรณี Edit Latitude ที่มีค่า 999.999999
+    open_edit_depot_menu    อู่แสมฟ้า
+    Input Text    ${latitude_field}    999.999999
+    Click Element    ${add_edit_button}
+    Wait Until Element Is Visible    ${confirm_button}
+
+TC_DP_097_กรณี Edit โดยกรอก Latitude ด้วยเครื่องหมาย - หรือ + ที่ตำแหน่งที่ไม่ใช่ตัวแรก
     open_edit_depot_menu     อู่แสมฟ้า
     Input Text    ${latitude_field}    1+-2
     Click Element    ${add_edit_button}
     Wait Until Element Is Visible    ${latitude_alert}
 
-กรณี Edit โดยกรอก longitude ด้วยตัวเลข = 0
+TC_DP_0100_กรณี Edit โดยกรอก longitude ด้วยตัวเลข = 0
     open_edit_depot_menu     อู่แสมฟ้า
     Input Text    ${longitude_field}    0
     Click Element    ${add_edit_button}
     Wait Until Element Is Visible    ${confirm_button}
 
-กรณี Edit โดยกรอก longitude ด้วยเครื่องหมาย - หรือ + ที่ตำแหน่งที่ไม่ใช่ตัวแรก
+TC_DP_102_กรณี Edit Longitude ที่มีค่า < -999.999999
+    open_edit_depot_menu    อู่แสมฟ้า
+    Input Text    ${longitude_field}    -999.9999999
+    Click Element    ${add_edit_button}
+    Wait Until Element Is Visible    ${longitude_alert}
+    Element Text Should Be    ${longitude_alert}        ลองจิจูดต้องมีค่ามากกว่าหรือเท่ากับ -999.999999
+
+TC_DP_103_กรณี Edit Longitude ที่มีค่า -999.999999
+    open_edit_depot_menu    อู่แสมฟ้า
+    Input Text    ${longitude_field}    -999.999999
+    Click Element    ${add_edit_button}
+    Wait Until Element Is Visible    ${confirm_button}
+
+TC_DP_104_กรณี Edit Longitude ที่มีค่า > 999.999999
+    open_edit_depot_menu    อู่แสมฟ้า
+    Input Text    ${longitude_field}    999.9999999
+    Click Element    ${add_edit_button}
+    Wait Until Element Is Visible    ${longitude_alert}
+    Element Text Should Be    ${longitude_alert}        ลองจิจูดต้องมีค่าน้อยกว่าหรือเท่ากับ 999.999999
+
+TC_DP_105_กรณี Edit Longitude ที่มีค่า 999.999999
+    open_edit_depot_menu    อู่แสมฟ้า
+    Input Text    ${longitude_field}    999.999999
+    Click Element    ${add_edit_button}
+    Wait Until Element Is Visible    ${confirm_button}
+
+TC_DP_108_กรณี Edit โดยกรอก longitude ด้วยเครื่องหมาย - หรือ + ที่ตำแหน่งที่ไม่ใช่ตัวแรก
     open_edit_depot_menu     อู่แสมฟ้า
     Input Text    ${longitude_field}    1+-2
     Click Element    ${add_edit_button}
     Wait Until Element Is Visible    ${longitude_alert}
+
+
+
+
+
+##
+
+
+
+
+
 
 
 #กรณีค้นหาข้อมูลที่ไม่มีอยู่ในระบบ

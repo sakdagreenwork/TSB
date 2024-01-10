@@ -75,6 +75,20 @@ ${email_field}     //input[@name="email"]
 ${password_field}    //input[@name='password']
 ${login_button}    //button[@class="btn btn-sm btn-dark block w-full text-center"]
 
+${factory_data_dropdown_text}    //div[3]//div[1]/button/span[1]
+${license_plate_dropdown_text}    //div[3]//div[2]/button/span[1]
+${equipment_dropdown_text}    //div[3]//div[3]/button/span[1]
+${operation_data_dropdown_text}    //div[3]//div[4]/button/span[1]
+
+${add_edit_status_placeholder}    //div[1]/div/div/div/div/span/div[1]/div/div/div[1]/div[1]
+${add_edit_model_placeholder}    //div[1]/div/div/div/div/span/div[3]/div[1]/div/div/div[1]/div[1]
+${add_edit_brand_placeholder}    //div[1]/div/div/div/div/span/div[3]/div[2]/div/div/div[1]/div[1]
+
+${add_edit_depot_placeholder}    //div[4]/div/div/div/div/span/div[1]/div/div/div[1]/div[1]
+${add_edit_subline_placeholder}    //div[4]/div/div/div/div/span/div[2]/div/div/div[1]/div[1]/div[1]
+
+${no_equipment_data_text}    //span[2]/div/text/tspan
+
 ${status_label}    //div[@class="mb-3"][1]/div/div/div/div/span/div[1]/label
 ${veName_label}    //div[@class="mb-3"][1]//span/div[2]/div[1]/label
 ${motor_label}    //div[@class="mb-3"][1]//span/div[2]/div[2]/label
@@ -138,6 +152,8 @@ ${confirm_delete_button}    //div[3]/div/div[@class="flex justify-center w-full 
 
 
 ${search_box}    //*[@id="root"]/main//main/div/div/div/input
+
+${no_data_text}    //*[@id="root"]/main//main/div[2]/div[1]/div[2]/div/div/div/div[1]/text/tspan    
 
 ${confirm_edit_title}    //div[@role="dialog"]/div[2]/div/div/div/h2
 ${confirm_edit_detail}    //div[@role="dialog"]/div[2]/div/div/div[2]/div
@@ -257,7 +273,8 @@ TC_VHC_001-หน้า Vehicle
     Run Keyword And Continue On Failure    Element Should Contain    ${maintaince}    ปิดซ่อมบำรุง
     Run Keyword And Continue On Failure    Element Should Contain    ${maintaince}    รายการ
     Run Keyword And Continue On Failure    Element Text Should Be    ${select_to_view_text}    เลือกยานพาหนะเพื่อดูข้อมูล
-
+    Mouse Over    ${add_new_ve_button}
+    Wait Until Element Is Enabled    //*[@id="tippy-1"]//*[text()="เพิ่มพาหนะ"]    
 
 TC_VHC_002-กดปุ่ม Add New Vehicle
     Open Add New Vehicle Page
@@ -265,8 +282,9 @@ TC_VHC_002-กดปุ่ม Add New Vehicle
 
 TC_VHC_003-กดเลือก Vehicle
     Open Vehicle Menu
-    Wait Until Element Is Visible    //*[@id="root"]/main/div[3]/div/div/div/div[3]/div/div[1]/div/main/div[2]/div[1]/div[2]/div/div/div/div[2]/div/div[1]    20
-    Click Element    //*[@id="root"]/main/div[3]/div/div/div/div[3]/div/div[1]/div/main/div[2]/div[1]/div[2]/div/div/div/div[2]/div/div[1]
+    Wait Until Element Is Visible    ${first_ve_result}    20
+    Click Element    ${first_ve_result}
+    Wait Until Element Is Visible    ${delete_button}
     
 TC_VHC_004-กรณีค้นหาข้อมูลที่มี
     ${license}    Set Variable    4646544
@@ -275,14 +293,14 @@ TC_VHC_004-กรณีค้นหาข้อมูลที่มี
     Input Text    ${search_box}    ${license}
     Wait Until Element Is Visible    //span[text()="${license}"]    25
 
-TC_VHC_004-กรณีค้นหาข้อมูลที่ไม่มี
+TC_VHC_005-กรณีค้นหาข้อมูลที่ไม่มี
     Open Vehicle Menu
-    Wait Until Element Is Visible    //*[@id="root"]/main/div[3]/div/div/div/div[3]/div/div[1]/div/main/div[1]/div[1]/div/input    20
-    Input Text    //*[@id="root"]/main/div[3]/div/div/div/div[3]/div/div[1]/div/main/div[1]/div[1]/div/input    ไม่มีข้อมูล
-    Wait Until Element Is Visible    //*[@id="root"]/main/div[3]/div/div/div/div[3]/div/div[1]/div/main/div[2]/div[1]/div[2]/div/div/div/div[1]/text/tspan    10
-    Element Text Should Be    //*[@id="root"]/main/div[3]/div/div/div/div[3]/div/div[1]/div/main/div[2]/div[1]/div[2]/div/div/div/div[1]/text/tspan    ไม่พบข้อมูล
+    Wait Until Element Is Visible    ${search_box}    20
+    Input Text    ${search_box}    ไม่มีข้อมูล
+    Wait Until Element Is Visible    ${no_data_text}    10
+    Element Text Should Be    ${no_data_text}    ไม่พบข้อมูล
         
-กรณีค้นหาข้อมูลที่ไม่มีอยู่ในตาราง > กดไปเมนูอื่น > กดมาเมนู Vehicle
+TC_VHC_006-กรณีค้นหาข้อมูลที่ไม่มีอยู่ในตาราง > กดไปเมนูอื่น > กดมาเมนู Vehicle
     Open Vehicle Menu
     Wait Until Element Is Visible    ${first_ve_result}    10
     Input Text    ${search_box}    พาหนะไม่มี
@@ -296,29 +314,29 @@ TC_VHC_004-กรณีค้นหาข้อมูลที่ไม่มี
     Click Element    ${vehicle_menu}
     Wait Until Element Is Visible   ${first_ve_result}    10
 
-TC_VHC_005-หน้า Add New Vehicle
+TC_VHC_007-หน้า Add New Vehicle
     Open Add New Vehicle Page
     Run Keyword And Continue On Failure    Element Text Should Be    ${add_new_ve_title}    เพิ่มพาหนะ
-    Wait Until Element Is Visible    //div[3]//div[1]/button/span[1]
-    Run Keyword And Continue On Failure    Element Text Should Be    //div[3]//div[1]/button/span[1]    ข้อมูลโรงงาน
-    Run Keyword And Continue On Failure    Element Text Should Be    //div[3]//div[2]/button/span[1]    ทะเบียนรถ - รับประกัน
-    Run Keyword And Continue On Failure    Element Text Should Be    //div[3]//div[3]/button/span[1]    อุปกรณ์
-    Run Keyword And Continue On Failure    Element Text Should Be    //div[3]//div[4]/button/span[1]    ข้อมูลการดำเนินงาน
+    Wait Until Element Is Visible    ${factory_data_dropdown_text}
+    Run Keyword And Continue On Failure    Element Text Should Be    ${factory_data_dropdown_text}    ข้อมูลโรงงาน
+    Run Keyword And Continue On Failure    Element Text Should Be    ${license_plate_dropdown_text}    ทะเบียนรถ - รับประกัน
+    Run Keyword And Continue On Failure    Element Text Should Be    ${equipment_dropdown_text}    อุปกรณ์
+    Run Keyword And Continue On Failure    Element Text Should Be    ${operation_data_dropdown_text}    ข้อมูลการดำเนินงาน
 
-TC_VHC_006-Drop down Factory data
+TC_VHC_008-Drop down Factory data
     Open Add New Vehicle Page
     Run Keyword And Continue On Failure    Element Text Should Be    ${status_label}    สถานะ *
-    Run Keyword And Continue On Failure    Element Text Should Be    css:div:nth-child(1) > div > div > div > div > span > div > div > div > div > div    เลือก...
+    Run Keyword And Continue On Failure    Element Text Should Be    ${add_edit_status_placeholder}    เลือก...
     Run Keyword And Continue On Failure    Element Text Should Be    ${veName_label}    ชื่อพาหนะ *
     ${place_ve_name}    Run Keyword And Continue On Failure    Get Element Attribute    ${field_veName}    placeholder
     Run Keyword And Continue On Failure    Should Be Equal    ${place_ve_name}    ชื่อพาหนะ
-    Run Keyword And Continue On Failure    Element Text Should Be    ${motor_label}    หมายเลขมอเตอร์*
+    Run Keyword And Continue On Failure    Element Text Should Be    ${motor_label}    หมายเลขมอเตอร์ *
     ${place_motor}    Run Keyword And Continue On Failure    Get Element Attribute    ${field_motor}    placeholder
     Run Keyword And Continue On Failure    Should Be Equal    ${place_motor}    หมายเลขมอเตอร์
     Run Keyword And Continue On Failure    Element Text Should Be    ${model_label}    รุ่น *
-    Run Keyword And Continue On Failure    Element Text Should Be    css:span > div:nth-child(3) > div:nth-child(1) > div > div > div > div:nth-child(1)    เลือก...
+    Run Keyword And Continue On Failure    Element Text Should Be    ${add_edit_model_placeholder}    เลือก...
     Run Keyword And Continue On Failure    Element Text Should Be    ${brand_label}    ยี่ห้อ *
-    Run Keyword And Continue On Failure    Element Text Should Be    css:span > div:nth-child(3) > div:nth-child(2) > div > div > div > div:nth-child(1)    เลือก...
+    Run Keyword And Continue On Failure    Element Text Should Be    ${add_edit_brand_placeholder}    เลือก...
     Run Keyword And Continue On Failure    Element Text Should Be    ${gps_label}    GPS IMEI *
     ${place_GPS}    Run Keyword And Continue On Failure    Get Element Attribute    ${field_gps}    placeholder
     Run Keyword And Continue On Failure    Should Be Equal    ${place_GPS}    GPS IMEI
@@ -328,28 +346,28 @@ TC_VHC_006-Drop down Factory data
 
     #Click Element    css: span > div:nth-child(3) > div:nth-child(1) > div:nth-child(2)
 
-TC_VHC_007-Drop down License plate - Guarantee
+TC_VHC_009-Drop down License plate - Guarantee
     Open Add New Vehicle Page
     Run Keyword And Continue On Failure    Element Text Should Be    ${license_label}    ทะเบียนรถ *
     ${place_License}    Run Keyword And Continue On Failure    Get Element Attribute    ${field_license}    placeholder
     Run Keyword And Continue On Failure    Should Be Equal    ${place_License}    ทะเบียนรถ
 
-TC_VHC_008-Drop down Equipment
+TC_VHC_010-Drop down Equipment
     Open Add New Vehicle Page
-    Element Text Should Be    css:span:nth-child(2) > div > text > tspan    ไม่มีข้อมูลอุปกรณ์
+    Element Text Should Be    ${no_equipment_data_text}    ไม่มีข้อมูลอุปกรณ์
 
-TC_VHC_009-Drop down Operation data
+TC_VHC_011-Drop down Operation data
     Open Add New Vehicle Page
     Run Keyword And Continue On Failure    Element Text Should Be    ${depot_label}    อู่รถ *
-    Run Keyword And Continue On Failure    Element Text Should Be    css:div:nth-child(4) > div > div > div > div > span >div:nth-child(1) > div > div > div:nth-child(1) > div:nth-child(1)    เลือก...
+    Run Keyword And Continue On Failure    Element Text Should Be    ${add_edit_depot_placeholder}    เลือก...
     Run Keyword And Continue On Failure    Element Text Should Be    ${subline_label}    สายย่อย *
-    Run Keyword And Continue On Failure    Element Text Should Be    css:div:nth-child(4) > div > div > div > div > span > div:nth-child(2) > div:nth-child(1) > div > div > div > div:nth-child(1)    เลือก...
+    Run Keyword And Continue On Failure    Element Text Should Be    ${add_edit_subline_placeholder}    เลือก...
     Run Keyword And Continue On Failure    Element Text Should Be    ${company_label}    บริษัท *
 
 #TC_VHC_010-กรณีค้นหาข้อมูลใน Drop down สถานะ, รุ่น, ยี่ห้อ, อู่, สายย่อย ด้วยข้อมูลที่ไม่มีอยู่ในระบบ
 
 
-TC_VHC_011-กรณีเพิ่มโดยไม่กรอกข้อมูล
+TC_VHC_016_017_018_019_20_21_22_23_28_31_32-กรณีเพิ่มโดยไม่กรอกข้อมูล
     Open Add New Vehicle Page
     Click Element    //Button[@type="submit"]
     Run Keyword And Continue On Failure    Element Text Should Be    ${alert_status}    กรอกสถานะ
@@ -363,37 +381,37 @@ TC_VHC_011-กรณีเพิ่มโดยไม่กรอกข้อม
     Run Keyword And Continue On Failure    Element Text Should Be    ${alert_depot}   กรอกอู่รถ
     Run Keyword And Continue On Failure    Element Text Should Be    ${alert_subline}    กรอกสายย่อย
 
-TC_VHC_013-กรณีเพิ่มโดยกรอก Vehical Name ซ้ำกับที่มีอยู่
+TC_VHC_024-กรณีเพิ่มโดยกรอก Vehical Name ซ้ำกับที่มีอยู่
     add_new_vehicle    data_vename=35-11
     Element Should Be Visible    ${alert_veName}
     Element Text Should Be    ${alert_veName}    ชื่อพาหนะนี้ถูกใช้งานแล้ว
 
-TC_VHC_014-กรณีเพิ่มโดยกรอก Motor Number ซ้ำกับที่มีอยู่
+TC_VHC_025-กรณีเพิ่มโดยกรอก Motor Number ซ้ำกับที่มีอยู่
     add_new_vehicle    data_motor=MCS20111214
     Element Should Be Visible    ${alert_motor}
     Element Text Should Be    ${alert_motor}    หมายเลขมอเตอร์นี้ถูกใช้งานแล้ว
 
-TC_VHC_015-กรณีเพิ่มโดยกรอก GPS ซ้ำกับที่มีอยู่
+TC_VHC_026-กรณีเพิ่มโดยกรอก GPS ซ้ำกับที่มีอยู่
     add_new_vehicle    data_gps=868998030639021
     Element Should Be Visible    ${alert_gps}
     Element Text Should Be    ${alert_gps}     หมายเลข GPS นี้ถูกใช้งานแล้ว
 
-TC_VHC_016-กรณีเพิ่มโดยกรอก Chassis ซ้ำกับที่มีอยู่
+TC_VHC_027-กรณีเพิ่มโดยกรอก Chassis ซ้ำกับที่มีอยู่
     add_new_vehicle    data_chassis=MRSBCREM6MZM00008
     Element Should Be Visible    ${alert_chassis}
     Element Text Should Be    ${alert_chassis}    หมายเลขตัวถังนี้ถูกใช้งานแล้ว
-TC_VHC_017-กรณีเพิ่มโดยกรอก License ซ้ำกับที่มีอยู่
+TC_VHC_029-กรณีเพิ่มโดยกรอก License ซ้ำกับที่มีอยู่
     add_new_vehicle    data_license=16-5841
     
     Element Should Be Visible    ${alert_license}
     Element Text Should Be    ${alert_license}    หมายเลขทะเบียนนี้ถูกใช้งานแล้ว
 
 
-TC_VHC_012-กรณีเพิ่มโดยกรอก Vehical Name 2 ตัวอักษร
+TC_VHC_034-กรณีเพิ่มโดยกรอก Vehical Name 2 ตัวอักษร
     add_new_vehicle    data_vename=QA
     Element Text Should Be    ${alert_veName}    ต้องมีอักขระ 3 ถึง 20 ตัว
 
-TC_VHC_18-ตรวจสอบจำนวนตัวอักษรสูงสุดกรณีเพิ่ม Vehical Name, Motot No, GPS IMEI, Chassis No, License plate
+TC_VHC_036_037_038_039_040_041_042_043_044_045-ตรวจสอบจำนวนตัวอักษรสูงสุดกรณีเพิ่ม Vehical Name, Motot No, GPS IMEI, Chassis No, License plate
     Open Add New Vehicle Page
     ${max_vename}    Get Element Attribute    ${field_veName}    maxlength
     Run Keyword And Continue On Failure    Should Be Equal    ${max_vename}    50
@@ -405,7 +423,7 @@ TC_VHC_18-ตรวจสอบจำนวนตัวอักษรสูง�
     Run Keyword And Continue On Failure    Should Be Equal    ${max_chassis}    20    
     ${max_license}    Get Element Attribute    ${field_license}    maxlength
     Run Keyword And Continue On Failure    Should Be Equal    ${max_license}    20
-TC_VHC_019-หน้าต่างยืนยันการ Add
+TC_VHC_046_047-หน้าต่างยืนยันการ Add
     add_new_vehicle    data_vename=999681
     Sleep    1
     Wait Until Element Is Visible    ${confirm_add}
@@ -415,19 +433,7 @@ TC_VHC_019-หน้าต่างยืนยันการ Add
     Run Keyword And Continue On Failure    Element Text Should Be    ${cancel_confirm_add}    ยกเลิก
     Wait Until Element Is Visible   ${close_confirm_add}
 
-TC_VHC_000-หน้าต่างยืนยันการ Add กรณีกดปุ่ม x
-    add_new_vehicle
-    Wait Until Element Is Visible    ${confirm_add}
-    Click Element    ${close_confirm_add}
-    Wait Until Element Is Not Visible    ${close_confirm_add}
-    Wait Until Element Is Visible    ${title}
-TC_VHC_000-หน้าต่างยืนยันการ Add กรณีกดปุ่ม Cancel
-    add_new_vehicle
-    Wait Until Element Is Visible    ${confirm_add}
-    Click Element    ${cancel_confirm_add}
-    Wait Until Element Is Not Visible    ${cancel_confirm_add}
-    Wait Until Element Is Visible    ${title}
-TC_VHC_020-กรณีเพิ่มโดยกรอกข้อมูลครบถ้วนและถูกต้อง
+TC_VHC_048-กรณีเพิ่มโดยกรอกข้อมูลครบถ้วนและถูกต้อง
     #ใส่ข้อมูลทั้งหมดทีต้องการเพิ่มถ้าไม่ใส่จะ Dafault ให้ใน Function add_new_vehicle
     
     ${data_status}    Set Variable    Active
@@ -472,9 +478,23 @@ TC_VHC_020-กรณีเพิ่มโดยกรอกข้อมูลค
     Should Be Equal    ${check_chassis}    ${data_chassis}
     Element Text Should Be    //div[@class="mb-3"][4]//span/div[1]/div/div/div[1]/div[1]    ${data_depot}
     Element Text Should Be    //div[@class="mb-3"][4]//span/div[2]/div[1]/div[1]/div/div[1]/div[1]    ${data_subline}
-    #ตัวที่สร้างใหม่จะไปลบออกตอน case delete 
+    #ตัวที่สร้างใหม่จะไปลบออกตอน case delete
 
-TC_VHC_021-หน้ารายละเอียด Vehicle
+TC_VHC_050-หน้าต่างยืนยันการ Add กรณีกดปุ่ม Cancel
+    add_new_vehicle
+    Wait Until Element Is Visible    ${confirm_add}
+    Click Element    ${cancel_confirm_add}
+    Wait Until Element Is Not Visible    ${cancel_confirm_add}
+    Wait Until Element Is Visible    ${title}
+
+TC_VHC_051-หน้าต่างยืนยันการ Add กรณีกดปุ่ม x
+    add_new_vehicle
+    Wait Until Element Is Visible    ${confirm_add}
+    Click Element    ${close_confirm_add}
+    Wait Until Element Is Not Visible    ${close_confirm_add}
+    Wait Until Element Is Visible    ${title}
+
+TC_VHC_053-หน้ารายละเอียด Vehicle
     Run Keyword And Continue On Failure    select_vehicle    4646544
     Run Keyword And Continue On Failure    Element Text Should Be    ${edit_ve_title}    พาหนะ
     Wait Until Element Is Visible    //div[3]//div[1]/button/span[1]    10
@@ -504,7 +524,7 @@ TC_VHC_021-หน้ารายละเอียด Vehicle
     ${place_License}     Run Keyword And Continue On Failure    Get Element Attribute    ${field_license}    placeholder
     Run Keyword And Continue On Failure    Should Be Equal    ${place_License}    ทะเบียนรถ
 
-TC_VHC_022-กรณีกดปุ่ม Edit
+TC_VHC_058_059_060_061-กรณีกดปุ่ม Edit
     select_vehicle
     Element Should Be Disabled    //div[@class="mb-3"][1]/div/div/div/div/span/div[1]/div[1]/div[1]/div/div/input
     Element Should Be Disabled    ${field_veName}
@@ -540,7 +560,7 @@ TC_VHC_022-กรณีกดปุ่ม Edit
     Element Should Be Enabled     ${field_license}
     Element Should Be Enabled    //div[@class="mb-3"][4]/div/div/div/div[1]/span/div[1]/div//input
 
-TC_VHC_000-ปุ่ม Save กรณีมีการแก้ไขข้อมูล
+TC_VHC_062_063_064_065-ปุ่ม Save กรณีมีการแก้ไขข้อมูล
     select_vehicle
     Click Element    ${factory_edit_button}
     Run Keyword And Continue On Failure    Wait Until Element Is Visible    //*[@class="mb-3"][1]/div/div/div/div[2]/span/div/div[@class="custom-tippy"][1]
@@ -564,7 +584,7 @@ TC_VHC_000-ปุ่ม Save กรณีมีการแก้ไขข้อ
     Run Keyword And Continue On Failure    Element Should Be Enabled    ${license_save_button}
     Run Keyword And Continue On Failure    Element Should Be Enabled    ${factory_save_button}
 
-TC_VHC_0-กรณีกดปุ่ม Cancel ส่วน Factory Data
+TC_VHC_067-กรณีกดปุ่ม Cancel ส่วน Factory Data
     #จะดึงข้อมูลเดิมมาเก็บไว้ก่อนแล้วแก้ไขข้อมูล และ Cancel เรียงไป 3 case และดูช่องทั้งหมดว่าข้อมูลยังเป็นค่าเดิม หรือ หายไปไหม
     #เช็ค Motor Number ไม่ได้
     #ยังไม่เขียน Case License
@@ -644,7 +664,7 @@ TC_VHC_0-กรณีกดปุ่ม Cancel ส่วน Factory Data
 #กด Cancel เวลาไม่แก้ข้อมูลบางช่องจะข้อมูลหาย
 #กด Cancel เวลามีการแก้ข้อมูลส่วนอื่นที่ไม่เกี่ยวบางช่องโดนเปลี่ยนค่ากลับ
 
-TC_VHC_0-กรณีกดปุ่ม Cancel ส่วน License
+TC_VHC_068-กรณีกดปุ่ม Cancel ส่วน License
     #จะดึงข้อมูลเดิมมาเก็บไว้ก่อนแล้วแก้ไขข้อมูล และ Cancel เรียงไป 3 case และดูช่องทั้งหมดว่าข้อมูลยังเป็นค่าเดิม หรือ หายไปไหม
     #เช็ค Motor Number ไม่ได้
     #ยังไม่เขียน Case License
@@ -721,7 +741,7 @@ TC_VHC_0-กรณีกดปุ่ม Cancel ส่วน License
 #กด Cancel เวลาไม่แก้ข้อมูลบางช่องจะข้อมูลหาย
 #กด Cancel เวลามีการแก้ข้อมูลส่วนอื่นที่ไม่เกี่ยวบางช่องโดนเปลี่ยนค่ากลับ
 
-TC_VHC_0-กรณีกดปุ่ม Cancel ส่วน Operation Data
+TC_VHC_070-กรณีกดปุ่ม Cancel ส่วน Operation Data
     #จะดึงข้อมูลเดิมมาเก็บไว้ก่อนแล้วแก้ไขข้อมูล และ Cancel เรียงไป 3 case และดูช่องทั้งหมดว่าข้อมูลยังเป็นค่าเดิม หรือ หายไปไหม
     #เช็ค Motor Number ไม่ได้
     #ยังไม่เขียน Case License
@@ -799,90 +819,7 @@ TC_VHC_0-กรณีกดปุ่ม Cancel ส่วน Operation Data
 #กด Cancel เวลาไม่แก้ข้อมูลบางช่องจะข้อมูลหาย
 #กด Cancel เวลามีการแก้ข้อมูลส่วนอื่นที่ไม่เกี่ยวบางช่องโดนเปลี่ยนค่ากลับ
 
-TC_VHC_023-กรณี Edit โดยข้อมูลว่าง
-    select_vehicle
-    Click Element    ${factory_edit_button}
-    Clear Element Text    ${field_veName}
-    Clear Element Text    ${field_motor}
-    Clear Element Text    ${field_gps}
-    Clear Element Text    ${field_chassis}
-    Click Element    ${license_edit_button}
-    Clear Element Text    ${field_license}
-    Click Element    ${factory_save_button}
-    Click Element    ${license_save_button}
-    
-    Run Keyword And Continue On Failure    Element Text Should Be    ${alert_veName}    กรอกชื่อพาหนะ
-    Run Keyword And Continue On Failure    Element Text Should Be    ${alert_motor}    กรอกหมายเลขมอเตอร์
-    Run Keyword And Continue On Failure    Element Text Should Be    ${alert_gps}    กรอก GPS IMEI
-    Run Keyword And Continue On Failure    Element Text Should Be    ${alert_chassis}    กรอก Chassis No
-    Run Keyword And Continue On Failure    Element Text Should Be    ${alert_license}   กรอกทะเบียนรถ
-
-TC_VHC_024-กรณี Edit โดย Vehicle Name 2 ตัวอักษร
-    ${license}    Set Variable    4646544
-    edit_vehicle_name    ${license}    new_veName=84
-    Element Text Should Be    ${alert_veName}    ต้องมีอักขระ 3 ถึง 20 ตัว
-
-TC_VHC_025-กรณี Edit โดย Vehicle Name ซ้ำกับที่มีอยู่
-    ${license}    Set Variable    4646544
-    edit_vehicle_name    license=${license}    new_veName=646564
-    
-    Click Element    ${confirm_edit_button}
-    Click Element    ${confirm_confirm_edit_button}
-    #Sleep    100
-    Wait Until Element Is Visible    ${top_right_alert}    10
-    Element Text Should Be    ${top_right_alert}   ชื่อพาหนะนี้ถูกใช้งานแล้ว
-
-TC_VHC_026-กรณี Edit โดย motor number ซ้ำกับที่มีอยู่
-    ${license}    Set Variable    4646544
-    ${motor_number}    Set Variable    DPPC9U0018        
-    #${motor_number}    Set Variable    66546333    
-    select_vehicle    ${license}
-    Click Element    ${factory_edit_button}
-    Input Text    ${field_motor}    ${motor_number} 
-    Click Element    ${factory_save_button}
-    Click Element    ${factory_save_button}
-    Wait Until Element Is Visible    ${alert_motor}
-    Element Text Should Be    ${alert_motor}    หมายเลขมอเตอร์นี้ถูกใช้งานแล้ว    
-    #Sleep    100
-   
-TC_VHC_027-กรณี Edit GPS IMEI ซ้ำกับที่มีอยู่
-    ${license}    Set Variable    4646544
-    ${GPS}    Set Variable    100223167173
-    #${GPS}    Set Variable    465656653        
-    select_vehicle    ${license}
-    Click Element    ${factory_edit_button}
-    Input Text    ${field_gps}    ${GPS}
-    Click Element    ${factory_save_button}
-    Click Element    ${factory_save_button}
-    Wait Until Element Is Visible    ${alert_gps}
-    Element Text Should Be    ${alert_gps}    หมายเลขจีพีเอสนี้ถูกใช้งานแล้ว
-
-TC_VHC_028-กรณี Edit chassis number ซ้ำกับที่มีอยู่
-    ${license}    Set Variable    4646544
-    ${chassis}    Set Variable    MRSBCREMXNZM00918
-    #${chassis}    Set Variable    45654633         
-    select_vehicle    ${license}
-    Click Element    ${factory_edit_button}
-    Input Text    ${field_chassis}    ${chassis}
-    Click Element    ${factory_save_button}
-    Click Element    ${factory_save_button}
-    Wait Until Element Is Visible    ${alert_chassis}
-    Element Text Should Be    ${alert_chassis}    หมายเลขตัวถังนี้ถูกใช้งานแล้ว
-
-TC_VHC_029-ตรวจสอบจำนวนตัวอักษรสูงสุดกรณี Edit Vehical Name, Motot No, GPS IMEI, Chassis No, License plate
-    select_vehicle
-    ${max_vename}    Get Element Attribute    ${field_veName}    maxlength
-    Run Keyword And Continue On Failure    Should Be Equal    ${max_vename}    50
-    ${max_motor}    Get Element Attribute    ${field_motor}    maxlength
-    Run Keyword And Continue On Failure    Should Be Equal    ${max_motor}    30
-    ${max_gps}    Get Element Attribute    ${field_gps}    maxlength
-    Run Keyword And Continue On Failure    Should Be Equal    ${max_gps}    15    
-    ${max_chassis}    Get Element Attribute    ${field_chassis}    maxlength
-    Run Keyword And Continue On Failure    Should Be Equal    ${max_chassis}    20    
-    ${max_license}    Get Element Attribute    ${field_license}    maxlength
-    Run Keyword And Continue On Failure    Should Be Equal    ${max_license}    20
-
-TC_VHC_030-หน้าต่างยืนยันการแก้ไข
+TC_VHC_082-หน้าต่างยืนยันการแก้ไข
     edit_vehicle_name
     Click Element    ${confirm_edit_button}
     Sleep    1
@@ -892,25 +829,7 @@ TC_VHC_030-หน้าต่างยืนยันการแก้ไข
     Run Keyword And Continue On Failure    Element Text Should Be    ${confirm_edit_cancel_button}    ยกเลิก
     Run Keyword And Continue On Failure    Wait Until Element Is Visible    ${close_confirm_edit_button}
 
-หน้าต่างยืนยันการแก้ไขกรณีกดปุ่ม x
-    edit_vehicle_name
-    Click Element    ${confirm_edit_button}
-    Wait Until Element Is Visible    ${close_confirm_edit_button}
-    Click Element    ${close_confirm_edit_button}
-    Wait Until Element Is Not Visible    ${close_confirm_edit_button}
-    Wait Until Element Is Visible    ${title}
-
-
-หน้าต่างยืนยันการแก้ไขกรณีกดปุ่ม Cancel
-    edit_vehicle_name
-    Click Element    ${confirm_edit_button}
-    Wait Until Element Is Visible    ${confirm_edit_cancel_button}
-    Click Element    ${confirm_edit_cancel_button}
-    Wait Until Element Is Not Visible    ${confirm_edit_cancel_button}
-    Wait Until Element Is Visible    ${title}
-
-
-TC_VHC_031-กรณี Edit vehicle name
+TC_VHC_083.1-กรณี Edit vehicle name
     ${new_vename}    Set Variable    6465642
     ${old_vename}    Set Variable    64656429
     ${license}    Set Variable    4646544
@@ -944,7 +863,7 @@ TC_VHC_031-กรณี Edit vehicle name
     
 
 
-TC_VHC_032-กรณี Edit status
+TC_VHC_083.2-กรณี Edit status
     ${license}    Set Variable    4646544
     ${new_status}    Set Variable    Active
     ${old_status}    Set Variable    InActive
@@ -982,7 +901,7 @@ TC_VHC_032-กรณี Edit status
 
 
 
-TC_VHC_033-กรณี Edit motor number
+TC_VHC_083.3-กรณี Edit motor number
     # motor number เป็น case เดียวที่เช็คค่าในช่องไม่ได้
     ${license}    Set Variable    4646544
     ${new_motor_number}    Set Variable    6654633        
@@ -1016,7 +935,7 @@ TC_VHC_033-กรณี Edit motor number
 
 
 
-TC_VHC_034-กรณี Edit model
+TC_VHC_083.4-กรณี Edit model
     ${license}    Set Variable    4646544
     ${new_model}    Set Variable    scania  
     ${old_model}    Set Variable    Benz             
@@ -1053,7 +972,7 @@ TC_VHC_034-กรณี Edit model
 
 
 
-TC_VHC_035-กรณี Edit brand
+TC_VHC_083.5-กรณี Edit brand
     ${license}    Set Variable    4646544
     ${new_brand}    Set Variable    NISSAN 
     ${old_brand}    Set Variable    ISUZU       
@@ -1086,7 +1005,7 @@ TC_VHC_035-กรณี Edit brand
 
 
 
-TC_VHC_036-กรณี Edit GPS IMEI
+TC_VHC_083.6-กรณี Edit GPS IMEI
     ${license}    Set Variable    4646544
     ${new_GPS}    Set Variable    46565665
     ${old_GPS}    Set Variable    465656659        
@@ -1120,7 +1039,7 @@ TC_VHC_036-กรณี Edit GPS IMEI
     Should Be Equal    ${check_GPS}    ${old_GPS}
     Close Browser
 
-TC_VHC_037-กรณี Edit chassis number
+TC_VHC_083.7-กรณี Edit chassis number
     ${license}    Set Variable    4646544
     ${new_chassis}    Set Variable    4565463
     ${old_chassis}    Set Variable    45654639         
@@ -1160,7 +1079,7 @@ TC_VHC_037-กรณี Edit chassis number
 #TC_VHC กรณี Edit license plate
 #    Open Add New Vehicle Page
 
-TC_VHC_038-กรณี Edit depot
+TC_VHC_083.8-กรณี Edit depot
     ${license}    Set Variable    4646544
     ${new_depot}    Set Variable    อู่เคหะบางพลี
     ${old_depot}    Set Variable    อู่เคหะธนบุรี         
@@ -1200,7 +1119,7 @@ TC_VHC_038-กรณี Edit depot
     Close Browser
     
 
-TC_VHC_039-กรณี Edit sub line
+TC_VHC_083.9-กรณี Edit sub line
     ${license}    Set Variable    4646544
     ${depot}    Set Variable    อู่เคหะธนบุรี  
     ${new_subline}    Set Variable    99-99(3)
@@ -1249,7 +1168,107 @@ TC_VHC_039-กรณี Edit sub line
     Element Text Should Be    //div[@class="mb-3"][4]//span/div[2]/div[1]/div[1]/div/div[1]/div[1]    ${old_subline}
     Sleep    3
     Close Browser
-TC_VHC_040-หน้าต่างยืนยันการ Delete Vehicle
+
+TC_VHC_085-หน้าต่างยืนยันการแก้ไขกรณีกดปุ่ม Cancel
+    edit_vehicle_name
+    Click Element    ${confirm_edit_button}
+    Wait Until Element Is Visible    ${confirm_edit_cancel_button}
+    Click Element    ${confirm_edit_cancel_button}
+    Wait Until Element Is Not Visible    ${confirm_edit_cancel_button}
+    Wait Until Element Is Visible    ${title}
+
+TC_VHC_086-หน้าต่างยืนยันการแก้ไขกรณีกดปุ่ม x
+    edit_vehicle_name
+    Click Element    ${confirm_edit_button}
+    Wait Until Element Is Visible    ${close_confirm_edit_button}
+    Click Element    ${close_confirm_edit_button}
+    Wait Until Element Is Not Visible    ${close_confirm_edit_button}
+    Wait Until Element Is Visible    ${title}
+
+TC_VHC_092_093_094_095_103_-กรณี Edit โดยข้อมูลว่าง
+    select_vehicle
+    Click Element    ${factory_edit_button}
+    Clear Element Text    ${field_veName}
+    Clear Element Text    ${field_motor}
+    Clear Element Text    ${field_gps}
+    Clear Element Text    ${field_chassis}
+    Click Element    ${license_edit_button}
+    Clear Element Text    ${field_license}
+    Click Element    ${factory_save_button}
+    Click Element    ${license_save_button}
+    
+    Run Keyword And Continue On Failure    Element Text Should Be    ${alert_veName}    กรอกชื่อพาหนะ
+    Run Keyword And Continue On Failure    Element Text Should Be    ${alert_motor}    กรอกหมายเลขมอเตอร์
+    Run Keyword And Continue On Failure    Element Text Should Be    ${alert_gps}    กรอก GPS IMEI
+    Run Keyword And Continue On Failure    Element Text Should Be    ${alert_chassis}    กรอก Chassis No
+    Run Keyword And Continue On Failure    Element Text Should Be    ${alert_license}   กรอกทะเบียนรถ
+
+TC_VHC_096-กรณี Edit โดย Vehicle Name ซ้ำกับที่มีอยู่
+    ${license}    Set Variable    4646544
+    edit_vehicle_name    license=${license}    new_veName=646564
+    
+    Click Element    ${confirm_edit_button}
+    Click Element    ${confirm_confirm_edit_button}
+    #Sleep    100
+    Wait Until Element Is Visible    ${top_right_alert}    10
+    Element Text Should Be    ${top_right_alert}   ชื่อพาหนะนี้ถูกใช้งานแล้ว
+
+TC_VHC_097-กรณี Edit โดย motor number ซ้ำกับที่มีอยู่
+    ${license}    Set Variable    4646544
+    ${motor_number}    Set Variable    DPPC9U0018        
+    #${motor_number}    Set Variable    66546333    
+    select_vehicle    ${license}
+    Click Element    ${factory_edit_button}
+    Input Text    ${field_motor}    ${motor_number} 
+    Click Element    ${factory_save_button}
+    Click Element    ${factory_save_button}
+    Wait Until Element Is Visible    ${alert_motor}
+    Element Text Should Be    ${alert_motor}    หมายเลขมอเตอร์นี้ถูกใช้งานแล้ว    
+    #Sleep    100
+
+TC_VHC_101-กรณี Edit GPS IMEI ซ้ำกับที่มีอยู่
+    ${license}    Set Variable    4646544
+    ${GPS}    Set Variable    100223167173
+    #${GPS}    Set Variable    465656653        
+    select_vehicle    ${license}
+    Click Element    ${factory_edit_button}
+    Input Text    ${field_gps}    ${GPS}
+    Click Element    ${factory_save_button}
+    Click Element    ${factory_save_button}
+    Wait Until Element Is Visible    ${alert_gps}
+    Element Text Should Be    ${alert_gps}    หมายเลขจีพีเอสนี้ถูกใช้งานแล้ว
+
+TC_VHC_102-กรณี Edit chassis number ซ้ำกับที่มีอยู่
+    ${license}    Set Variable    4646544
+    ${chassis}    Set Variable    MRSBCREMXNZM00918
+    #${chassis}    Set Variable    45654633         
+    select_vehicle    ${license}
+    Click Element    ${factory_edit_button}
+    Input Text    ${field_chassis}    ${chassis}
+    Click Element    ${factory_save_button}
+    Click Element    ${factory_save_button}
+    Wait Until Element Is Visible    ${alert_chassis}
+    Element Text Should Be    ${alert_chassis}    หมายเลขตัวถังนี้ถูกใช้งานแล้ว
+
+TC_VHC_107-กรณี Edit โดย Vehicle Name 2 ตัวอักษร
+    ${license}    Set Variable    4646544
+    edit_vehicle_name    ${license}    new_veName=84
+    Element Text Should Be    ${alert_veName}    ต้องมีอักขระ 3 ถึง 20 ตัว
+
+TC_VHC_109_110_111_112_113_114_115_116_117_118-ตรวจสอบจำนวนตัวอักษรสูงสุดกรณี Edit Vehical Name, Motot No, GPS IMEI, Chassis No, License plate
+    select_vehicle
+    ${max_vename}    Get Element Attribute    ${field_veName}    maxlength
+    Run Keyword And Continue On Failure    Should Be Equal    ${max_vename}    50
+    ${max_motor}    Get Element Attribute    ${field_motor}    maxlength
+    Run Keyword And Continue On Failure    Should Be Equal    ${max_motor}    30
+    ${max_gps}    Get Element Attribute    ${field_gps}    maxlength
+    Run Keyword And Continue On Failure    Should Be Equal    ${max_gps}    15    
+    ${max_chassis}    Get Element Attribute    ${field_chassis}    maxlength
+    Run Keyword And Continue On Failure    Should Be Equal    ${max_chassis}    20    
+    ${max_license}    Get Element Attribute    ${field_license}    maxlength
+    Run Keyword And Continue On Failure    Should Be Equal    ${max_license}    20
+
+TC_VHC_125-หน้าต่างยืนยันการ Delete Vehicle
     select_vehicle
     Click Element    ${delete_button}
     Wait Until Element Is Visible    ${confirm_delete}
@@ -1259,23 +1278,7 @@ TC_VHC_040-หน้าต่างยืนยันการ Delete Vehicle
     Run Keyword And Continue On Failure    Element Text Should Be    ${cancel_confirm_delete}    ยกเลิก
     Run Keyword And Continue On Failure    Wait Until Element Is Visible    ${close_confirm_delete}
 
-หน้าต่างยืนยันการ Delete กรณีกดปุ่ม x
-    select_vehicle
-    Click Element    ${delete_button}
-    Wait Until Element Is Visible    ${close_confirm_delete}
-    Click Element    ${close_confirm_delete}
-    Wait Until Element Is Not Visible    ${close_confirm_delete}
-    Wait Until Element Is Visible    ${title}
-
-หน้าต่างยืนยันการ Delete กรณีกดปุ่ม Cancel
-    select_vehicle
-    Click Element    ${delete_button}
-    Wait Until Element Is Visible    ${cancel_confirm_delete}
-    Click Element    ${cancel_confirm_delete}
-    Wait Until Element Is Not Visible    ${cancel_confirm_delete}
-    Wait Until Element Is Visible    ${title}
-
-TC_VHC_041-กรณีลบ Vehicle
+TC_VHC_126-กรณีลบ Vehicle
     #ใส่ License Plate ที่ต้องการลบ
     #License Plate ที่เลือกลบจะใช้ตัวเดียวกับที่ Add ใหม่
     ${delete_license}    Set Variable    999680
@@ -1285,15 +1288,31 @@ TC_VHC_041-กรณีลบ Vehicle
     Input Text    ${search_box}    ${delete_license}
     Element Should Not Be Visible    //span[text()[contains(.,"${delete_license}")]]    10
 
-TC_VHC_042-กรณีลบ Vehicle ที่ถูกใช้งานอยู่
+TC_VHC_127-หน้าต่างยืนยันการ Delete กรณีกดปุ่ม x
+    select_vehicle
+    Click Element    ${delete_button}
+    Wait Until Element Is Visible    ${close_confirm_delete}
+    Click Element    ${close_confirm_delete}
+    Wait Until Element Is Not Visible    ${close_confirm_delete}
+    Wait Until Element Is Visible    ${title}
 
-    #ยังใช้งานไม่ได้
-    ${delete_license}    Set Variable    98-Test
-    delete_vehicle    ${delete_license}
-    Run Keyword And Continue On Failure    Wait Until Element Is Visible    ${top_right_alert}
-    Run Keyword And Continue On Failure    Element Text Should Be    ${top_right_alert}    ข้อผิดพลาด : พาหนะถูกใช้งานอยู่ ไม่สามารถลบได้
-    Input Text    ${search_box}    ${delete_license}
-    Wait Until Element Is Visible    //span[text()[contains(.,"${delete_license}")]]    10
+TC_VHC_128-หน้าต่างยืนยันการ Delete กรณีกดปุ่ม Cancel
+    select_vehicle
+    Click Element    ${delete_button}
+    Wait Until Element Is Visible    ${cancel_confirm_delete}
+    Click Element    ${cancel_confirm_delete}
+    Wait Until Element Is Not Visible    ${cancel_confirm_delete}
+    Wait Until Element Is Visible    ${title}
+
+# TC_VHC_129-กรณีลบ Vehicle ที่ถูกใช้งานอยู่
+
+#     #ยังใช้งานไม่ได้
+#     ${delete_license}    Set Variable    98-Test
+#     delete_vehicle    ${delete_license}
+#     Run Keyword And Continue On Failure    Wait Until Element Is Visible    ${top_right_alert}
+#     Run Keyword And Continue On Failure    Element Text Should Be    ${top_right_alert}    ข้อผิดพลาด : พาหนะถูกใช้งานอยู่ ไม่สามารถลบได้
+#     Input Text    ${search_box}    ${delete_license}
+#     Wait Until Element Is Visible    //span[text()[contains(.,"${delete_license}")]]    10
 
 
 

@@ -339,7 +339,7 @@ add_route
     Click Element    ${add_route_button}
 
 *** Test Cases ***
-หน้า Line
+TC_LI_001_002_หน้า Line
     open_line_subline_menu
     Run Keyword And Continue On Failure    Element Text Should Be    ${title}    สาย   
     Run Keyword And Continue On Failure    Element Should Contain    ${total}    สายทั้งหมด
@@ -353,7 +353,7 @@ add_route
     Run Keyword And Continue On Failure    Element Text Should Be    ${add_new_line_button}    เพิ่มสาย
     Run Keyword And Continue On Failure    Element Text Should Be    ${select_to_view_text}    Select line to view sub lines    
 
-กรณีค้นหาข้อมูลที่ไม่มีอยู่ในตาราง > กดไปเมนูอื่น > กดมาเมนู Line
+TC_LI_006_กรณีค้นหาข้อมูลที่ไม่มีอยู่ในตาราง > กดไปเมนูอื่น > กดมาเมนู Line
     open_line_subline_menu
     Wait Until Element Is Visible    ${first_result}    10
     Input Text    ${search_box}    อู่ไม่มี
@@ -367,10 +367,10 @@ add_route
     Click Element    ${line_subline_button}
     Wait Until Element Is Visible    ${first_result}    10
 
-กรณีกดปุ่ม + Add New Line
+TC_LI_007_กรณีกดปุ่ม + Add New Line
     open_add_line_menu
 
-หน้าต่าง Add New Line
+TC_LI_008_หน้าต่าง Add New Line
     open_add_line_menu
     Run Keyword And Continue On Failure    Element Text Should Be    ${line_name_label}    ชื่อสาย
     ${line_name_place}    Get Element Attribute    ${line_name_field}    placeholder
@@ -396,14 +396,14 @@ add_route
     Run Keyword And Continue On Failure    Should Be Equal    ${line_min_trip_place}    เดินทางขั้นต่ำ  
     Run Keyword And Continue On Failure    Element Text Should Be    ${add_edit_line_button}    เพิ่ม
 
-กรณีกดปุ่ม x หน้า Add New Line
+TC_LI_009_กรณีกดปุ่ม x หน้า Add New Line
     open_add_line_menu
     Wait Until Element Is Visible    ${add_edit_line_button}    5
     Click Element    ${add_edit_line_close_button}
     Wait Until Element Is Not Visible    ${add_edit_line_close_button}    5
     Wait Until Element Is Visible    ${title}
 
-กรณีเพิ่ม Line โดยไม่กรอกข้อมูล
+TC_LI_011_023_024_025_029_034_กรณีเพิ่ม Line โดยไม่กรอกข้อมูล
     open_add_line_menu
     Click Element    ${add_edit_line_button}
     Run Keyword And Continue On Failure    Wait Until Element Is Visible    ${line_name_alert}
@@ -420,7 +420,7 @@ add_route
     Run Keyword And Continue On Failure    Element Should Be Visible    ${line_min_ve_alert}    
     Run Keyword And Continue On Failure    Element Text Should Be    ${line_min_ve_alert}    โปรดระบุพาหนะขั้นต่ำ
 
-จำนวนตัวอักษรสูงสุดกรณีเพิ่ม Line
+TC_LI_022_028_032_37_จำนวนตัวอักษรสูงสุดกรณีเพิ่ม Line
     open_add_line_menu
     ${max_line_name}    Get Element Attribute    ${line_name_field}    maxlength
     Run Keyword And Continue On Failure    Should Be Equal    ${max_line_name}    30
@@ -435,17 +435,17 @@ add_route
     ${max_min_trip}    Get Element Attribute    ${line_min_trip_field}    maxlength
     Run Keyword And Continue On Failure    Should Be Equal    ${max_min_trip}    2
 
-กรณีเพิ่ม Line Name ที่ซ้ำกับที่มีอยู่
+TC_LI_013_กรณีเพิ่ม Line Name ที่ซ้ำกับที่มีอยู่
     add_line     line_name=ชื่55
     Wait Until Element Is Visible    ${line_name_alert}
     Run Keyword And Continue On Failure    Element Text Should Be    ${line_name_alert}    ชื่อสายนี้ถูกใช้งานแล้ว    
     
-กรณีเพิ่ม Minimum Vehicle < 0
+TC_LI_026_กรณีเพิ่ม Minimum Vehicle < 0
     add_line    min_ve=-1
     Wait Until Element Is Visible    ${line_min_ve_alert}
     Run Keyword And Continue On Failure    Element Text Should Be    ${line_min_ve_alert}    พาหนะขั้นต่ำต้องมีจำนวนมากกว่าหรือเท่ากับ 1
 
-กรณีเพิ่ม Minimum Vehicle = 0
+TC_LI_027_กรณีเพิ่ม Minimum Vehicle = 0
     add_line    min_ve=0
     Wait Until Element Is Visible    ${line_min_ve_alert}
     Run Keyword And Continue On Failure    Element Text Should Be    ${line_min_ve_alert}    พาหนะขั้นต่ำต้องมีจำนวนมากกว่าหรือเท่ากับ 1
@@ -1101,7 +1101,7 @@ add_route
     Run Keyword And Continue On Failure    Wait Until Element Is Visible    ${confirm_add_edit_line_text}
     
     Click Element    ${confirm_confirm_add_edit_line_button}
-    
+
     Run Keyword And Continue On Failure    Wait Until Element Is Visible    ${top_right_alert}
     Run Keyword And Continue On Failure    Element Text Should Be    ${top_right_alert}    แก้ไขสายสำเร็จ
     select_line    99-99

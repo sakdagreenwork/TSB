@@ -17,10 +17,7 @@
 
 *** Settings ***
 Library             SeleniumLibrary    screenshot_root_directory=/Users/sakda.l/Desktop/TSB Automate/Login/Failed Screenshot
-Library             Collections
-Library    OperatingSystem
 Resource            keyword.robot
-
 Test Teardown       Close Browser
 
 
