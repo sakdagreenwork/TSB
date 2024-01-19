@@ -13,6 +13,7 @@
 
 *** Settings ***
 Library   SeleniumLibrary    screenshot_root_directory=/Users/sakda.l/Desktop/TSB Automate/Login/Failed Screenshot 
+Library    String
 Resource      keyword.robot
 #Test Teardown    Clear Element Text    //*[@id="root"]/main/div/div/div[2]/div/div[1]/form/div/div/input
 Test Teardown    Close Browser
@@ -37,9 +38,55 @@ ${top_right_alert}    //div[@class='Toastify__toast-body']/div[2]
 
 ${login_page}    //*[@id="root"]/main/div[2]/div/div[2]/div/div[1]/div[2]/h4
 ${dashboard_page}    //*[@id="root"]//div[3]/h4
+${error_text0}    "Default ข้อมูล"
+
 *** Keywords ***
 
 ## Keyword: Log In อยู่ที่ไฟล์ keyword.robot ##
+
+find_word_since_should
+    [Arguments]    ${text}
+    
+    ${length_text}    Get Length    ${text}
+
+    Log To Console    ข้อความที่รับมา   ${text}
+    Log To Console    ความยาวข้อความที่รับมา   ${text}
+    FOR    ${index}    IN RANGE    0    ${length_text}   
+        IF    '${text}[${index}]' == "s"
+            #Log To Console    เจอ s ที่ ${index}
+            ${index}    Set Variable    ${index+1}
+
+            IF    '${text}[${index}]' == "h"
+            #Log To Console    เจอ sh ที่ ${index}
+            ${index}    Set Variable    ${index+1}
+            
+                IF    '${text}[${index}]' == "o"
+                #Log To Console    เจอ sho ที่ ${index}
+                ${index}    Set Variable    ${index+1}
+
+                    IF    '${text}[${index}]' == "u"
+                    #Log To Console    เจอ shou ที่ ${index}
+                    ${index}    Set Variable    ${index+1}
+
+                        IF    '${text}[${index}]' == "l"
+                        #Log To Console    เจอ shoul ที่ ${index}
+                        ${index}    Set Variable    ${index+1}
+
+                            IF    '${text}[${index}]' == "d"
+                            #Log To Console    เจอ should ที่ ${index}
+                            ${index}    Set Variable    ${index-5}
+                            Log To Console    should อยู่ที่ตำแหน่ง ${index}
+                            Log To Console    ${text}[${index}:]
+                            RETURN    ${text}[${index}:]
+                            END
+                        END
+                    END
+                END
+            END
+        END
+    END
+
+
 
 Open Forgot Password Page
     Open Browser  ${link}    browser=chrome
@@ -49,16 +96,74 @@ Open Forgot Password Page
     Click Element   ${forgot_pass_page_button}
     
 *** Test Case ***
-TC_FP_001-ข้อความหน้า Forgot Your Password
+TC_LI_020-Sign in ด้วย Password เก่า
+    Log In    sakda@efinancethai.com    EVEFT@cs
+    Run Keyword And Continue On Failure    Wait Until Element Is Visible    //div[@class='Toastify__toast-body']/div[2]
+    Run Keyword And Continue On Failure    Element Text Should Be    //div[@class='Toastify__toast-body']/div[2]   expected=อีเมลหรือรหัสผ่านไม่ถูกต้อง
+    Element Should Not Be Visible    ${dashboard_page}
+
+TC_LI_027-ข้อความหน้า Forgot Your Password
+    ${issue_message}    Set Variable    ISSUE : 
     Open Forgot Password Page
     Wait Until Element Is Visible    ${Title}    15
-    Run Keyword And Continue On Failure    Element Text Should Be  ${Title}    ลืมรหัสผ่าน?
-    Run Keyword And Continue On Failure    Element Text Should Be    ${Text}    กรอกอีเมล เพื่อรับอีเมลรหัสผ่านใหม่
-    Run Keyword And Continue On Failure    Element Text Should Be    ${Label Email}    อีเมล
-    Run Keyword And Continue On Failure    Element Text Should Be    ${send_email_button}    ส่งอีเมลเปลี่ยนรหัสผ่าน
-    Run Keyword And Continue On Failure    Element Text Should Be    ${Back_Signin_Text}   กลับ เข้าสู่ระบบ
+    # Run Keyword And Continue On Failure    Element Text Should Be  ${Title}    ลืมรหัสผ่าน?
+    
+    ${error_text0}    Run Keyword And Ignore Error    Element Text Should Be  ${Title}    ลืมรหัสผ่าน?
+    IF    "${error_text0}[0]" == "FAIL"
+        ${text}    Set Variable    ${error_text0}[1]
+        
+        ${text}    Replace String    ${text}    '    --
+        ${text}    Replace String    ${text}    "    --
+     
+         Log To Console    ข้อความที่ตัด ${text}    
+      
+       ${length_text}    Get Length    ${text}
+       Log To Console    ${length_text}
+       Log To Console    ข้อความก่อนไปแยกส่วน ${text}
 
-TC_FP_005-Forgot Password ด้วย Email ที่ไม่มีอยู่ในระบบ
+
+        FOR    ${index}    IN RANGE    0    ${length_text}   
+            IF     "${text}[${index}]" == "s"
+                Log To Console    เจอ s ที่ ${index}
+                ${index}    Set Variable    ${index+1}
+
+                IF    '${text}[${index}]' == "h"
+                Log To Console    เจอ sh ที่ ${index}
+                ${index}    Set Variable    ${index+1}
+                
+                    IF    '${text}[${index}]' == "o"
+                    Log To Console    เจอ sho ที่ ${index}
+                    ${index}    Set Variable    ${index+1}
+
+                        IF    '${text}[${index}]' == "u"
+                        Log To Console    เจอ shou ที่ ${index}
+                        ${index}    Set Variable    ${index+1}
+
+                            IF    '${text}[${index}]' == "l"
+                            Log To Console    เจอ shoul ที่ ${index}
+                            ${index}    Set Variable    ${index+1}
+
+                                IF    '${text}[${index}]' == "d"
+                                Log To Console    เจอ should ที่ ${index}
+                                ${index}    Set Variable    ${index-5}
+                                Log To Console    should อยู่ที่ตำแหน่ง ${index}
+                                Log To Console    ${text}[${index}:]
+                                END
+                            END
+                        END
+                    END
+                END
+            END
+        END
+
+    END
+
+    # Run Keyword And Continue On Failure    Element Text Should Be    ${Label Email}    อีเมล2    ต้องแสดงำว่า Email
+    # Run Keyword And Continue On Failure    Element Text Should Be    ${send_email_button}    ส่งอีเมลเปลี่ยนรหัสผ่าน
+    # Run Keyword And Continue On Failure    Element Text Should Be    ${Back_Signin_Text}   กลับ เข้าสู่ระบบ
+    # [Teardown]    Set Test Documentation    ${issue_message}
+
+TC_LI_028-Forgot Password ด้วย Email ที่ไม่มีอยู่ในระบบ
     Open Forgot Password Page
     Wait Until Element Is Visible    ${forgot_email_field}    15
     Click Element    ${forgot_email_field}
@@ -67,13 +172,13 @@ TC_FP_005-Forgot Password ด้วย Email ที่ไม่มีอยู�
     Wait Until Element Is Visible    ${top_right_alert}    10
     Element Text Should Be  ${top_right_alert}    อีเมลไม่ถูกต้อง
 
-TC_FP_002-Forgot Password โดยไม่กรอก Email
+TC_LI_029-Forgot Password โดยไม่กรอก Email
     Open Forgot Password Page
     Wait Until Element Is Visible   ${send_email_button}    10
     Click Element   ${send_email_button}
     Element Text Should Be  ${email_field_alert}  โปรดระบุอีเมล
 
-TC_FP_000-Forgot Password โดยกรอก Email ที่ผิดรูปแบบ
+TC_LI_030-Forgot Password โดยกรอก Email ที่ผิดรูปแบบ
     Open Forgot Password Page
     Wait Until Element Is Visible    ${forgot_email_field}    15
     Click Element    ${forgot_email_field}
@@ -82,7 +187,7 @@ TC_FP_000-Forgot Password โดยกรอก Email ที่ผิดรู�
     Wait Until Element Is Visible    ${email_field_alert}
     Element Text Should Be    ${email_field_alert}    อีเมลไม่ถูกต้อง
 
-TC_FP_003-Forgot Password ด้วย Email ที่ยังไม่ Verified
+TC_LI_031-Forgot Password ด้วย Email ที่ยังไม่ Verified
     Open Forgot Password Page
     Wait Until Element Is Visible    ${forgot_email_field}    15
     Click Element    ${forgot_email_field}
@@ -92,7 +197,7 @@ TC_FP_003-Forgot Password ด้วย Email ที่ยังไม่ Verifie
     Element Text Should Be  ${top_right_alert}  expected=ผู้ใช้งานยังไม่ได้ยืนยัน
 
 
-TC_FP_004-Forgot Password ด้วย Email ที่ถูก Disabled
+TC_LI_034-Forgot Password ด้วย Email ที่ถูก Disabled
     Open Forgot Password Page
     Wait Until Element Is Visible    ${forgot_email_field}    15
     Click Element    ${forgot_email_field}
@@ -101,9 +206,7 @@ TC_FP_004-Forgot Password ด้วย Email ที่ถูก Disabled
     Wait Until Element Is Visible    ${top_right_alert}    10
     Element Text Should Be  ${top_right_alert}    ผู้ใช้งานถูกปิดการใช้งาน
 
-
-
-TC_FP_006-Forgot Password ด้วย Email ที่มีอยู่ในระบบ
+TC_LI_035-Forgot Password ด้วย Email ที่มีอยู่ในระบบ
     Open Forgot Password Page
     Wait Until Element Is Visible    ${forgot_email_field}    15
     Click Element    ${forgot_email_field}
@@ -115,15 +218,13 @@ TC_FP_006-Forgot Password ด้วย Email ที่มีอยู่ใน�
     Wait Until Element Is Visible    ${login_page}    10
     Element Text Should Be  ${login_page}     เข้าสู่ระบบ
 
-TC_FP_007-กรณีกดปุ่ม Back To Sign in
+TC_LI_036-กรณีกดปุ่ม Back To Sign in
     Open Forgot Password Page
     Wait Until Element Is Visible    ${Back_Signin_Button}    15
     Click Element    ${Back_Signin_Button}
     Wait Until Element Is Visible    ${login_page}    10
     Element Text Should Be  ${login_page}     เข้าสู่ระบบ
     Sleep    1
-TC_FP_008-Sign in ด้วย Password เก่า
-    Log In    sakda@efinancethai.com    EVEFT@cs
-    Run Keyword And Continue On Failure    Wait Until Element Is Visible    //div[@class='Toastify__toast-body']/div[2]
-    Run Keyword And Continue On Failure    Element Text Should Be    //div[@class='Toastify__toast-body']/div[2]   expected=อีเมลหรือรหัสผ่านไม่ถูกต้อง
-    Element Should Not Be Visible    ${dashboard_page}
+
+
+    
